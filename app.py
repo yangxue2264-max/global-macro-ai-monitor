@@ -57,21 +57,31 @@ def get_macro(): return fetch_fred_snapshot(FRED_SERIES)
 @st.cache_data(ttl=900,show_spinner=False)
 def get_news(): return fetch_news_bundle(max_each=10)
 
+@st.cache_data(ttl=3600,show_spinner=False)
+def get_enso(): return fetch_enso_summary()
+
 cfg,universe=get_watch()
 with open(BASE/"config"/"a_share_map.json","r",encoding="utf-8") as f:
     ashare_cfg=json.load(f)
+
+st.title("Global Macro AI Monitor")
+st.caption("A股开盘前 · 全球宏观 × 跨资产 × 主流个股 × AI传导分析")
+startup_status=st.empty()
+startup_status.info("正在加载全球市场、宏观与新闻数据…首次冷启动通常需要几十秒。")
 with st.spinner("更新全球市场、宏观状态与新闻…"):
     market=get_market(universe); macro=get_macro(); news=get_news()
 health=data_health(market,macro,news)
-
-if health["market_ok"] < max(5, int(health["market_total"]*0.5)):
-    st.warning("部分市场免费行情当前不可用；页面会保留结构，但请不要把缺失值当作真实市场信号。")
+live_ratio=(health.get("market_live",0)/health.get("market_total",1)) if health.get("market_total",0) else 0
+DEMO_FALLBACK=live_ratio < 0.45
+if DEMO_FALLBACK:
+    market=demo_market(universe); macro=demo_macro(FRED_SERIES); news=demo_news(); health=data_health(market,macro,news)
+news=add_evidence_scores(news)
+enso=get_enso()
+startup_status.empty()
 
 now=datetime.now(CN_TZ)
 c1,c2=st.columns([5,1.2])
 with c1:
-    st.title("Global Macro AI Monitor")
-    st.caption("A股开盘前 · 全球宏观 × 跨资产 × 主流个股 × AI传导分析")
     if DEMO_FALLBACK:
         st.warning("当前免费行情源不可用，页面自动切换到 DEMO FALLBACK。所有示例数值均非实时数据。", icon="⚠️")
 with c2:
