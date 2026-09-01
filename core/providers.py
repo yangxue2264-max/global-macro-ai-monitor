@@ -91,8 +91,44 @@ def _market_snapshot_one(meta):
     })
     return base
 
+def _snapshot_from_frames(meta, price_df, volume_df=None):
+    base = {"name":meta.get("name",""),"ticker":meta["ticker"],"group":meta.get("group",""),"theme":meta.get("theme",""),"region":meta.get("region",""),"last":np.nan,"change_pct":np.nan,"change_5d_pct":np.nan,"change_20d_pct":np.nan,"vol_20d":np.nan,"ret_z":np.nan,"volume_ratio":np.nan,"asof":"","status":"unavailable"}
+    try:
+        c=pd.Series(price_df).dropna()
+        if len(c)<2:return base
+        r=c.pct_change().dropna(); std20=r.tail(20).std() if len(r)>=5 else np.nan
+        ret_z=(r.iloc[-1]/std20) if std20 and not np.isnan(std20) and std20!=0 else np.nan
+        vr=np.nan
+        if volume_df is not None:
+            v=pd.Series(volume_df).dropna()
+            if len(v)>=5 and v.tail(20).mean()!=0: vr=float(v.iloc[-1]/v.tail(20).mean())
+        base.update({"last":float(c.iloc[-1]),"change_pct":float((c.iloc[-1]/c.iloc[-2]-1)*100),"change_5d_pct":float((c.iloc[-1]/c.iloc[-6]-1)*100) if len(c)>=6 else np.nan,"change_20d_pct":float((c.iloc[-1]/c.iloc[-21]-1)*100) if len(c)>=21 else np.nan,"vol_20d":float(r.tail(20).std()*np.sqrt(252)*100) if len(r)>=5 else np.nan,"ret_z":float(ret_z) if not np.isnan(ret_z) else np.nan,"volume_ratio":float(vr) if not np.isnan(vr) else np.nan,"asof":str(c.index[-1].date()) if hasattr(c.index[-1],"date") else str(c.index[-1]),"status":"ok"})
+        return base
+    except Exception:return base
+
 def fetch_market_snapshot(universe: dict):
-    return {k: _market_snapshot_one(meta) for k,meta in universe.items()}
+    tickers=[m["ticker"] for m in universe.values()]
+    try:
+        df=yf.download(tickers=tickers,period="6mo",progress=False,auto_adjust=False,threads=True,group_by="column")
+    except Exception:
+        df=pd.DataFrame()
+    if df.empty:
+        return {k:_market_snapshot_one(meta) for k,meta in universe.items()}
+    out={}
+    for key,meta in universe.items():
+        ticker=meta["ticker"]; close=None; volume=None
+        try:
+            if isinstance(df.columns,pd.MultiIndex):
+                if ("Close",ticker) in df.columns: close=df[("Close",ticker)]
+                elif (ticker,"Close") in df.columns: close=df[(ticker,"Close")]
+                if ("Volume",ticker) in df.columns: volume=df[("Volume",ticker)]
+                elif (ticker,"Volume") in df.columns: volume=df[(ticker,"Volume")]
+            else:
+                close=df["Close"] if "Close" in df.columns else None
+                volume=df["Volume"] if "Volume" in df.columns else None
+        except Exception: pass
+        out[key]=_snapshot_from_frames(meta,close,volume) if close is not None else _market_snapshot_one(meta)
+    return out
 
 def _fred_csv(series):
     url = f"https://fred.stlouisfed.org/graph/fredgraph.csv?id={series}"
