@@ -1,0 +1,9 @@
+{
+  "generated_at": "DEMO",
+  "note": "Bundled fallback example. Live deployment overwrites this file on scheduled runs.",
+  "brief": {
+    "headline": "DEMO：页面启动后会优先获取实时免费数据；若数据源暂时不可用，会明确切换到演示模式。",
+    "regime": "Mixed",
+    "regime_score": 0.2
+  }
+}
