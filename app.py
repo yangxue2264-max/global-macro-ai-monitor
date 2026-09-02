@@ -22,7 +22,8 @@ from core.market_context import enrich_macro_with_market_proxies, source_label
 from core.ontology import MACRO_MODULES
 from core.providers import (
     FRED_SERIES, data_health, fetch_fred_snapshot, fetch_market_snapshot,
-    fetch_news_bundle, fetch_price_history, flatten_watchlist, load_watchlist,
+    fetch_news_bundle, fetch_price_history, fetch_treasury_snapshot,
+    flatten_watchlist, load_watchlist,
 )
 from core.research_memory import memory_summary
 from core.theme_monitor import ai_chain_bottlenecks, ai_chain_snapshot, theme_ledger_rows
@@ -72,11 +73,12 @@ def load_config():
 
 @st.cache_data(ttl=900, show_spinner=False)
 def load_snapshot(universe):
-    with ThreadPoolExecutor(max_workers=3) as pool:
+    with ThreadPoolExecutor(max_workers=4) as pool:
         market_future = pool.submit(fetch_market_snapshot, universe)
         macro_future = pool.submit(fetch_fred_snapshot, FRED_SERIES)
         news_future = pool.submit(fetch_news_bundle, 8)
-        return market_future.result(), macro_future.result(), news_future.result()
+        treasury_future = pool.submit(fetch_treasury_snapshot)
+        return market_future.result(), macro_future.result(), news_future.result(), treasury_future.result()
 
 
 @st.cache_data(ttl=3600, show_spinner=False)
@@ -95,7 +97,7 @@ def market_context_text(market, macro):
     for key in keys:
         item = market.get(key, {})
         rows.append(f"{item.get('name', key)}: 1日 {fmt_pct(item.get('change_pct'))}; 5日 {fmt_pct(item.get('change_5d_pct'))}; 20日 {fmt_pct(item.get('change_20d_pct'))}")
-    for key in ["US10Y", "USREAL10Y", "BREAKEVEN10Y", "VIX", "HYSPREAD", "NFCI"]:
+    for key in ["US10Y", "USREAL10Y", "BREAKEVEN10Y", "VIX", "HYSPREAD", "CREDIT_PROXY", "NFCI"]:
         item = macro.get(key, {})
         rows.append(f"{item.get('name', key)}: {fmt_num(item.get('value'))} ({source_label(item)})")
     return "\n".join(rows)
@@ -120,14 +122,14 @@ st.markdown('<div class="subhead">A股开盘前研究工作台 · 事实 → 状
 load_notice = st.empty()
 load_notice.info("正在同步行情、宏观与研究流；三类数据并行更新。")
 if os.getenv("MACRO_MONITOR_OFFLINE_TEST") == "1":
-    market, macro, news = demo_market(universe), demo_macro(FRED_SERIES), demo_news()
+    market, macro, news, treasury = demo_market(universe), demo_macro(FRED_SERIES), demo_news(), {}
 else:
-    market, macro, news = load_snapshot(universe)
+    market, macro, news, treasury = load_snapshot(universe)
 health = data_health(market, macro, news)
 demo_mode = health.get("market_live", 0) == 0
 if demo_mode:
     market, macro, news = demo_market(universe), demo_macro(FRED_SERIES), demo_news()
-macro = enrich_macro_with_market_proxies(macro, market)
+macro = enrich_macro_with_market_proxies(macro, market, treasury)
 news = add_evidence_scores(news)
 health = data_health(market, macro, news)
 load_notice.empty()
@@ -135,7 +137,7 @@ load_notice.empty()
 now = datetime.now(CN_TZ)
 ai = ai_status()
 market_ratio = f"{health.get('market_live', 0)}/{health.get('market_total', 0)}"
-macro_available = sum(1 for value in macro.values() if value.get("status") in {"ok", "market_proxy", "derived"})
+macro_available = sum(1 for value in macro.values() if value.get("status") in {"ok", "treasury", "market_proxy", "derived"})
 macro_ratio = f"{macro_available}/{len(macro)}"
 badges = [
     f'<span class="badge {"warn" if demo_mode else "live"}">{"DEMO" if demo_mode else "LIVE"} 行情 {market_ratio}</span>',
@@ -161,7 +163,7 @@ if page == "晨间简报":
     cols[2].metric("美元指数", fmt_num(market.get("DXY", {}).get("last")), fmt_pct(market.get("DXY", {}).get("change_pct")))
     real = macro.get("USREAL10Y", {})
     cols[3].metric(f"实际10Y · {source_label(real)}", fmt_num(real.get("value")), metric_delta(real.get("delta"), "pp"))
-    cols[4].metric("USD/CNH", fmt_num(market.get("USDCNH", {}).get("last"), 4), fmt_pct(market.get("USDCNH", {}).get("change_pct")))
+    cols[4].metric("人民币汇率代理", fmt_num(market.get("USDCNH", {}).get("last"), 4), fmt_pct(market.get("USDCNH", {}).get("change_pct")))
     cols[5].metric("铜", fmt_num(market.get("COPPER", {}).get("last")), fmt_pct(market.get("COPPER", {}).get("change_pct")))
 
     st.markdown('<div class="section">今天最值得回答的三个问题</div>', unsafe_allow_html=True)
@@ -273,6 +275,8 @@ elif page == "主题监控":
         for key, meta in FRED_SERIES.items():
             item = macro.get(key, {})
             rows.append({"变量": meta["name"], "最新": item.get("value"), "变化": item.get("delta"), "来源层级": source_label(item), "发布日期": item.get("date", ""), "具体来源": item.get("source", "FRED" if item.get("status") == "ok" else "")})
+        credit = macro.get("CREDIT_PROXY", {})
+        rows.append({"变量": credit.get("name", "信用风险市场代理"), "最新": credit.get("value"), "变化": credit.get("delta"), "来源层级": source_label(credit), "发布日期": credit.get("date", ""), "具体来源": credit.get("source", "")})
         st.dataframe(pd.DataFrame(rows), hide_index=True, width="stretch", column_config={"最新": st.column_config.NumberColumn(format="%.3f"), "变化": st.column_config.NumberColumn(format="%.3f")})
         st.markdown("##### 气候 → 农业 → 食品通胀")
         if st.button("加载 NOAA ENSO 官方诊断"):

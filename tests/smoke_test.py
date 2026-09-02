@@ -47,6 +47,7 @@ missing_macro = {"US10Y":{"value":float("nan"),"status":"unavailable"},"VIX":{"v
 enriched = enrich_macro_with_market_proxies(missing_macro, proxy_market)
 assert enriched["US10Y"]["value"] == 4.25
 assert source_label(enriched["USREAL10Y"]) == "推导"
+assert source_label({"status":"treasury"}) == "美国财政部"
 
 mapping = {"测试":{"trigger_assets":["MISSING"],"global_assets":[],"a_share_themes":[],"logic":"x","verify":[]}}
 rows = build_a_share_mapping({"MISSING":{"change_pct":float("nan")}}, news, mapping)

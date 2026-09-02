@@ -15,9 +15,15 @@ def _macro_ok(macro, key):
     return _finite(macro.get(key, {}).get("value")) is not None
 
 
-def enrich_macro_with_market_proxies(macro, market):
+def enrich_macro_with_market_proxies(macro, market, treasury=None):
     """Fill only missing macro observations and label every proxy explicitly."""
     out = {key: dict(value) for key, value in macro.items()}
+    treasury = treasury or {}
+
+    # Prefer FRED when available; otherwise use the official Treasury curve.
+    for key in ["US10Y", "US2Y", "USREAL10Y", "BREAKEVEN10Y"]:
+        if not _macro_ok(out, key) and key in treasury:
+            out[key] = dict(treasury[key])
 
     if not _macro_ok(out, "US10Y"):
         tnx = _finite(market.get("US10Y_PROXY", {}).get("last"))
@@ -73,6 +79,7 @@ def source_label(item):
     status = item.get("status", "unavailable")
     return {
         "ok": "官方",
+        "treasury": "美国财政部",
         "market_proxy": "市场代理",
         "derived": "推导",
         "saved": "最近快照",

@@ -81,6 +81,36 @@ def fetch_price_history(ticker: str, period="3mo") -> pd.DataFrame:
         except Exception:
             return pd.DataFrame()
 
+
+def _yahoo_spark(tickers, period="3mo"):
+    """Fetch up to 20 symbols in one Yahoo request (the endpoint's hard cap)."""
+    endpoint = "https://query1.finance.yahoo.com/v7/finance/spark"
+    response = requests.get(
+        endpoint,
+        params={"symbols": ",".join(tickers), "range": period, "interval": "1d"},
+        headers=HEADERS,
+        timeout=20,
+    )
+    response.raise_for_status()
+    results = response.json().get("spark", {}).get("result", []) or []
+    frames = {}
+    for item in results:
+        symbol = item.get("symbol")
+        payloads = item.get("response") or []
+        if not symbol or not payloads:
+            continue
+        payload = payloads[0]
+        timestamps = payload.get("timestamp") or []
+        quotes = (payload.get("indicators", {}).get("quote") or [{}])[0]
+        closes = quotes.get("close") or []
+        if not timestamps or not closes:
+            continue
+        frames[symbol] = pd.DataFrame(
+            {"Close": closes},
+            index=pd.to_datetime(timestamps, unit="s", utc=True).tz_convert(None),
+        ).dropna(subset=["Close"])
+    return frames
+
 def _market_snapshot_one(meta):
     df = fetch_price_history(meta["ticker"], period="6mo")
     base = {
@@ -132,24 +162,80 @@ def _snapshot_from_frames(meta, price_df, volume_df=None):
     except Exception:return base
 
 def fetch_market_snapshot(universe: dict):
-    def one(key, meta):
+    entries = list(universe.items())
+    chunks = [entries[i:i+20] for i in range(0, len(entries), 20)]
+
+    def one_chunk(chunk):
         try:
-            frame = _yahoo_chart(meta["ticker"], period="3mo")
-            if frame.empty:
-                return key, _snapshot_from_frames(meta, None)
-            return key, _snapshot_from_frames(meta, frame["Close"], frame.get("Volume"))
+            return _yahoo_spark([meta["ticker"] for _, meta in chunk], period="3mo")
         except Exception:
-            return key, _snapshot_from_frames(meta, None)
+            return {}
+
+    frames = {}
+    # Four batched requests replace 61 simultaneous single-ticker requests,
+    # avoiding Yahoo rate limits while keeping the cold start bounded.
+    with ThreadPoolExecutor(max_workers=len(chunks)) as pool:
+        futures = [pool.submit(one_chunk, chunk) for chunk in chunks]
+        for future in as_completed(futures):
+            frames.update(future.result())
+
+    # Spark occasionally omits a small number of symbols. Retry only critical
+    # dashboard series, never the full universe, so latency remains bounded.
+    critical = {"^GSPC", "^NDX", "DX-Y.NYB", "CNY=X", "GC=F", "HG=F", "CL=F", "^VIX", "^TNX", "399006.SZ"}
+    missing = [ticker for ticker in critical if ticker not in frames]
+    if missing:
+        with ThreadPoolExecutor(max_workers=min(4, len(missing))) as pool:
+            future_map = {pool.submit(_yahoo_chart, ticker, "3mo"): ticker for ticker in missing}
+            for future in as_completed(future_map):
+                try:
+                    frame = future.result()
+                    if not frame.empty:
+                        frames[future_map[future]] = frame
+                except Exception:
+                    pass
 
     out = {}
-    # Direct chart endpoints avoid yfinance's crumb negotiation and long serial
-    # retry loops. Each ticker has a hard timeout and missing assets remain clear.
-    with ThreadPoolExecutor(max_workers=min(20, len(universe))) as pool:
-        futures = [pool.submit(one, key, meta) for key, meta in universe.items()]
-        for future in as_completed(futures):
-            key, value = future.result()
-            out[key] = value
-    return {key: out[key] for key in universe}
+    for key, meta in universe.items():
+        frame = frames.get(meta["ticker"])
+        out[key] = _snapshot_from_frames(meta, frame["Close"]) if frame is not None and not frame.empty else _snapshot_from_frames(meta, None)
+    return out
+
+
+def fetch_treasury_snapshot():
+    """Official US Treasury nominal and real curves; no API key required."""
+    year = datetime.now(timezone.utc).year
+    base = f"https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-rates.csv/{year}/all"
+
+    def curve(curve_type):
+        response = requests.get(
+            base,
+            params={"type": curve_type, "field_tdr_date_value": str(year), "page": "", "_format": "csv"},
+            headers=HEADERS,
+            timeout=20,
+        )
+        response.raise_for_status()
+        frame = pd.read_csv(StringIO(response.text))
+        frame["Date"] = pd.to_datetime(frame["Date"], errors="coerce")
+        return frame.dropna(subset=["Date"]).sort_values("Date", ascending=False)
+
+    try:
+        with ThreadPoolExecutor(max_workers=2) as pool:
+            nominal_future = pool.submit(curve, "daily_treasury_yield_curve")
+            real_future = pool.submit(curve, "daily_treasury_real_yield_curve")
+            nominal, real = nominal_future.result(), real_future.result()
+        n0, n1 = nominal.iloc[0], nominal.iloc[min(1, len(nominal)-1)]
+        r0, r1 = real.iloc[0], real.iloc[min(1, len(real)-1)]
+        date = n0["Date"].date().isoformat()
+        real_date = r0["Date"].date().isoformat()
+        us10, us2, real10 = float(n0["10 Yr"]), float(n0["2 Yr"]), float(r0["10 YR"])
+        return {
+            "US10Y": {"name":"美国10年期国债收益率","value":us10,"prev":float(n1["10 Yr"]),"delta":us10-float(n1["10 Yr"]),"date":date,"unit":"%","status":"treasury","source":"US Treasury"},
+            "US2Y": {"name":"美国2年期国债收益率","value":us2,"prev":float(n1["2 Yr"]),"delta":us2-float(n1["2 Yr"]),"date":date,"unit":"%","status":"treasury","source":"US Treasury"},
+            "USREAL10Y": {"name":"美国10年期实际利率","value":real10,"prev":float(r1["10 YR"]),"delta":real10-float(r1["10 YR"]),"date":real_date,"unit":"%","status":"treasury","source":"US Treasury real yield curve"},
+            "BREAKEVEN10Y": {"name":"美国10年期盈亏平衡通胀","value":us10-real10,"prev":float(n1["10 Yr"])-float(r1["10 YR"]),"delta":0.0,"date":max(date,real_date),"unit":"%","status":"derived","source":"Treasury nominal 10Y − real 10Y"},
+        }
+    except Exception:
+        return {}
 
 def _fred_csv(series):
     url = f"https://fred.stlouisfed.org/graph/fredgraph.csv?id={series}"

@@ -2,12 +2,14 @@ from datetime import datetime
 from pathlib import Path
 from zoneinfo import ZoneInfo
 import json
-from core.providers import load_watchlist, flatten_watchlist, fetch_market_snapshot, fetch_fred_snapshot, fetch_news_bundle
+from core.providers import load_watchlist, flatten_watchlist, fetch_market_snapshot, fetch_fred_snapshot, fetch_news_bundle, fetch_treasury_snapshot
 from core.briefing import morning_rule_brief
+from core.market_context import enrich_macro_with_market_proxies
 
 BASE=Path(__file__).resolve().parents[1]; CN=ZoneInfo("Asia/Shanghai")
 cfg=load_watchlist(BASE/"config"/"watchlist.json"); universe=flatten_watchlist(cfg)
 market=fetch_market_snapshot(universe); macro=fetch_fred_snapshot(); news=fetch_news_bundle(max_each=10)
+macro=enrich_macro_with_market_proxies(macro,market,fetch_treasury_snapshot())
 brief=morning_rule_brief(market,macro,news)
 payload={
     "generated_at":datetime.now(CN).isoformat(),

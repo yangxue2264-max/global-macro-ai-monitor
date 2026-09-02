@@ -102,12 +102,15 @@ def morning_rule_brief(market,macro,news):
         v=_x(market,k,"change_pct"); return "—" if np.isnan(v) else f"{v:+.2f}%"
     def mval(k):
         v=_x(macro,k,"value"); return "—" if np.isnan(v) else f"{v:.2f}"
+    hy_value=_x(macro,"HYSPREAD","value")
+    credit_proxy=_x(macro,"CREDIT_PROXY","value")
+    credit_text=f"HY OAS {hy_value:.2f}%" if not np.isnan(hy_value) else f"HYG-LQD 20日代理 {credit_proxy:+.2f}pp" if not np.isnan(credit_proxy) else "信用数据待确认"
     stance="隔夜市场偏风险偏好，但要区分“流动性驱动”与“盈利/AI驱动”。" if regime=="风险偏好" else "隔夜市场偏防御，A股开盘前优先检查美元、实际利率与信用是否继续收紧。" if regime=="偏防御" else "隔夜信号分化，单一股指方向不足以概括市场，重点看跨资产共振与背离。"
     headline=f"{stance} S&P 500 {pct('SP500')}，Nasdaq {pct('NASDAQ')}，美元 {pct('DXY')}，铜 {pct('COPPER')}，黄金 {pct('GOLD')}。"
     checklist=[
         f"贴现率：US10Y {mval('US10Y')}%，实际10Y {mval('USREAL10Y')}%。",
-        f"风险溢价：VIX {mval('VIX')}，HY OAS {mval('HYSPREAD')}%。",
-        f"人民币外部条件：USD/CNH {pct('USDCNH')}，美元指数 {pct('DXY')}。",
+        f"风险溢价：VIX {mval('VIX')}，{credit_text}。",
+        f"人民币外部条件：USD/CNY代理 {pct('USDCNH')}，美元指数 {pct('DXY')}。",
         f"AI实体约束：铜 {pct('COPPER')}，天然气 {pct('NATGAS')}，AI核心股异动见雷达。",
         "新闻必须先回答“影响现金流、贴现率、风险溢价还是供给约束”，再映射资产。"
     ]
