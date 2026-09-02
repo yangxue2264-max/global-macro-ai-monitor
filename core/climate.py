@@ -16,7 +16,7 @@ def _clean_html(raw):
 
 def fetch_enso_summary():
     try:
-        r = requests.get(ENSO_URL, headers=HEADERS, timeout=15)
+        r = requests.get(ENSO_URL, headers=HEADERS, timeout=8)
         r.raise_for_status()
         text = _clean_html(r.text)
 

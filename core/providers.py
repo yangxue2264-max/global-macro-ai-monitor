@@ -1,12 +1,14 @@
 from __future__ import annotations
 
 from datetime import datetime, timezone
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from io import StringIO
 from pathlib import Path
-from urllib.parse import urlparse
+from urllib.parse import quote, urlparse
 import json
 import re
 import xml.etree.ElementTree as ET
+from difflib import SequenceMatcher
 
 import numpy as np
 import pandas as pd
@@ -47,14 +49,37 @@ def _to_series(x):
         x = x.iloc[:,0]
     return pd.Series(x).dropna()
 
+def _yahoo_chart(ticker: str, period="3mo") -> pd.DataFrame:
+    url = f"https://query1.finance.yahoo.com/v8/finance/chart/{quote(ticker, safe='')}"
+    params = {"range": period, "interval": "1d", "events": "history"}
+    response = requests.get(url, params=params, headers=HEADERS, timeout=6)
+    response.raise_for_status()
+    result = response.json().get("chart", {}).get("result", [])
+    if not result:
+        return pd.DataFrame()
+    payload = result[0]
+    timestamps = payload.get("timestamp", [])
+    quote_data = (payload.get("indicators", {}).get("quote") or [{}])[0]
+    if not timestamps or not quote_data.get("close"):
+        return pd.DataFrame()
+    frame = pd.DataFrame(
+        {"Close": quote_data.get("close", []), "Volume": quote_data.get("volume", [])},
+        index=pd.to_datetime(timestamps, unit="s", utc=True).tz_convert(None),
+    )
+    return frame.dropna(subset=["Close"])
+
+
 def fetch_price_history(ticker: str, period="3mo") -> pd.DataFrame:
     try:
-        df = yf.download(ticker, period=period, progress=False, auto_adjust=False, threads=False)
-        if isinstance(df.columns, pd.MultiIndex):
-            df.columns = df.columns.get_level_values(0)
-        return df.dropna(how="all")
+        return _yahoo_chart(ticker, period=period)
     except Exception:
-        return pd.DataFrame()
+        try:
+            df = yf.download(ticker, period=period, progress=False, auto_adjust=False, threads=False, timeout=8)
+            if isinstance(df.columns, pd.MultiIndex):
+                df.columns = df.columns.get_level_values(0)
+            return df.dropna(how="all")
+        except Exception:
+            return pd.DataFrame()
 
 def _market_snapshot_one(meta):
     df = fetch_price_history(meta["ticker"], period="6mo")
@@ -107,32 +132,28 @@ def _snapshot_from_frames(meta, price_df, volume_df=None):
     except Exception:return base
 
 def fetch_market_snapshot(universe: dict):
-    tickers=[m["ticker"] for m in universe.values()]
-    try:
-        df=yf.download(tickers=tickers,period="6mo",progress=False,auto_adjust=False,threads=True,group_by="column")
-    except Exception:
-        df=pd.DataFrame()
-    if df.empty:
-        return {k:_market_snapshot_one(meta) for k,meta in universe.items()}
-    out={}
-    for key,meta in universe.items():
-        ticker=meta["ticker"]; close=None; volume=None
+    def one(key, meta):
         try:
-            if isinstance(df.columns,pd.MultiIndex):
-                if ("Close",ticker) in df.columns: close=df[("Close",ticker)]
-                elif (ticker,"Close") in df.columns: close=df[(ticker,"Close")]
-                if ("Volume",ticker) in df.columns: volume=df[("Volume",ticker)]
-                elif (ticker,"Volume") in df.columns: volume=df[(ticker,"Volume")]
-            else:
-                close=df["Close"] if "Close" in df.columns else None
-                volume=df["Volume"] if "Volume" in df.columns else None
-        except Exception: pass
-        out[key]=_snapshot_from_frames(meta,close,volume) if close is not None else _market_snapshot_one(meta)
-    return out
+            frame = _yahoo_chart(meta["ticker"], period="3mo")
+            if frame.empty:
+                return key, _snapshot_from_frames(meta, None)
+            return key, _snapshot_from_frames(meta, frame["Close"], frame.get("Volume"))
+        except Exception:
+            return key, _snapshot_from_frames(meta, None)
+
+    out = {}
+    # Direct chart endpoints avoid yfinance's crumb negotiation and long serial
+    # retry loops. Each ticker has a hard timeout and missing assets remain clear.
+    with ThreadPoolExecutor(max_workers=min(20, len(universe))) as pool:
+        futures = [pool.submit(one, key, meta) for key, meta in universe.items()]
+        for future in as_completed(futures):
+            key, value = future.result()
+            out[key] = value
+    return {key: out[key] for key in universe}
 
 def _fred_csv(series):
     url = f"https://fred.stlouisfed.org/graph/fredgraph.csv?id={series}"
-    r = requests.get(url, headers=HEADERS, timeout=15)
+    r = requests.get(url, headers=HEADERS, timeout=8)
     r.raise_for_status()
     df = pd.read_csv(StringIO(r.text))
     df.columns = ["DATE", series]
@@ -142,13 +163,12 @@ def _fred_csv(series):
 
 def fetch_fred_snapshot(series_map=None):
     series_map = series_map or FRED_SERIES
-    out = {}
-    for key, meta in series_map.items():
+    def one(key, meta):
         try:
             df = _fred_csv(meta["series"])
             row = df.iloc[-1]
             previous = df.iloc[-2] if len(df) > 1 else row
-            out[key] = {
+            return key, {
                 "name": meta["name"], "value": float(row[meta["series"]]),
                 "prev": float(previous[meta["series"]]),
                 "delta": float(row[meta["series"]] - previous[meta["series"]]),
@@ -156,11 +176,19 @@ def fetch_fred_snapshot(series_map=None):
                 "status":"ok"
             }
         except Exception:
-            out[key] = {
+            return key, {
                 "name": meta["name"], "value": np.nan, "prev":np.nan, "delta":np.nan,
                 "date":"", "unit":meta.get("unit",""), "status":"unavailable"
             }
-    return out
+    out = {}
+    # FRED endpoints are independent. Parallel calls cap cold-start latency at
+    # one timeout instead of N × timeout.
+    with ThreadPoolExecutor(max_workers=min(8, len(series_map))) as pool:
+        futures = [pool.submit(one, key, meta) for key, meta in series_map.items()]
+        for future in as_completed(futures):
+            key, value = future.result()
+            out[key] = value
+    return {key: out[key] for key in series_map}
 
 def _domain_weight(url):
     domain = urlparse(url or "").netloc.lower().replace("www.","")
@@ -176,7 +204,7 @@ def fetch_gdelt(query: str, maxrecords=15):
     endpoint = "https://api.gdeltproject.org/api/v2/doc/doc"
     params = {"query":query, "mode":"ArtList", "maxrecords":maxrecords, "format":"json", "sort":"HybridRel"}
     try:
-        r = requests.get(endpoint, params=params, headers=HEADERS, timeout=18)
+        r = requests.get(endpoint, params=params, headers=HEADERS, timeout=8)
         r.raise_for_status()
         payload = r.json()
         items = []
@@ -202,7 +230,7 @@ def fetch_google_news(query="global macro markets AI investment when:1d", limit=
     endpoint = "https://news.google.com/rss/search"
     params = {"q":query, "hl":"en-US", "gl":"US", "ceid":"US:en"}
     try:
-        r = requests.get(endpoint, params=params, headers=HEADERS, timeout=15)
+        r = requests.get(endpoint, params=params, headers=HEADERS, timeout=8)
         r.raise_for_status()
         root = ET.fromstring(r.text)
         items=[]
@@ -229,18 +257,29 @@ NEWS_QUERIES = {
 }
 
 def fetch_news_bundle(max_each=10):
-    all_items=[]
-    for bucket,q in NEWS_QUERIES.items():
+    def one(bucket, q):
         items=fetch_gdelt(q,maxrecords=max_each)
         if not items:
             items=fetch_google_news(q+" when:1d",limit=max_each)
         for x in items:
             x["bucket"]=bucket
-            all_items.append(x)
+        return items
+
+    all_items=[]
+    with ThreadPoolExecutor(max_workers=len(NEWS_QUERIES)) as pool:
+        futures=[pool.submit(one,bucket,q) for bucket,q in NEWS_QUERIES.items()]
+        for future in as_completed(futures):
+            all_items.extend(future.result())
     seen,dedup=set(),[]
     for x in sorted(all_items,key=lambda z:z.get("score",0),reverse=True):
-        key=re.sub(r"\W+","",x.get("title","").lower())[:120]
+        raw=x.get("title","")
+        # Google News commonly appends " - Publisher"; remove it before
+        # de-duplicating the same wire story syndicated by many outlets.
+        core=re.sub(r"\s+-\s+[^-]{2,45}$","",raw).lower()
+        key=re.sub(r"\W+","",core)[:160]
         if not key or key in seen: continue
+        if any(SequenceMatcher(None,key,old).ratio()>=0.88 for old in seen):
+            continue
         seen.add(key); dedup.append(x)
     return dedup
 

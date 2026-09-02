@@ -6,6 +6,14 @@ import pandas as pd
 
 from .ontology import THEMES
 
+
+def _finite(value, default=np.nan):
+    try:
+        value=float(value)
+        return value if np.isfinite(value) else default
+    except Exception:
+        return default
+
 def _x(d,key,field):
     try: return float(d[key][field])
     except Exception: return np.nan
@@ -45,7 +53,7 @@ def market_implied_states(market,macro):
 def risk_regime(market,macro):
     s=market_implied_states(market,macro)
     score=s["金融条件宽松"]*.35+s["增长"]*.25+s["久期友好"]*.20+s["美元流动性"]*.20
-    label="Risk-on" if score>=.65 else "Risk-off" if score<=-.65 else "Mixed"
+    label="风险偏好" if score>=.65 else "偏防御" if score<=-.65 else "信号分化"
     return label,round(float(score),2)
 
 def radar_rank(market,keys=None):
@@ -94,7 +102,7 @@ def morning_rule_brief(market,macro,news):
         v=_x(market,k,"change_pct"); return "—" if np.isnan(v) else f"{v:+.2f}%"
     def mval(k):
         v=_x(macro,k,"value"); return "—" if np.isnan(v) else f"{v:.2f}"
-    stance="隔夜市场偏风险偏好，但要区分“流动性驱动”与“盈利/AI驱动”。" if regime=="Risk-on" else "隔夜市场偏防御，A股开盘前优先检查美元、实际利率与信用是否继续收紧。" if regime=="Risk-off" else "隔夜信号混合，单一股指方向不足以概括市场，重点看跨资产共振与背离。"
+    stance="隔夜市场偏风险偏好，但要区分“流动性驱动”与“盈利/AI驱动”。" if regime=="风险偏好" else "隔夜市场偏防御，A股开盘前优先检查美元、实际利率与信用是否继续收紧。" if regime=="偏防御" else "隔夜信号分化，单一股指方向不足以概括市场，重点看跨资产共振与背离。"
     headline=f"{stance} S&P 500 {pct('SP500')}，Nasdaq {pct('NASDAQ')}，美元 {pct('DXY')}，铜 {pct('COPPER')}，黄金 {pct('GOLD')}。"
     checklist=[
         f"贴现率：US10Y {mval('US10Y')}%，实际10Y {mval('USREAL10Y')}%。",
@@ -103,7 +111,46 @@ def morning_rule_brief(market,macro,news):
         f"AI实体约束：铜 {pct('COPPER')}，天然气 {pct('NATGAS')}，AI核心股异动见雷达。",
         "新闻必须先回答“影响现金流、贴现率、风险溢价还是供给约束”，再映射资产。"
     ]
-    return {"headline":headline,"regime":regime,"regime_score":score,"states":states,"divergences":divs,"checklist":checklist,"events":top_event_cards(news,6)}
+    focus = build_focus_cards(market, macro, news, divs)
+    return {"headline":headline,"regime":regime,"regime_score":score,"states":states,"divergences":divs,"checklist":checklist,"events":top_event_cards(news,6),"focus":focus}
+
+
+def build_focus_cards(market, macro, news, divergences=None):
+    """Three research questions for the morning, ranked by observed signals."""
+    divergences = divergences or []
+    day = lambda key: _finite(market.get(key,{}).get("change_pct"),0.0)
+    d20 = lambda key: _finite(market.get(key,{}).get("change_20d_pct"),0.0)
+    real = _finite(macro.get("USREAL10Y",{}).get("value"))
+    vix = _finite(macro.get("VIX",{}).get("value"))
+
+    cards=[]
+    pressure=abs(day("DXY"))+abs(day("SP500"))+abs(day("NASDAQ"))
+    cards.append({
+        "score":pressure,
+        "title":"金融条件是否继续收紧？",
+        "now":f"美元 {day('DXY'):+.2f}%，Nasdaq {day('NASDAQ'):+.2f}%" + (f"，实际10Y {real:.2f}%" if np.isfinite(real) else "，实际利率待确认"),
+        "why":"美元、实际利率与风险资产的共振决定外部流动性压力。",
+        "verify":"看 USD/CNH、美国长端利率、VIX 与高收益信用是否同向。",
+    })
+    ai_score=abs(d20("SMH"))+abs(d20("VRT"))+abs(d20("COPPER"))
+    cards.append({
+        "score":ai_score/3,
+        "title":"AI Capex 是否从芯片扩散到实体？",
+        "now":f"半导体 {d20('SMH'):+.2f}%，电力设备 {d20('VRT'):+.2f}%，铜 {d20('COPPER'):+.2f}%（20日）",
+        "why":"只有算力、电力、电网与原料共同确认，才是更完整的资本开支周期。",
+        "verify":"看 hyperscaler 指引、服务器/光模块、电网设备与铜能否接力。",
+    })
+    risk_score=abs(day("WTI"))+abs(day("GOLD"))+(abs(vix-20)/5 if np.isfinite(vix) else 0)
+    cards.append({
+        "score":risk_score,
+        "title":"油价冲击是供给风险还是增长信号？",
+        "now":f"WTI {day('WTI'):+.2f}%，黄金 {day('GOLD'):+.2f}%" + (f"，VIX {vix:.1f}" if np.isfinite(vix) else "，VIX待确认"),
+        "why":"供给冲击与需求走强对通胀、利率和A股行业利润的含义相反。",
+        "verify":"看期限结构、库存、通胀预期及航空/化工等成本敏感板块。",
+    })
+    if divergences:
+        cards[0]["divergence"]=divergences[0]
+    return sorted(cards,key=lambda x:x["score"],reverse=True)[:3]
 
 
 def build_a_share_mapping(market, news, mapping_cfg):
@@ -116,10 +163,7 @@ def build_a_share_mapping(market, news, mapping_cfg):
         news_themes.extend(n.get("themes", []))
 
     def abs_move(key):
-        try:
-            return abs(float(market.get(key,{}).get("change_pct",0) or 0))
-        except Exception:
-            return 0.0
+        return abs(_finite(market.get(key,{}).get("change_pct"),0.0))
 
     rows = []
     for name, cfg in mapping_cfg.items():
@@ -135,7 +179,11 @@ def build_a_share_mapping(market, news, mapping_cfg):
             score += 1.5
         for k in cfg.get("trigger_assets",[]):
             score += min(abs_move(k)/1.5, 1.0)
-        rows.append({**cfg, "name":name, "score":round(score,2)})
+        moves=[_finite(market.get(k,{}).get("change_20d_pct")) for k in cfg.get("trigger_assets",[])]
+        moves=[abs(v) for v in moves if np.isfinite(v)]
+        avg20=float(np.mean(moves)) if moves else np.nan
+        pricing="高度交易" if np.isfinite(avg20) and avg20>=10 else "部分确认" if np.isfinite(avg20) and avg20>=3 else "尚未确认"
+        rows.append({**cfg, "name":name, "score":round(float(score),2),"pricing":pricing,"pricing_move":avg20})
     return sorted(rows, key=lambda x:x["score"], reverse=True)
 
 def morning_markdown(brief, market, macro, ashare_rows):

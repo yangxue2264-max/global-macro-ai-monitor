@@ -45,7 +45,12 @@ def _get_client():
     from openai import OpenAI
     return OpenAI(api_key=key),model
 
-def analyze_event(event,market_context="",use_ai=True):
+
+def ai_status():
+    client, model = _get_client()
+    return {"connected": client is not None, "model": model}
+
+def analyze_event(event,market_context="",use_ai=True,research_mode=False):
     client,model=_get_client()
     if not use_ai or client is None: return _fallback_event(event)
     prompt=f"""事件：
@@ -56,18 +61,26 @@ def analyze_event(event,market_context="",use_ai=True):
 
 请用中文输出，结构必须如下：
 1. 事实层：目前能确定什么；哪些仍需核实
-2. 宏观状态变量：增长 / 金融状况 / 政策 / 全球化 / 资产配置 / 实体瓶颈 / 社会与分配
-3. 因果传导链：至少三层，不得只写相关性
-4. 资产映射：股票/行业、利率、汇率、商品；分别标注“直接/二阶”
-5. 市场定价：说明如何判断市场是否已经计价
-6. 时间维度：24小时、1-4周、1-3个月分别关注什么
-7. 待验证数据：列出5项
-8. 反证条件：什么出现时应该推翻或弱化该叙事
-9. 一句话结论
+2. 核心传导链：三到五层，不得只写相关性
+3. 资产映射：直接影响 / 二阶影响 / A股映射
+4. 市场定价：已反映什么、尚未反映什么
+5. 待验证数据：列出5项，注明24小时或1-3个月
+6. 反证条件：列出3项
+7. 一句话结论
 
-禁止给出买入卖出建议。若没有实时证据，请明确说明。"""
+控制在1200个中文字符以内。禁止给出买入卖出建议。若没有实时证据，请明确说明。
+{"联网检索最新公开信息并在相关结论后保留来源链接。" if research_mode else "仅基于上方事件与看板上下文推理，不要假装已经联网核实。"}"""
     try:
-        r=client.responses.create(model=model,instructions=SYSTEM,input=prompt)
+        kwargs={"model":model,"instructions":SYSTEM,"input":prompt}
+        if research_mode:
+            kwargs["tools"]=[{"type":"web_search"}]
+        try:
+            r=client.responses.create(**kwargs)
+        except Exception:
+            # Some account/model combinations do not expose web search. The
+            # structural analysis remains available and stays explicitly labelled.
+            kwargs.pop("tools",None)
+            r=client.responses.create(**kwargs)
         return r.output_text
     except Exception as e:
         return f"AI调用失败：{e}\n\n"+_fallback_event(event)
@@ -83,15 +96,14 @@ def generate_ai_morning_brief(snapshot_text,news_text,use_ai=True):
 新闻标题与来源：
 {news_text}
 
-输出六部分：
+输出五部分：
 A. 一句话总判断（不超过70字）
-B. 今日四个核心状态变量（每项：变化→原因→资产含义）
-C. 三条“事件→传导→资产”链
-D. 市场叙事与价格的两个背离
-E. A股开盘前要盯的5个验证点
-F. 今天最可能被忽略的二阶变量
+B. 三个最重要变化（每项：事实→含义→定价）
+C. 两条“事件→传导→A股验证”链
+D. 三个开盘前验证点
+E. 一个最可能被忽略的二阶变量与反证条件
 
-要求：事实与推断分开；不要堆新闻；不要给买卖建议；对不确定信息标“待验证”。"""
+要求：总长度不超过900个中文字符；事实与推断分开；不要堆新闻；不要给买卖建议；对不确定信息标“待验证”。"""
     try:
         r=client.responses.create(model=model,instructions=SYSTEM,input=prompt)
         return r.output_text

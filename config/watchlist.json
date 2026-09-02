@@ -280,5 +280,27 @@
       "ticker": "600598.SS",
       "theme": "种植业"
     }
+  },
+  "macro_proxies": {
+    "US10Y_PROXY": {
+      "name": "美国10Y市场代理",
+      "ticker": "^TNX",
+      "theme": "利率代理"
+    },
+    "VIX_MARKET": {
+      "name": "VIX市场代理",
+      "ticker": "^VIX",
+      "theme": "风险代理"
+    },
+    "HYG": {
+      "name": "美国高收益债ETF",
+      "ticker": "HYG",
+      "theme": "信用代理"
+    },
+    "LQD": {
+      "name": "美国投资级债ETF",
+      "ticker": "LQD",
+      "theme": "信用代理"
+    }
   }
 }
