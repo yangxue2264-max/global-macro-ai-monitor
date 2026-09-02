@@ -6,8 +6,9 @@
 1. 创建/选择 GitHub 仓库并上传本项目；
 2. 用 GitHub 登录 Streamlit Community Cloud；
 3. 选择仓库和 `app.py` 部署；
-4. 若启用 AI，在 Streamlit Secrets 中粘贴 `OPENAI_API_KEY`；
+4. 在 Streamlit Secrets 中粘贴 `FRED_API_KEY`；若启用 AI，再添加 `OPENAI_API_KEY`；
 5. 如需每天自动保存晨报，允许 GitHub Actions workflow 写入 contents。
+6. 若希望自动晨报也使用FRED官方API，在GitHub仓库 `Settings → Secrets and variables → Actions` 中另建同名 `FRED_API_KEY`。
 
 cron 已换算为北京时间工作日 08:25。
 

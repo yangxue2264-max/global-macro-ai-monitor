@@ -30,6 +30,11 @@
       "ticker": "399006.SZ",
       "region": "CN"
     },
+    "STAR50": {
+      "name": "科创50",
+      "ticker": "000688.SS",
+      "region": "CN"
+    },
     "HSI": {
       "name": "恒生指数",
       "ticker": "^HSI",

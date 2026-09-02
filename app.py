@@ -63,6 +63,19 @@ def metric_delta(value, suffix=""):
     return None if value is None else f"{value:+.2f}{suffix}"
 
 
+def secret_value(name):
+    try:
+        return str(st.secrets.get(name, os.getenv(name, ""))).strip()
+    except Exception:
+        return os.getenv(name, "").strip()
+
+
+def item_help(item, default_source=""):
+    source = item.get("source") or default_source or "未标注"
+    asof = item.get("asof") or item.get("date") or "未知"
+    return f"来源：{source}\n\n数据日期：{asof}"
+
+
 @st.cache_data(ttl=900, show_spinner=False)
 def load_config():
     cfg = load_watchlist(BASE / "config" / "watchlist.json")
@@ -72,10 +85,10 @@ def load_config():
 
 
 @st.cache_data(ttl=900, show_spinner=False)
-def load_snapshot(universe):
+def load_snapshot(universe, fred_api_key=""):
     with ThreadPoolExecutor(max_workers=4) as pool:
         market_future = pool.submit(fetch_market_snapshot, universe)
-        macro_future = pool.submit(fetch_fred_snapshot, FRED_SERIES)
+        macro_future = pool.submit(fetch_fred_snapshot, FRED_SERIES, fred_api_key)
         news_future = pool.submit(fetch_news_bundle, 8)
         treasury_future = pool.submit(fetch_treasury_snapshot)
         return market_future.result(), macro_future.result(), news_future.result(), treasury_future.result()
@@ -117,14 +130,25 @@ def pricing_check(theme, market):
 
 
 cfg, universe, ashare_cfg = load_config()
-st.title("Global Macro AI Monitor")
-st.markdown('<div class="subhead">A股开盘前研究工作台 · 事实 → 状态变量 → 传导 → 定价 → 验证</div>', unsafe_allow_html=True)
+title_col, refresh_col = st.columns([8, 1])
+with title_col:
+    st.title("Global Macro AI Monitor")
+    st.markdown('<div class="subhead">A股开盘前研究工作台 · 事实 → 状态变量 → 传导 → 定价 → 验证</div>', unsafe_allow_html=True)
+with refresh_col:
+    st.write("")
+    refresh_requested = st.button("刷新数据", help="清除15分钟缓存并立即重新抓取行情、宏观和新闻", width="stretch")
+if refresh_requested:
+    load_snapshot.clear()
+    load_history.clear()
+    load_enso.clear()
+
+fred_api_key = secret_value("FRED_API_KEY")
 load_notice = st.empty()
 load_notice.info("正在同步行情、宏观与研究流；三类数据并行更新。")
 if os.getenv("MACRO_MONITOR_OFFLINE_TEST") == "1":
     market, macro, news, treasury = demo_market(universe), demo_macro(FRED_SERIES), demo_news(), {}
 else:
-    market, macro, news, treasury = load_snapshot(universe)
+    market, macro, news, treasury = load_snapshot(universe, fred_api_key)
 health = data_health(market, macro, news)
 demo_mode = health.get("market_live", 0) == 0
 if demo_mode:
@@ -133,17 +157,26 @@ macro = enrich_macro_with_market_proxies(macro, market, treasury)
 news = add_evidence_scores(news)
 health = data_health(market, macro, news)
 load_notice.empty()
+if refresh_requested:
+    st.toast("已重新请求行情、宏观、新闻和气候数据缓存。")
 
 now = datetime.now(CN_TZ)
 ai = ai_status()
-market_ratio = f"{health.get('market_live', 0)}/{health.get('market_total', 0)}"
+market_proxy = health.get("market_proxy", 0)
+market_available = health.get("market_live", 0) + market_proxy
+market_ratio = f"{market_available}/{health.get('market_total', 0)}" + (f" · {market_proxy}代理" if market_proxy else "")
 macro_available = sum(1 for value in macro.values() if value.get("status") in {"ok", "treasury", "market_proxy", "derived"})
 macro_ratio = f"{macro_available}/{len(macro)}"
+fred_live = sum(1 for value in macro.values() if value.get("source") == "FRED API")
+market_dates = sorted({str(item.get("asof", ""))[:10] for item in market.values() if item.get("asof")})
+latest_market_date = market_dates[-1] if market_dates else "未知"
 badges = [
     f'<span class="badge {"warn" if demo_mode else "live"}">{"DEMO" if demo_mode else "LIVE"} 行情 {market_ratio}</span>',
     f'<span class="badge {"live" if macro_available else "warn"}">宏观 {macro_ratio}</span>',
+    f'<span class="badge {"live" if fred_live else "warn"}">FRED API {fred_live}/{len(FRED_SERIES)}</span>',
     f'<span class="badge {"live" if ai["connected"] else "warn"}">AI {escape(ai["model"] if ai["connected"] else "未连接")}</span>',
-    f'<span class="badge">北京时间 {now:%m-%d %H:%M}</span>',
+    f'<span class="badge">行情日期 {escape(latest_market_date)}</span>',
+    f'<span class="badge">页面更新 {now:%H:%M}</span>',
 ]
 st.markdown(f'<div class="statusbar">{"".join(badges)}</div>', unsafe_allow_html=True)
 if demo_mode:
@@ -159,12 +192,12 @@ if page == "晨间简报":
     st.info(brief["headline"])
     cols = st.columns(6)
     cols[0].metric("市场状态", brief["regime"], metric_delta(brief["regime_score"]))
-    cols[1].metric("S&P 500", fmt_num(market.get("SP500", {}).get("last")), fmt_pct(market.get("SP500", {}).get("change_pct")))
-    cols[2].metric("美元指数", fmt_num(market.get("DXY", {}).get("last")), fmt_pct(market.get("DXY", {}).get("change_pct")))
+    cols[1].metric("S&P 500", fmt_num(market.get("SP500", {}).get("last")), fmt_pct(market.get("SP500", {}).get("change_pct")), help=item_help(market.get("SP500", {}), "Yahoo Finance"))
+    cols[2].metric("美元指数", fmt_num(market.get("DXY", {}).get("last")), fmt_pct(market.get("DXY", {}).get("change_pct")), help=item_help(market.get("DXY", {}), "Yahoo Finance"))
     real = macro.get("USREAL10Y", {})
-    cols[3].metric(f"实际10Y · {source_label(real)}", fmt_num(real.get("value")), metric_delta(real.get("delta"), "pp"))
-    cols[4].metric("人民币汇率代理", fmt_num(market.get("USDCNH", {}).get("last"), 4), fmt_pct(market.get("USDCNH", {}).get("change_pct")))
-    cols[5].metric("铜", fmt_num(market.get("COPPER", {}).get("last")), fmt_pct(market.get("COPPER", {}).get("change_pct")))
+    cols[3].metric(f"实际10Y · {source_label(real)}", fmt_num(real.get("value")), metric_delta(real.get("delta"), "pp"), help=item_help(real))
+    cols[4].metric("人民币汇率代理", fmt_num(market.get("USDCNH", {}).get("last"), 4), fmt_pct(market.get("USDCNH", {}).get("change_pct")), help=item_help(market.get("USDCNH", {}), "Yahoo Finance"))
+    cols[5].metric("铜", fmt_num(market.get("COPPER", {}).get("last")), fmt_pct(market.get("COPPER", {}).get("change_pct")), help=item_help(market.get("COPPER", {}), "Yahoo Finance"))
 
     st.markdown('<div class="section">今天最值得回答的三个问题</div>', unsafe_allow_html=True)
     focus_cols = st.columns(3)
@@ -245,15 +278,18 @@ elif page == "跨资产":
         cols = st.columns(min(5, len(keys)))
         for index, key in enumerate(keys):
             item = market.get(key, {})
-            cols[index % len(cols)].metric(item.get("name", key), fmt_num(item.get("last")), fmt_pct(item.get("change_pct")))
+            cols[index % len(cols)].metric(item.get("name", key), fmt_num(item.get("last")), fmt_pct(item.get("change_pct")), help=item_help(item, "Yahoo Finance"))
     st.divider()
     all_keys = list(cfg["indices"]) + list(cfg["fx"]) + list(cfg["commodities"]) + list(cfg["crypto"])
     pick = st.selectbox("6个月走势", all_keys, format_func=lambda key: universe[key]["name"])
     if st.button("加载走势图"):
-        history = load_history(universe[pick]["ticker"])
+        history_ticker = market.get(pick, {}).get("proxy_ticker") or universe[pick]["ticker"]
+        history = load_history(history_ticker)
         if history.empty:
             st.warning("该资产历史行情暂时不可用。")
         else:
+            if market.get(pick, {}).get("status") == "market_proxy":
+                st.caption(f"当前走势图使用：{market[pick].get('source', '市场代理')}。")
             close = history["Close"]
             if isinstance(close, pd.DataFrame):
                 close = close.iloc[:, 0]
@@ -334,9 +370,11 @@ else:
     h2.metric("可用宏观变量", macro_ratio)
     h3.metric("研究流事件", len(news))
     st.markdown("##### 数据来源层级")
-    st.write("- **官方：** FRED、NOAA CPC；宏观发布日期与行情日期分开显示。")
-    st.write("- **市场代理：** Yahoo Finance；当官方序列缺失时只做明确标注的代理或推导。")
+    st.write("- **官方：** FRED API、美国财政部、NOAA CPC；宏观发布日期与行情日期分开显示。")
+    st.write("- **市场行情：** Yahoo Finance；创业板指和科创50缺失时回退东方财富/腾讯的精确指数行情。")
+    st.write("- **市场代理：** 只有无法取得精确序列时才使用明确标注的代理或推导值。")
     st.write("- **新闻发现：** GDELT，失败时回退 Google News RSS；同一转载事件合并。")
     st.write("- **AI：** OpenAI Responses API，仅在用户主动生成晨报或事件分析时调用。")
+    st.write(f"- **刷新机制：** 行情、宏观与新闻缓存15分钟；也可使用页面顶部“刷新数据”。本次FRED API成功 {fred_live}/{len(FRED_SERIES)} 项。")
     st.json(health)
     st.warning("免费数据可能延迟、缺失或临时不可用。本项目用于研究与信息整理，不构成投资建议。")

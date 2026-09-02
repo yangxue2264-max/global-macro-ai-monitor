@@ -1,4 +1,4 @@
-# Global Macro AI Monitor v0.5
+# Global Macro AI Monitor v2.2
 
 面向 **A股开盘前** 的全球投资研究看板。
 
@@ -22,13 +22,14 @@ pip install -r requirements.txt
 streamlit run app.py
 ```
 
-## OpenAI（可选）
-不配置 API Key 时，行情、宏观、新闻和规则式事件传导仍可工作。
+## API配置
+OpenAI可选；FRED Key建议配置，以使用官方宏观API。未配置或请求失败时，系统仍会回退FRED CSV、美国财政部和明确标注的市场代理。
 
 `.streamlit/secrets.toml`:
 ```toml
 OPENAI_API_KEY = "..."
 OPENAI_MODEL = "gpt-5.6-luna"
+FRED_API_KEY = "..."
 ```
 
 ## 自动晨报
@@ -36,11 +37,22 @@ GitHub Actions 已预设工作日北京时间 08:25 运行，生成日度 JSON �
 
 ## 免费数据源
 - Yahoo Finance / yfinance
-- FRED
+- FRED官方API；失败回退FRED CSV
+- 美国财政部名义与实际利率曲线
+- 东方财富 / 腾讯：创业板指、科创50精确指数回退
+- 创业板ETF / 科创50ETF：最后一级、明确标注的行情代理
+- NOAA CPC
 - GDELT；失败回退 Google News RSS
 - OpenAI Responses API（可选）
 
 免费源不是交易级行情。
+
+## v2.2新增
+- 正式读取 `FRED_API_KEY`，并显示本次成功返回的FRED序列数量
+- 新增科创50；创业板指和科创50支持多源精确指数回退
+- 精确指数不可用时使用明确标注的ETF代理，不伪装成指数
+- 顶部手动刷新按钮、行情日期、页面更新时间和指标级来源说明
+- 修正官方数据与市场代理的健康统计口径
 
 ## v0.3 新增
 - A股开盘前主题映射

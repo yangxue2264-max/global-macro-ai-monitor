@@ -6,6 +6,7 @@ from io import StringIO
 from pathlib import Path
 from urllib.parse import quote, urlparse
 import json
+import os
 import re
 import xml.etree.ElementTree as ET
 from difflib import SequenceMatcher
@@ -18,6 +19,21 @@ import yfinance as yf
 from .ontology import tag_modules, tag_themes, TRUSTED_DOMAINS
 
 HEADERS = {"User-Agent": "Mozilla/5.0 (GlobalMacroAIMonitor/0.2; research use)"}
+
+# Yahoo does not consistently return mainland index history. These exact-index
+# fallbacks keep the dashboard usable without requiring a paid A-share token.
+CN_INDEX_FALLBACKS = {
+    "399006.SZ": {
+        "eastmoney": "0.399006",
+        "tencent": "sz399006",
+        "proxies": [("159915.SZ", "创业板ETF代理"), ("159949.SZ", "创业板50ETF代理")],
+    },
+    "000688.SS": {
+        "eastmoney": "1.000688",
+        "tencent": "sh000688",
+        "proxies": [("588000.SS", "科创50ETF代理"), ("588050.SS", "科创50ETF代理")],
+    },
+}
 
 FRED_SERIES = {
     "US10Y": {"name":"美国10年期国债收益率", "series":"DGS10", "unit":"%"},
@@ -69,17 +85,102 @@ def _yahoo_chart(ticker: str, period="3mo") -> pd.DataFrame:
     return frame.dropna(subset=["Close"])
 
 
+def _eastmoney_index_history(secid: str, limit=160) -> pd.DataFrame:
+    """Read an exact mainland index from Eastmoney's public quote endpoint."""
+    endpoint = "https://push2his.eastmoney.com/api/qt/stock/kline/get"
+    response = requests.get(
+        endpoint,
+        params={
+            "secid": secid,
+            "fields1": "f1,f2,f3,f4,f5,f6",
+            "fields2": "f51,f52,f53,f54,f55,f56,f57,f58,f59,f60,f61",
+            "klt": "101",
+            "fqt": "1",
+            "beg": "0",
+            "end": "20500101",
+            "lmt": str(limit),
+        },
+        headers=HEADERS,
+        timeout=8,
+    )
+    response.raise_for_status()
+    rows = (response.json().get("data") or {}).get("klines") or []
+    parsed = []
+    for row in rows:
+        parts = row.split(",")
+        if len(parts) >= 6:
+            parsed.append((parts[0], parts[2], parts[5]))
+    frame = pd.DataFrame(parsed, columns=["Date", "Close", "Volume"])
+    if frame.empty:
+        return frame
+    frame["Date"] = pd.to_datetime(frame["Date"], errors="coerce")
+    frame["Close"] = pd.to_numeric(frame["Close"], errors="coerce")
+    frame["Volume"] = pd.to_numeric(frame["Volume"], errors="coerce")
+    return frame.dropna(subset=["Date", "Close"]).set_index("Date").sort_index()
+
+
+def _tencent_index_history(symbol: str, limit=160) -> pd.DataFrame:
+    """Second no-token fallback for exact mainland index daily history."""
+    endpoint = "https://web.ifzq.gtimg.cn/appstock/app/fqkline/get"
+    response = requests.get(
+        endpoint,
+        params={"param": f"{symbol},day,,,{limit},qfq"},
+        headers=HEADERS,
+        timeout=8,
+    )
+    response.raise_for_status()
+    payload = (response.json().get("data") or {}).get(symbol) or {}
+    rows = payload.get("qfqday") or payload.get("day") or []
+    parsed = []
+    for row in rows:
+        if len(row) >= 6:
+            parsed.append((row[0], row[2], row[5]))
+    frame = pd.DataFrame(parsed, columns=["Date", "Close", "Volume"])
+    if frame.empty:
+        return frame
+    frame["Date"] = pd.to_datetime(frame["Date"], errors="coerce")
+    frame["Close"] = pd.to_numeric(frame["Close"], errors="coerce")
+    frame["Volume"] = pd.to_numeric(frame["Volume"], errors="coerce")
+    return frame.dropna(subset=["Date", "Close"]).set_index("Date").sort_index()
+
+
+def fetch_cn_index_history(ticker: str) -> tuple[pd.DataFrame, str]:
+    """Return exact mainland index history and the source that succeeded."""
+    mapping = CN_INDEX_FALLBACKS.get(ticker)
+    if not mapping:
+        return pd.DataFrame(), ""
+    try:
+        frame = _eastmoney_index_history(mapping["eastmoney"])
+        if not frame.empty:
+            return frame, "东方财富"
+    except Exception:
+        pass
+    try:
+        frame = _tencent_index_history(mapping["tencent"])
+        if not frame.empty:
+            return frame, "腾讯行情"
+    except Exception:
+        pass
+    return pd.DataFrame(), ""
+
+
 def fetch_price_history(ticker: str, period="3mo") -> pd.DataFrame:
     try:
-        return _yahoo_chart(ticker, period=period)
+        frame = _yahoo_chart(ticker, period=period)
+        if not frame.empty:
+            return frame
     except Exception:
-        try:
-            df = yf.download(ticker, period=period, progress=False, auto_adjust=False, threads=False, timeout=8)
-            if isinstance(df.columns, pd.MultiIndex):
-                df.columns = df.columns.get_level_values(0)
-            return df.dropna(how="all")
-        except Exception:
-            return pd.DataFrame()
+        pass
+    frame, _ = fetch_cn_index_history(ticker)
+    if not frame.empty:
+        return frame
+    try:
+        df = yf.download(ticker, period=period, progress=False, auto_adjust=False, threads=False, timeout=8)
+        if isinstance(df.columns, pd.MultiIndex):
+            df.columns = df.columns.get_level_values(0)
+        return df.dropna(how="all")
+    except Exception:
+        return pd.DataFrame()
 
 
 def _yahoo_spark(tickers, period="3mo"):
@@ -146,8 +247,8 @@ def _market_snapshot_one(meta):
     })
     return base
 
-def _snapshot_from_frames(meta, price_df, volume_df=None):
-    base = {"name":meta.get("name",""),"ticker":meta["ticker"],"group":meta.get("group",""),"theme":meta.get("theme",""),"region":meta.get("region",""),"last":np.nan,"change_pct":np.nan,"change_5d_pct":np.nan,"change_20d_pct":np.nan,"vol_20d":np.nan,"ret_z":np.nan,"volume_ratio":np.nan,"asof":"","status":"unavailable"}
+def _snapshot_from_frames(meta, price_df, volume_df=None, source="Yahoo Finance", status="ok", proxy_ticker=""):
+    base = {"name":meta.get("name",""),"ticker":meta["ticker"],"group":meta.get("group",""),"theme":meta.get("theme",""),"region":meta.get("region",""),"last":np.nan,"change_pct":np.nan,"change_5d_pct":np.nan,"change_20d_pct":np.nan,"vol_20d":np.nan,"ret_z":np.nan,"volume_ratio":np.nan,"asof":"","status":"unavailable","source":"","proxy_ticker":""}
     try:
         c=pd.Series(price_df).dropna()
         if len(c)<2:return base
@@ -157,17 +258,24 @@ def _snapshot_from_frames(meta, price_df, volume_df=None):
         if volume_df is not None:
             v=pd.Series(volume_df).dropna()
             if len(v)>=5 and v.tail(20).mean()!=0: vr=float(v.iloc[-1]/v.tail(20).mean())
-        base.update({"last":float(c.iloc[-1]),"change_pct":float((c.iloc[-1]/c.iloc[-2]-1)*100),"change_5d_pct":float((c.iloc[-1]/c.iloc[-6]-1)*100) if len(c)>=6 else np.nan,"change_20d_pct":float((c.iloc[-1]/c.iloc[-21]-1)*100) if len(c)>=21 else np.nan,"vol_20d":float(r.tail(20).std()*np.sqrt(252)*100) if len(r)>=5 else np.nan,"ret_z":float(ret_z) if not np.isnan(ret_z) else np.nan,"volume_ratio":float(vr) if not np.isnan(vr) else np.nan,"asof":str(c.index[-1].date()) if hasattr(c.index[-1],"date") else str(c.index[-1]),"status":"ok"})
+        base.update({"last":float(c.iloc[-1]),"change_pct":float((c.iloc[-1]/c.iloc[-2]-1)*100),"change_5d_pct":float((c.iloc[-1]/c.iloc[-6]-1)*100) if len(c)>=6 else np.nan,"change_20d_pct":float((c.iloc[-1]/c.iloc[-21]-1)*100) if len(c)>=21 else np.nan,"vol_20d":float(r.tail(20).std()*np.sqrt(252)*100) if len(r)>=5 else np.nan,"ret_z":float(ret_z) if not np.isnan(ret_z) else np.nan,"volume_ratio":float(vr) if not np.isnan(vr) else np.nan,"asof":str(c.index[-1].date()) if hasattr(c.index[-1],"date") else str(c.index[-1]),"status":status,"source":source,"proxy_ticker":proxy_ticker})
         return base
     except Exception:return base
 
 def fetch_market_snapshot(universe: dict):
     entries = list(universe.items())
-    chunks = [entries[i:i+20] for i in range(0, len(entries), 20)]
+    requested_tickers = [meta["ticker"] for _, meta in entries]
+    requested_tickers.extend(
+        proxy_ticker
+        for mapping in CN_INDEX_FALLBACKS.values()
+        for proxy_ticker, _ in mapping.get("proxies", [])
+    )
+    requested_tickers = list(dict.fromkeys(requested_tickers))
+    chunks = [requested_tickers[i:i+20] for i in range(0, len(requested_tickers), 20)]
 
     def one_chunk(chunk):
         try:
-            return _yahoo_spark([meta["ticker"] for _, meta in chunk], period="3mo")
+            return _yahoo_spark(chunk, period="3mo")
         except Exception:
             return {}
 
@@ -178,10 +286,14 @@ def fetch_market_snapshot(universe: dict):
         futures = [pool.submit(one_chunk, chunk) for chunk in chunks]
         for future in as_completed(futures):
             frames.update(future.result())
+    frame_sources = {ticker: "Yahoo Finance" for ticker in frames}
 
     # Spark occasionally omits a small number of symbols. Retry only critical
     # dashboard series, never the full universe, so latency remains bounded.
-    critical = {"^GSPC", "^NDX", "DX-Y.NYB", "CNY=X", "GC=F", "HG=F", "CL=F", "^VIX", "^TNX", "399006.SZ"}
+    critical = {
+        "^GSPC", "^NDX", "DX-Y.NYB", "CNY=X", "GC=F", "HG=F", "CL=F", "^VIX", "^TNX",
+        "159915.SZ", "159949.SZ", "588000.SS", "588050.SS",
+    }
     missing = [ticker for ticker in critical if ticker not in frames]
     if missing:
         with ThreadPoolExecutor(max_workers=min(4, len(missing))) as pool:
@@ -190,14 +302,69 @@ def fetch_market_snapshot(universe: dict):
                 try:
                     frame = future.result()
                     if not frame.empty:
-                        frames[future_map[future]] = frame
+                        ticker = future_map[future]
+                        frames[ticker] = frame
+                        frame_sources[ticker] = "Yahoo Finance"
                 except Exception:
                     pass
+
+    # A small dedicated batch is more reliable for Shenzhen/Shanghai ETFs than
+    # mixing them into the global request. It runs only when those proxies are
+    # still absent after the normal batch and direct retry.
+    proxy_tickers = [
+        proxy_ticker
+        for mapping in CN_INDEX_FALLBACKS.values()
+        for proxy_ticker, _ in mapping.get("proxies", [])
+    ]
+    missing_proxies = [ticker for ticker in proxy_tickers if ticker not in frames]
+    if missing_proxies:
+        try:
+            proxy_frames = _yahoo_spark(missing_proxies, period="3mo")
+            frames.update(proxy_frames)
+            frame_sources.update({ticker: "Yahoo Finance" for ticker in proxy_frames})
+        except Exception:
+            pass
+
+    # Exact mainland index fallback. This is deliberately limited to the two
+    # indices that Yahoo frequently omits, keeping cold-start requests bounded.
+    for ticker in CN_INDEX_FALLBACKS:
+        current = frames.get(ticker)
+        current_close = current.get("Close") if current is not None else None
+        needs_exact_fallback = current_close is None or len(pd.Series(current_close).dropna()) < 2
+        if ticker in {meta["ticker"] for _, meta in entries} and needs_exact_fallback:
+            frame, source = fetch_cn_index_history(ticker)
+            if not frame.empty:
+                frames[ticker] = frame
+                frame_sources[ticker] = source
 
     out = {}
     for key, meta in universe.items():
         frame = frames.get(meta["ticker"])
-        out[key] = _snapshot_from_frames(meta, frame["Close"]) if frame is not None and not frame.empty else _snapshot_from_frames(meta, None)
+        if frame is not None and not frame.empty:
+            exact_snapshot = _snapshot_from_frames(meta, frame["Close"], frame.get("Volume"), frame_sources.get(meta["ticker"], "Yahoo Finance"))
+            if exact_snapshot.get("status") == "ok":
+                out[key] = exact_snapshot
+                continue
+        proxy = next(
+            (
+                (proxy_ticker, label, frames[proxy_ticker])
+                for proxy_ticker, label in CN_INDEX_FALLBACKS.get(meta["ticker"], {}).get("proxies", [])
+                if proxy_ticker in frames and not frames[proxy_ticker].empty
+            ),
+            None,
+        )
+        if proxy:
+            proxy_ticker, label, proxy_frame = proxy
+            out[key] = _snapshot_from_frames(
+                meta,
+                proxy_frame["Close"],
+                proxy_frame.get("Volume"),
+                source=f"Yahoo Finance · {label}（{proxy_ticker.split('.')[0]}）",
+                status="market_proxy",
+                proxy_ticker=proxy_ticker,
+            )
+        else:
+            out[key] = _snapshot_from_frames(meta, None)
     return out
 
 
@@ -247,11 +414,49 @@ def _fred_csv(series):
     df[series] = pd.to_numeric(df[series], errors="coerce")
     return df.dropna()
 
-def fetch_fred_snapshot(series_map=None):
+
+def _fred_api(series, api_key):
+    endpoint = "https://api.stlouisfed.org/fred/series/observations"
+    response = requests.get(
+        endpoint,
+        params={
+            "series_id": series,
+            "api_key": api_key,
+            "file_type": "json",
+            "sort_order": "desc",
+            "limit": 10,
+        },
+        headers=HEADERS,
+        timeout=10,
+    )
+    response.raise_for_status()
+    rows = []
+    for item in response.json().get("observations", []):
+        value = pd.to_numeric(item.get("value"), errors="coerce")
+        date = pd.to_datetime(item.get("date"), errors="coerce")
+        if pd.notna(value) and pd.notna(date):
+            rows.append((date, float(value)))
+    frame = pd.DataFrame(rows, columns=["DATE", series])
+    if frame.empty:
+        raise ValueError(f"FRED returned no numeric observations for {series}")
+    return frame.sort_values("DATE").dropna()
+
+
+def fetch_fred_snapshot(series_map=None, api_key=None):
     series_map = series_map or FRED_SERIES
+    api_key = (api_key or os.getenv("FRED_API_KEY", "")).strip()
+
     def one(key, meta):
         try:
-            df = _fred_csv(meta["series"])
+            source = "FRED CSV"
+            if api_key:
+                try:
+                    df = _fred_api(meta["series"], api_key)
+                    source = "FRED API"
+                except Exception:
+                    df = _fred_csv(meta["series"])
+            else:
+                df = _fred_csv(meta["series"])
             row = df.iloc[-1]
             previous = df.iloc[-2] if len(df) > 1 else row
             return key, {
@@ -259,7 +464,7 @@ def fetch_fred_snapshot(series_map=None):
                 "prev": float(previous[meta["series"]]),
                 "delta": float(row[meta["series"]] - previous[meta["series"]]),
                 "date": row["DATE"].date().isoformat(), "unit": meta.get("unit",""),
-                "status":"ok"
+                "status":"ok", "source": source,
             }
         except Exception:
             return key, {
@@ -372,12 +577,14 @@ def fetch_news_bundle(max_each=10):
 def data_health(market, macro, news):
     total_m = len(market)
     live_m = sum(1 for v in market.values() if v.get("status")=="ok")
+    proxy_m = sum(1 for v in market.values() if v.get("status")=="market_proxy")
     demo_m = sum(1 for v in market.values() if v.get("status")=="demo")
     total_macro = len(macro)
-    live_macro = sum(1 for v in macro.values() if v.get("status")=="ok")
+    live_macro = sum(1 for v in macro.values() if v.get("status") in {"ok", "treasury"})
+    proxy_macro = sum(1 for v in macro.values() if v.get("status") in {"market_proxy", "derived"})
     demo_macro = sum(1 for v in macro.values() if v.get("status")=="demo")
     return {
-        "market_live": live_m, "market_demo": demo_m, "market_total": total_m,
-        "macro_live": live_macro, "macro_demo": demo_macro, "macro_total": total_macro,
+        "market_live": live_m, "market_proxy": proxy_m, "market_demo": demo_m, "market_total": total_m,
+        "macro_live": live_macro, "macro_proxy": proxy_macro, "macro_demo": demo_macro, "macro_total": total_macro,
         "news_count": len(news),
     }
