@@ -1,0 +1,50 @@
+[
+  {
+    "name": "AI Capex正从芯片扩散到电力基础设施",
+    "horizon": "1–3个月",
+    "why": "若扩散成立，受益链应从GPU延伸至供电、并网、电网设备和铜，而非只有少数芯片股上涨。",
+    "invalidation": "SMH维持强势，但VRT、GRID与铜连续数周走弱，且Hyperscaler资本开支指引下修。",
+    "rules": [
+      {"label": "半导体确认", "source": "market", "key": "SMH", "field": "change_20d_pct", "op": ">", "value": 2},
+      {"label": "供电设备确认", "source": "market", "key": "VRT", "field": "change_20d_pct", "op": ">", "value": 2},
+      {"label": "电网确认", "source": "market", "key": "GRID", "field": "change_20d_pct", "op": ">", "value": 1},
+      {"label": "铜确认", "source": "market", "key": "COPPER", "field": "change_20d_pct", "op": ">", "value": 0}
+    ]
+  },
+  {
+    "name": "美元流动性仍支持全球风险资产",
+    "horizon": "2–6周",
+    "why": "真正的宽松应同时出现在美元、股票、信用与波动率，而非单一股指上涨。",
+    "invalidation": "美元和实际利率持续上行、HY信用恶化，同时股票上涨的市场广度收窄。",
+    "rules": [
+      {"label": "美元不收紧", "source": "market", "key": "DXY", "field": "change_20d_pct", "op": "<", "value": 1},
+      {"label": "股票确认", "source": "market", "key": "SP500", "field": "change_20d_pct", "op": ">", "value": 0},
+      {"label": "信用确认", "source": "market", "key": "HYG", "field": "change_20d_pct", "op": ">", "value": -1},
+      {"label": "波动率可控", "source": "macro", "key": "VIX", "field": "value", "op": "<", "value": 22}
+    ]
+  },
+  {
+    "name": "能源安全风险正在形成跨资产溢价",
+    "horizon": "1–3个月",
+    "why": "若是结构性安全溢价，油价、能源股、通胀预期与避险资产应出现部分共振。",
+    "invalidation": "原油与能源股不确认、通胀预期回落，相关冲击只停留在新闻标题。",
+    "rules": [
+      {"label": "WTI确认", "source": "market", "key": "WTI", "field": "change_20d_pct", "op": ">", "value": 2},
+      {"label": "Brent确认", "source": "market", "key": "BRENT", "field": "change_20d_pct", "op": ">", "value": 2},
+      {"label": "能源股确认", "source": "market", "key": "XLE", "field": "change_20d_pct", "op": ">", "value": 0},
+      {"label": "通胀预期确认", "source": "macro", "key": "BREAKEVEN10Y", "field": "value", "op": ">", "value": 2.2}
+    ]
+  },
+  {
+    "name": "中国风险偏好改善具备跨市场确认",
+    "horizon": "2–8周",
+    "why": "人民币、港股互联网与A股宽基共同改善，才比单一政策标题更可信。",
+    "invalidation": "人民币持续走弱，港股反弹无法传导至A股宽基，或海外美元条件明显收紧。",
+    "rules": [
+      {"label": "人民币不走弱", "source": "market", "key": "USDCNH", "field": "change_20d_pct", "op": "<", "value": 1},
+      {"label": "港股确认", "source": "market", "key": "HSI", "field": "change_20d_pct", "op": ">", "value": 0},
+      {"label": "互联网确认", "source": "market", "key": "BABA", "field": "change_20d_pct", "op": ">", "value": 0},
+      {"label": "A股宽基确认", "source": "market", "key": "CSI300", "field": "change_20d_pct", "op": ">", "value": 0}
+    ]
+  }
+]

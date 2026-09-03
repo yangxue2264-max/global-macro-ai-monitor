@@ -1,22 +1,32 @@
-import numpy as np
+from __future__ import annotations
 
-def fmt_pct(x):
-    try:
-        if np.isnan(float(x)): return "—"
-        return f"{float(x):+.2f}%"
-    except Exception: return "—"
+import math
 
-def fmt_num(x,digits=2):
-    try:
-        if np.isnan(float(x)): return "—"
-        return f"{float(x):,.{digits}f}"
-    except Exception: return "—"
 
-def signal_emoji(x,threshold=.8):
+def finite(value, default=None):
     try:
-        v=float(x)
-        if np.isnan(v): return "⚪"
-        if v>=threshold: return "🟢"
-        if v<=-threshold: return "🔴"
-        return "🟡"
-    except Exception: return "⚪"
+        number = float(value)
+        return number if math.isfinite(number) else default
+    except (TypeError, ValueError):
+        return default
+
+
+def fmt_num(value, digits=2):
+    number = finite(value)
+    return "—" if number is None else f"{number:,.{digits}f}"
+
+
+def fmt_pct(value, digits=2):
+    number = finite(value)
+    return "—" if number is None else f"{number:+.{digits}f}%"
+
+
+def signal_emoji(value):
+    number = finite(value)
+    if number is None:
+        return "○"
+    if number >= 0.75:
+        return "▲"
+    if number <= -0.75:
+        return "▼"
+    return "●"

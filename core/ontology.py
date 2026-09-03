@@ -1,96 +1,90 @@
 from __future__ import annotations
 
+from urllib.parse import urlparse
+
+
 MACRO_MODULES = {
-    "增长": {
-        "question": "经济活动是在加速还是减速？AI资本开支是否正在改变增长结构？",
-        "items": ["GDP/Nowcast", "就业", "消费", "Capex", "生产率", "产出缺口"],
-        "keywords": ["gdp", "growth", "jobs", "employment", "unemployment", "pmi", "consumption", "capex", "productivity", "recession", "增长", "就业", "消费", "资本开支", "生产率"]
-    },
-    "金融状况": {
-        "question": "资金价格、风险溢价和杠杆是否在放松或收紧？",
-        "items": ["实际利率", "信用利差", "VIX", "美元", "流动性", "私人信贷", "市场杠杆"],
-        "keywords": ["fed", "yield", "real yield", "credit spread", "liquidity", "vix", "private credit", "leverage", "美元", "利率", "信用", "流动性"]
-    },
-    "政策": {
-        "question": "政策正在改变谁的成本、收入或竞争格局？",
-        "items": ["货币政策", "财政/补贴", "产业政策", "监管", "关税", "出口管制"],
-        "keywords": ["tariff", "subsidy", "fiscal", "regulation", "export control", "sanction", "industrial policy", "关税", "补贴", "财政", "监管", "出口管制", "产业政策"]
-    },
-    "全球化": {
-        "question": "贸易、资本和技术跨境流动是否发生结构变化？",
-        "items": ["芯片供应链", "跨境资本", "国际竞争", "AI服务出口", "美元体系"],
-        "keywords": ["trade", "supply chain", "cross-border", "semiconductor", "chip export", "dollar system", "贸易", "供应链", "跨境", "芯片"]
-    },
-    "资产配置": {
-        "question": "当前回报来自现金流、贴现率还是风险溢价？跨资产之间有什么共振或背离？",
-        "items": ["股债相关性", "实际利率", "风险溢价", "黄金/商品", "区域轮动", "轻重资产"],
-        "keywords": ["asset allocation", "equity", "bond", "gold", "commodity", "risk premium", "rotation", "资产配置", "股票", "债券", "黄金", "商品"]
-    },
-    "实体瓶颈": {
-        "question": "资本开支是否撞上物理世界的约束？",
-        "items": ["电力", "电网", "数据中心", "铜", "天然气", "土地与水", "技能"],
-        "keywords": ["power", "grid", "electricity", "data center", "copper", "natural gas", "water", "land", "电力", "电网", "数据中心", "铜", "天然气", "用水"]
-    },
-    "社会与分配": {
-        "question": "技术和价格变化如何重新分配收入、就业和政治压力？",
-        "items": ["收入分配", "就业替代", "工资", "食品通胀", "社会情绪", "政策反应"],
-        "keywords": ["wage", "inequality", "automation jobs", "food inflation", "social", "income distribution", "工资", "收入分配", "就业替代", "食品通胀"]
-    }
+    "增长": {"question": "增长预期在改善还是恶化？", "items": ["股指广度", "铜与周期品", "就业与PMI"], "keywords": ["growth", "gdp", "jobs", "employment", "pmi", "recession", "增长", "就业"]},
+    "通胀": {"question": "价格压力来自需求还是供给？", "items": ["盈亏平衡通胀", "油价", "工资与食品"], "keywords": ["inflation", "cpi", "ppi", "wage", "通胀", "物价"]},
+    "货币政策": {"question": "政策路径相对预期有何变化？", "items": ["央行表态", "政策利率", "收益率曲线"], "keywords": ["federal reserve", "fed", "ecb", "pboc", "rate cut", "rate hike", "央行", "降息", "加息"]},
+    "金融状况": {"question": "美元、实际利率与信用是否共振？", "items": ["美元", "实际利率", "信用利差", "波动率"], "keywords": ["dollar", "yield", "credit", "liquidity", "vix", "美元", "利率", "流动性"]},
+    "财政与监管": {"question": "政策如何改变现金流与风险溢价？", "items": ["财政支出", "税收", "关税", "监管"], "keywords": ["fiscal", "tariff", "regulation", "sanction", "关税", "监管", "财政"]},
+    "地缘与供应链": {"question": "冲击卡在哪个物理或制度节点？", "items": ["航运", "出口管制", "能源通道", "库存"], "keywords": ["war", "conflict", "export control", "supply chain", "shipping", "战争", "出口限制", "供应链"]},
+    "实体瓶颈": {"question": "资本开支最终受什么约束？", "items": ["电力", "电网", "芯片", "原料", "产能"], "keywords": ["data center", "power", "grid", "copper", "capacity", "semiconductor", "电力", "电网", "铜", "产能"]},
 }
+
 
 THEMES = {
     "AI资本开支": {
-        "keywords": ["ai capex", "data center", "gpu", "hyperscaler", "nvidia", "cloud capex", "人工智能", "算力", "数据中心", "资本开支"],
-        "assets": ["NVDA", "AVGO", "AMD", "MSFT", "GOOGL", "AMZN", "META", "TSM", "ASML", "VRT", "COPPER", "NATGAS"],
-        "mechanism": "AI需求 → 云厂商/模型厂商资本开支 → GPU/网络/服务器 → 数据中心、电网、铜与能源 → 企业现金流/融资 → GDP与资产定价"
-    },
-    "天气与农业": {
-        "keywords": ["el nino", "la nina", "weather", "drought", "flood", "crop", "厄尔尼诺", "拉尼娜", "干旱", "洪水", "农作物"],
-        "assets": ["CORN", "SOY", "WTI", "GOLD"],
-        "mechanism": "气候异常 → 单产/运输/水电 → 农产品与能源价格 → 食品/能源通胀 → 企业利润和政策预期 → 农业链与利率资产"
-    },
-    "贸易与关税": {
-        "keywords": ["tariff", "trade war", "export control", "sanction", "关税", "贸易战", "出口管制", "制裁"],
-        "assets": ["DXY", "USDCNH", "TSM", "ASML", "BABA", "TCEHY"],
-        "mechanism": "贸易限制 → 进口成本/供应链迁移 → 企业利润与通胀 → 政策反应与汇率 → 区域/行业相对收益"
-    },
-    "油价与通胀": {
-        "keywords": ["oil", "opec", "brent", "wti", "energy inflation", "原油", "油价", "欧佩克", "能源通胀"],
-        "assets": ["WTI", "BRENT", "DXY", "GOLD"],
-        "mechanism": "油价 → 能源CPI/运输成本 → 通胀预期/居民实际收入 → 央行反应 → 股债汇与能源行业"
+        "keywords": ["ai", "artificial intelligence", "gpu", "hyperscaler", "data center", "semiconductor", "算力", "数据中心", "人工智能", "芯片"],
+        "mechanism": "AI需求与Capex → 芯片/网络 → 数据中心供电与并网 → 铜与设备 → 海外及A股硬件链",
+        "assets": ["SMH", "VRT", "GRID", "COPPER", "工业富联", "中际旭创"],
     },
     "流动性与信用": {
-        "keywords": ["liquidity", "credit spread", "private credit", "bond issuance", "funding", "流动性", "信用利差", "私人信贷", "融资"],
-        "assets": ["SP500", "NASDAQ", "DXY", "BTC", "GOLD"],
-        "mechanism": "融资条件 → 杠杆/估值/风险偏好 → 资本开支与并购 → 资产价格 → 财富效应和实体经济"
-    }
+        "keywords": ["liquidity", "credit", "yield", "bond", "dollar", "financial conditions", "流动性", "信用", "利率", "美元"],
+        "mechanism": "美元/实际利率/信用 → 全球金融条件 → 风险溢价与估值 → 人民币及A股风格",
+        "assets": ["DXY", "USREAL10Y", "HYG", "USD/CNH", "成长股"],
+    },
+    "油价与通胀": {
+        "keywords": ["oil", "opec", "crude", "energy", "inflation", "原油", "油价", "能源", "通胀"],
+        "mechanism": "原油供需/通道 → 能源与运输成本 → 通胀和政策预期 → 上游与成本敏感行业分化",
+        "assets": ["WTI", "BRENT", "GOLD", "石油石化", "航空", "化工"],
+    },
+    "天气与农业": {
+        "keywords": ["weather", "el nino", "la nina", "enso", "corn", "soy", "agriculture", "天气", "厄尔尼诺", "农业", "玉米", "大豆"],
+        "mechanism": "ENSO/天气 → 单产与物流 → 农产品价格 → 食品通胀 → 农业链利润与政策预期",
+        "assets": ["CORN", "SOY", "种业", "化肥", "食品"],
+    },
+    "贸易与关税": {
+        "keywords": ["tariff", "trade", "export control", "sanction", "关税", "贸易", "出口管制", "制裁"],
+        "mechanism": "贸易规则/关税 → 数量与成本 → 企业利润和供应链迁移 → 汇率与相关行业估值",
+        "assets": ["USD/CNH", "TSM", "BABA", "出口制造"],
+    },
+    "黄金与美元信用": {
+        "keywords": ["gold", "central bank buying", "reserve", "de-dollar", "黄金", "央行购金", "储备", "去美元化"],
+        "mechanism": "实际利率/美元/储备需求/地缘风险 → 黄金定价 → 国内金价与矿企盈利弹性",
+        "assets": ["GOLD", "DXY", "黄金矿业"],
+    },
+    "中国增长与政策": {
+        "keywords": ["china", "pboc", "yuan", "property", "stimulus", "中国", "人民银行", "人民币", "地产", "政策刺激"],
+        "mechanism": "中国政策与增长预期 → 人民币/信用/商品需求 → 港股与A股风险偏好及行业轮动",
+        "assets": ["CSI300", "HSI", "USD/CNH", "COPPER"],
+    },
 }
+
 
 TRUSTED_DOMAINS = {
-    "reuters.com": 3.0, "bloomberg.com": 3.0, "ft.com": 2.8, "wsj.com": 2.8,
-    "cnbc.com": 1.8, "federalreserve.gov": 3.5, "ecb.europa.eu": 3.5,
-    "imf.org": 3.2, "worldbank.org": 3.0, "bis.org": 3.2,
-    "pbc.gov.cn": 3.5, "gov.cn": 3.3
+    "federalreserve.gov": 3.0,
+    "home.treasury.gov": 3.0,
+    "fred.stlouisfed.org": 3.0,
+    "imf.org": 2.8,
+    "bis.org": 2.8,
+    "worldbank.org": 2.8,
+    "reuters.com": 2.5,
+    "bloomberg.com": 2.4,
+    "ft.com": 2.3,
+    "wsj.com": 2.2,
+    "cnbc.com": 2.0,
 }
 
-def tag_modules(text: str):
-    t = (text or "").lower()
-    hits = []
-    for name, cfg in MACRO_MODULES.items():
-        n = sum(1 for kw in cfg["keywords"] if kw.lower() in t)
-        if n:
-            hits.append((name, n))
-    return [x[0] for x in sorted(hits, key=lambda z: z[1], reverse=True)]
 
-def tag_themes(text: str):
-    t = (text or "").lower()
-    hits = []
-    for name, cfg in THEMES.items():
-        n = sum(1 for kw in cfg["keywords"] if kw.lower() in t)
-        if n:
-            hits.append((name, n))
-    return [x[0] for x in sorted(hits, key=lambda z: z[1], reverse=True)]
+def _match(text, keywords):
+    lowered = (text or "").lower()
+    return any(keyword.lower() in lowered for keyword in keywords)
 
-def find_theme(text: str):
-    tagged = tag_themes(text)
-    return tagged[0] if tagged else None
+
+def tag_modules(text):
+    return [name for name, meta in MACRO_MODULES.items() if _match(text, meta["keywords"])] or ["待分类"]
+
+
+def tag_themes(text):
+    return [name for name, meta in THEMES.items() if _match(text, meta["keywords"])] or ["待分类"]
+
+
+def find_theme(text):
+    tags = tag_themes(text)
+    return tags[0] if tags and tags[0] != "待分类" else "待分类"
+
+
+def source_domain(url):
+    return urlparse(url or "").netloc.lower().replace("www.", "")

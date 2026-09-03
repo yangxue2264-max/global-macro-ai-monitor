@@ -6,7 +6,6 @@ from html import escape
 from pathlib import Path
 from zoneinfo import ZoneInfo
 import json
-import math
 import os
 
 import pandas as pd
@@ -14,61 +13,60 @@ import plotly.graph_objects as go
 import streamlit as st
 
 from core.ai import ai_status, analyze_event, generate_ai_morning_brief
-from core.briefing import build_a_share_mapping, morning_markdown, morning_rule_brief, radar_rank, top_event_cards
+from core.briefing import morning_rule_brief, radar_rank, top_event_cards
 from core.climate import agriculture_transmission, fetch_enso_summary
+from core.decision_engine import cross_market_gaps, decision_queue, evaluate_theses, one_page_markdown
 from core.demo import demo_macro, demo_market, demo_news
 from core.evidence import add_evidence_scores
 from core.market_context import enrich_macro_with_market_proxies, source_label
-from core.ontology import MACRO_MODULES
+from core.ontology import MACRO_MODULES, THEMES
 from core.providers import (
     FRED_SERIES, data_health, fetch_fred_snapshot, fetch_market_snapshot,
     fetch_news_bundle, fetch_price_history, fetch_treasury_snapshot,
     flatten_watchlist, load_watchlist,
 )
 from core.research_memory import memory_summary
-from core.theme_monitor import ai_chain_bottlenecks, ai_chain_snapshot, theme_ledger_rows
-from core.utils import fmt_num, fmt_pct, signal_emoji
+from core.theme_monitor import ai_chain_bottlenecks, ai_chain_snapshot
+from core.utils import finite, fmt_num, fmt_pct, signal_emoji
 
 BASE = Path(__file__).resolve().parent
 CN_TZ = ZoneInfo("Asia/Shanghai")
 
-st.set_page_config(page_title="Global Macro AI Monitor", page_icon="🌐", layout="wide", initial_sidebar_state="collapsed")
+st.set_page_config(page_title="Global-to-A Share Decision Monitor", page_icon="◉", layout="wide", initial_sidebar_state="collapsed")
 st.markdown("""
 <style>
-:root{--ink:#101828;--muted:#667085;--border:#e4e7ec;--soft:#f8fafc;--blue:#155eef;--green:#067647}
-.block-container{padding-top:.65rem;padding-bottom:3rem;max-width:1440px}header[data-testid="stHeader"]{height:2.2rem;background:transparent}
-h1,h2,h3,h4{color:var(--ink);letter-spacing:-.02em}h1{margin-bottom:.1rem;font-size:2rem}
-[data-testid="stMetric"]{border:1px solid var(--border);padding:11px 13px;border-radius:12px;background:#fff}[data-testid="stMetricLabel"]{font-size:.78rem;color:var(--muted)}
-.subhead{color:var(--muted);font-size:.9rem;margin:-.2rem 0 .55rem}.statusbar{display:flex;gap:8px;flex-wrap:wrap;margin:.25rem 0 .75rem}
-.badge{display:inline-flex;align-items:center;border:1px solid var(--border);border-radius:999px;padding:4px 9px;font-size:.72rem;color:#344054;background:#fff}.badge.live{background:#ecfdf3;color:var(--green);border-color:#abefc6}.badge.warn{background:#fffaeb;color:#b54708;border-color:#fedf89}
-.section{font-size:1.05rem;font-weight:750;margin:1.15rem 0 .55rem;color:var(--ink)}.card{border:1px solid var(--border);border-radius:13px;padding:14px 15px;background:#fff;height:100%;margin-bottom:9px}
-.card-title{font-size:1rem;font-weight:720;line-height:1.4;color:var(--ink)}.kicker{font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:5px}
-.body{font-size:.86rem;line-height:1.55;color:#344054}.muted{font-size:.75rem;color:var(--muted);line-height:1.45}.fact{border-left:3px solid #84adff;padding-left:10px;margin:7px 0}.verify{border-left:3px solid #75e0a7;padding-left:10px;margin:7px 0}
-.pill{display:inline-block;border:1px solid var(--border);border-radius:999px;padding:2px 7px;margin:2px 4px 2px 0;font-size:.69rem;color:#475467;background:var(--soft)}div[data-testid="stRadio"]>div{gap:.35rem}div[data-testid="stRadio"] label{border:1px solid var(--border);border-radius:9px;padding:4px 10px;background:white}
-a{text-decoration:none}.stDataFrame{border:1px solid var(--border);border-radius:12px;overflow:hidden}@media(max-width:800px){.block-container{padding-left:1rem;padding-right:1rem}h1{font-size:1.65rem}}
+:root{--ink:#101828;--muted:#667085;--border:#e4e7ec;--soft:#f8fafc;--blue:#175cd3;--green:#067647;--amber:#b54708;--red:#b42318}
+.block-container{padding-top:.8rem;padding-bottom:3rem;max-width:1480px}header[data-testid="stHeader"]{height:2.1rem;background:transparent}
+h1,h2,h3,h4{color:var(--ink);letter-spacing:-.025em}.hero{padding:12px 0 8px}.eyebrow{font-size:.72rem;font-weight:750;color:var(--blue);letter-spacing:.12em;text-transform:uppercase}.hero-title{font-size:2.05rem;font-weight:780;line-height:1.15;color:var(--ink);margin:5px 0}.hero-sub{font-size:.92rem;color:var(--muted);max-width:900px;line-height:1.55}
+.statusbar{display:flex;gap:7px;flex-wrap:wrap;margin:.35rem 0 .8rem}.badge{display:inline-flex;align-items:center;border:1px solid var(--border);border-radius:999px;padding:4px 9px;font-size:.71rem;color:#344054;background:#fff}.badge.live{background:#ecfdf3;color:var(--green);border-color:#abefc6}.badge.warn{background:#fffaeb;color:var(--amber);border-color:#fedf89}
+[data-testid="stMetric"]{border:1px solid var(--border);padding:12px 14px;border-radius:13px;background:#fff;box-shadow:0 1px 2px rgba(16,24,40,.03)}[data-testid="stMetricLabel"]{font-size:.76rem;color:var(--muted)}
+.section{font-size:1.07rem;font-weight:760;margin:1.2rem 0 .55rem;color:var(--ink)}.section-note{font-size:.75rem;color:var(--muted);font-weight:400;margin-left:7px}
+.card{border:1px solid var(--border);border-radius:14px;padding:15px 16px;background:#fff;height:100%;margin-bottom:9px;box-shadow:0 1px 2px rgba(16,24,40,.035)}.card.priority{border-top:3px solid #84adff}.card.thesis{border-left:4px solid #d0d5dd}
+.card-title{font-size:.98rem;font-weight:740;line-height:1.42;color:var(--ink)}.kicker{font-size:.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px}.body{font-size:.84rem;line-height:1.58;color:#344054}.muted{font-size:.73rem;color:var(--muted);line-height:1.48}.fact{border-left:3px solid #84adff;padding-left:9px;margin:8px 0}.verify{border-left:3px solid #75e0a7;padding-left:9px;margin:8px 0}.invalidate{border-left:3px solid #fda29b;padding-left:9px;margin:8px 0}
+.pill{display:inline-block;border:1px solid var(--border);border-radius:999px;padding:2px 7px;margin:2px 4px 2px 0;font-size:.67rem;color:#475467;background:var(--soft)}.pill.green{color:#067647;background:#ecfdf3;border-color:#abefc6}.pill.amber{color:#b54708;background:#fffaeb;border-color:#fedf89}.pill.red{color:#b42318;background:#fef3f2;border-color:#fecdca}
+.callout{border:1px solid #b2ddff;background:#f5fbff;border-radius:14px;padding:15px 17px;color:#194185;font-size:.92rem;line-height:1.58}.formula{border:1px solid var(--border);background:var(--soft);border-radius:12px;padding:12px 14px;font-size:.78rem;color:#475467}
+div[data-testid="stRadio"]>div{gap:.35rem;flex-wrap:wrap}div[data-testid="stRadio"] label{border:1px solid var(--border);border-radius:9px;padding:4px 10px;background:white}.stDataFrame{border:1px solid var(--border);border-radius:12px;overflow:hidden}a{text-decoration:none}
+@media(max-width:800px){.block-container{padding-left:1rem;padding-right:1rem}.hero-title{font-size:1.62rem}.hero-sub{font-size:.84rem}}
 </style>
 """, unsafe_allow_html=True)
 
 
-def finite(value, default=None):
-    try:
-        value = float(value)
-        return value if math.isfinite(value) else default
-    except (TypeError, ValueError):
-        return default
-
-
 def metric_delta(value, suffix=""):
-    value = finite(value)
-    return None if value is None else f"{value:+.2f}{suffix}"
+    number = finite(value)
+    return None if number is None else f"{number:+.2f}{suffix}"
+
+
+def status_pill(status):
+    css = "green" if status in {"同步确认", "获得确认"} else "red" if status in {"方向背离", "受到挑战"} else "amber" if status in {"关注缺口", "证据混合", "A股先行"} else ""
+    return f'<span class="pill {css}">{escape(status)}</span>'
 
 
 @st.cache_data(ttl=900, show_spinner=False)
 def load_config():
     cfg = load_watchlist(BASE / "config" / "watchlist.json")
-    with open(BASE / "config" / "a_share_map.json", "r", encoding="utf-8") as handle:
-        ashare = json.load(handle)
-    return cfg, flatten_watchlist(cfg), ashare
+    ashare = json.loads((BASE / "config" / "a_share_map.json").read_text(encoding="utf-8"))
+    theses = json.loads((BASE / "config" / "thesis_book.json").read_text(encoding="utf-8"))
+    return cfg, flatten_watchlist(cfg), ashare, theses
 
 
 @st.cache_data(ttl=900, show_spinner=False)
@@ -92,41 +90,36 @@ def load_history(ticker):
 
 
 def market_context_text(market, macro):
-    keys = ["SP500", "NASDAQ", "RUSSELL", "DXY", "USDCNH", "GOLD", "COPPER", "WTI", "BTC", "SMH", "VRT", "GRID"]
-    rows = []
-    for key in keys:
+    lines = []
+    for key in ["SP500", "NASDAQ", "DXY", "USDCNH", "GOLD", "COPPER", "WTI", "SMH", "VRT", "GRID"]:
         item = market.get(key, {})
-        rows.append(f"{item.get('name', key)}: 1日 {fmt_pct(item.get('change_pct'))}; 5日 {fmt_pct(item.get('change_5d_pct'))}; 20日 {fmt_pct(item.get('change_20d_pct'))}")
-    for key in ["US10Y", "USREAL10Y", "BREAKEVEN10Y", "VIX", "HYSPREAD", "CREDIT_PROXY", "NFCI"]:
+        lines.append(f"{item.get('name', key)}: 1日 {fmt_pct(item.get('change_pct'))}; 20日 {fmt_pct(item.get('change_20d_pct'))}")
+    for key in ["US10Y", "USREAL10Y", "BREAKEVEN10Y", "VIX", "HYSPREAD", "NFCI"]:
         item = macro.get(key, {})
-        rows.append(f"{item.get('name', key)}: {fmt_num(item.get('value'))} ({source_label(item)})")
-    return "\n".join(rows)
+        lines.append(f"{item.get('name', key)}: {fmt_num(item.get('value'))} ({source_label(item)})")
+    return "\n".join(lines)
 
 
 def pricing_check(theme, market):
     mapping = {
         "AI资本开支": ["SMH", "VRT", "GRID", "COPPER"], "流动性与信用": ["DXY", "SP500", "BTC"],
         "油价与通胀": ["WTI", "XLE", "GOLD"], "天气与农业": ["CORN", "SOY"],
-        "贸易与关税": ["USDCNH", "TSM", "BABA"],
+        "贸易与关税": ["USDCNH", "TSM", "BABA"], "中国增长与政策": ["USDCNH", "HSI", "CSI300"],
     }
-    parts = []
-    for key in mapping.get(theme, ["SP500", "DXY"]):
-        item = market.get(key, {})
-        parts.append(f"{item.get('name', key)} {fmt_pct(item.get('change_pct'))}")
-    return "；".join(parts)
+    return "；".join(f"{market.get(key, {}).get('name', key)} {fmt_pct(market.get(key, {}).get('change_pct'))}" for key in mapping.get(theme, ["SP500", "DXY"]))
 
 
-cfg, universe, ashare_cfg = load_config()
-st.title("Global Macro AI Monitor")
-st.markdown('<div class="subhead">A股开盘前研究工作台 · 事实 → 状态变量 → 传导 → 定价 → 验证</div>', unsafe_allow_html=True)
+cfg, universe, ashare_cfg, thesis_cfg = load_config()
+st.markdown("""<div class="hero"><div class="eyebrow">Research operating system · A-share pre-open</div><div class="hero-title">Global-to-A Share Decision Monitor</div><div class="hero-sub">不是多一个行情看板：把海外事件压缩为研究优先级，识别跨市场定价缺口，并持续记录哪些假设正在被证实或推翻。</div></div>""", unsafe_allow_html=True)
+
 load_notice = st.empty()
-load_notice.info("正在同步行情、宏观与研究流；三类数据并行更新。")
+load_notice.info("正在并行同步市场、宏观与研究流…")
 if os.getenv("MACRO_MONITOR_OFFLINE_TEST") == "1":
     market, macro, news, treasury = demo_market(universe), demo_macro(FRED_SERIES), demo_news(), {}
 else:
     market, macro, news, treasury = load_snapshot(universe)
-health = data_health(market, macro, news)
-demo_mode = health.get("market_live", 0) == 0
+raw_health = data_health(market, macro, news)
+demo_mode = raw_health.get("market_live", 0) == 0
 if demo_mode:
     market, macro, news = demo_market(universe), demo_macro(FRED_SERIES), demo_news()
 macro = enrich_macro_with_market_proxies(macro, market, treasury)
@@ -136,207 +129,226 @@ load_notice.empty()
 
 now = datetime.now(CN_TZ)
 ai = ai_status()
+brief = morning_rule_brief(market, macro, news)
+all_gaps = cross_market_gaps(market, news, ashare_cfg)
+queue = decision_queue(market, news, ashare_cfg)
+theses = evaluate_theses(market, macro, thesis_cfg)
 market_ratio = f"{health.get('market_live', 0)}/{health.get('market_total', 0)}"
-macro_available = sum(1 for value in macro.values() if value.get("status") in {"ok", "treasury", "market_proxy", "derived"})
+macro_available = sum(1 for item in macro.values() if item.get("status") in {"ok", "treasury", "market_proxy", "derived"})
 macro_ratio = f"{macro_available}/{len(macro)}"
 badges = [
     f'<span class="badge {"warn" if demo_mode else "live"}">{"DEMO" if demo_mode else "LIVE"} 行情 {market_ratio}</span>',
     f'<span class="badge {"live" if macro_available else "warn"}">宏观 {macro_ratio}</span>',
     f'<span class="badge {"live" if ai["connected"] else "warn"}">AI {escape(ai["model"] if ai["connected"] else "未连接")}</span>',
-    f'<span class="badge">北京时间 {now:%m-%d %H:%M}</span>',
+    f'<span class="badge">北京时间 {now:%m-%d %H:%M}</span>', '<span class="badge">15分钟缓存 · 按需AI</span>',
 ]
 st.markdown(f'<div class="statusbar">{"".join(badges)}</div>', unsafe_allow_html=True)
 if demo_mode:
-    st.warning("免费行情源当前整体不可用，页面处于明确标注的演示模式；演示值不会被当作实时判断。")
+    st.warning("免费行情源本次未返回有效数据，当前为明确标注的演示模式；演示值不会被作为真实判断输出。")
 
-page = st.radio("主导航", ["晨间简报", "研究流", "跨资产", "主题监控", "事件实验室", "方法与数据"], horizontal=True, label_visibility="collapsed")
+page = st.radio("主导航", ["决策台", "信号流", "定价缺口", "跨资产", "主题账本", "事件实验室", "方法与数据"], horizontal=True, label_visibility="collapsed")
 
 
-if page == "晨间简报":
-    brief = morning_rule_brief(market, macro, news)
-    states = brief["states"]
+if page == "决策台":
+    confirmed = sum(row["status"] == "获得确认" for row in theses)
+    cols = st.columns(4)
+    cols[0].metric("隔夜市场状态", brief["regime"], metric_delta(brief["regime_score"]))
+    cols[1].metric("最高研究优先级", f"{queue[0]['priority']}/100" if queue else "—", queue[0]["name"] if queue else None)
+    cols[2].metric("首要跨市场状态", queue[0]["status"] if queue else "—", "不是收益预测")
+    cols[3].metric("获确认的主题假设", f"{confirmed}/{len(theses)}", "其余需复核")
     st.markdown('<div class="section">今日总判断</div>', unsafe_allow_html=True)
-    st.info(brief["headline"])
-    cols = st.columns(6)
-    cols[0].metric("市场状态", brief["regime"], metric_delta(brief["regime_score"]))
-    cols[1].metric("S&P 500", fmt_num(market.get("SP500", {}).get("last")), fmt_pct(market.get("SP500", {}).get("change_pct")))
-    cols[2].metric("美元指数", fmt_num(market.get("DXY", {}).get("last")), fmt_pct(market.get("DXY", {}).get("change_pct")))
-    real = macro.get("USREAL10Y", {})
-    cols[3].metric(f"实际10Y · {source_label(real)}", fmt_num(real.get("value")), metric_delta(real.get("delta"), "pp"))
-    cols[4].metric("人民币汇率代理", fmt_num(market.get("USDCNH", {}).get("last"), 4), fmt_pct(market.get("USDCNH", {}).get("change_pct")))
-    cols[5].metric("铜", fmt_num(market.get("COPPER", {}).get("last")), fmt_pct(market.get("COPPER", {}).get("change_pct")))
+    st.markdown(f'<div class="callout">{escape(brief["headline"])}</div>', unsafe_allow_html=True)
 
-    st.markdown('<div class="section">今天最值得回答的三个问题</div>', unsafe_allow_html=True)
-    focus_cols = st.columns(3)
-    for col, item in zip(focus_cols, brief["focus"]):
+    st.markdown('<div class="section">今天不是“看什么”，而是“判断什么”<span class="section-note">按研究优先级排序</span></div>', unsafe_allow_html=True)
+    decision_cols = st.columns(3)
+    for index, (col, row) in enumerate(zip(decision_cols, queue), 1):
+        breakdown = "".join(f'<span class="pill">{escape(key)} {value}</span>' for key, value in row["score_breakdown"].items())
         with col:
-            st.markdown(f'''<div class="card"><div class="kicker">research question</div><div class="card-title">{escape(item["title"])}</div><div class="fact body"><b>现在：</b>{escape(item["now"])}</div><div class="body"><b>意义：</b>{escape(item["why"])}</div><div class="verify body"><b>验证：</b>{escape(item["verify"])}</div></div>''', unsafe_allow_html=True)
+            st.markdown(f'''<div class="card priority"><div class="kicker">#{index} · PRIORITY {row["priority"]}/100 {status_pill(row["status"])}</div><div class="card-title">{escape(row["question"])}</div><div style="margin:7px 0">{breakdown}</div><div class="fact body"><b>现在：</b>{escape(row["now"])}</div><div class="body"><b>传导：</b>{escape(row["logic"])}</div><div class="verify body"><b>下一验证：</b>{escape(row["next_check"])}</div><div class="invalidate muted"><b>降低权重：</b>{escape(row["invalidation"])}</div></div>''', unsafe_allow_html=True)
 
-    left, right = st.columns([1, 1.25])
+    left, right = st.columns([1.18, 1])
     with left:
-        st.markdown('<div class="section">市场隐含状态</div>', unsafe_allow_html=True)
-        names, values = list(states.keys()), list(states.values())
-        colors = ["#17b26a" if value > .2 else "#f04438" if value < -.2 else "#98a2b3" for value in values]
-        fig = go.Figure(go.Bar(x=values, y=names, orientation="h", marker_color=colors, text=[f"{x:+.2f}" for x in values], textposition="auto"))
-        fig.update_layout(height=330, margin=dict(l=5, r=15, t=10, b=10), xaxis=dict(range=[-2, 2], zeroline=True), yaxis=dict(autorange="reversed"), showlegend=False)
-        st.plotly_chart(fig, width="stretch")
-        st.caption("市场价格推导的研究状态，不是对真实经济状态的机械估计。")
+        st.markdown('<div class="section">跨市场定价缺口</div>', unsafe_allow_html=True)
+        gap_rows = [{"主题": row["name"], "优先级": row["priority"], "状态": row["status"], "海外20日中位数%": row["global_median"], "A股20日中位数%": row["china_median"], "证据分": row["evidence"], "关联事件": row["event_count"]} for row in all_gaps[:5]]
+        st.dataframe(pd.DataFrame(gap_rows), hide_index=True, width="stretch", column_config={"优先级": st.column_config.ProgressColumn(min_value=0, max_value=100, format="%d"), "海外20日中位数%": st.column_config.NumberColumn(format="%+.2f%%"), "A股20日中位数%": st.column_config.NumberColumn(format="%+.2f%%"), "证据分": st.column_config.NumberColumn(format="%d/100")})
+        st.caption("缺口用于决定先研究什么；它不等于买卖信号，也不假设A股一定追随海外。")
     with right:
-        st.markdown('<div class="section">开盘前验证清单</div>', unsafe_allow_html=True)
-        for index, item in enumerate(brief["checklist"], 1):
-            st.markdown(f"**{index}.** {item}")
-        st.markdown("**当前背离**")
-        for item in brief["divergences"][:2]:
-            st.markdown(f"- {item}")
+        st.markdown('<div class="section">叙事压力测试</div>', unsafe_allow_html=True)
+        for divergence in brief["divergences"][:3]:
+            st.markdown(f"- {divergence}")
+        challenged = [row for row in theses if row["status"] in {"受到挑战", "证据混合"}]
+        if challenged:
+            st.markdown("**需要降低确信度**")
+            for row in challenged[:2]:
+                st.markdown(f"- {row['name']}：{row['status']}；反证检查：{row['invalidation']}")
 
-    st.markdown('<div class="section">隔夜资产温度计</div>', unsafe_allow_html=True)
-    temp_keys = ["SP500", "NASDAQ", "RUSSELL", "DXY", "USDCNH", "GOLD", "COPPER", "WTI", "BTC"]
-    temp_rows = []
-    for key in temp_keys:
-        item = market.get(key, {})
-        temp_rows.append({"信号": signal_emoji(item.get("change_pct")), "资产": item.get("name", key), "最新": item.get("last"), "1日%": item.get("change_pct"), "5日%": item.get("change_5d_pct"), "20日%": item.get("change_20d_pct"), "截至": item.get("asof", "")})
-    st.dataframe(pd.DataFrame(temp_rows), hide_index=True, width="stretch", column_config={"最新": st.column_config.NumberColumn(format="%.2f"), "1日%": st.column_config.NumberColumn(format="%.2f%%"), "5日%": st.column_config.NumberColumn(format="%.2f%%"), "20日%": st.column_config.NumberColumn(format="%.2f%%")})
+    st.markdown('<div class="section">导师每天如何使用</div>', unsafe_allow_html=True)
+    workflow_cols = st.columns(3)
+    workflow = [("08:45–09:05", "先定问题", "只读前三项决策队列，确认海外变化、证据等级和关键背离。"), ("09:15–09:25", "再看A股验证", "观察人民币、集合竞价与主题代理；确认跟随、背离还是已提前定价。"), ("收盘后 5分钟", "记录结果", "回到主题账本，检查反证条件，并把未验证叙事降权。")]
+    for col, (time_label, title, body) in zip(workflow_cols, workflow):
+        col.markdown(f'<div class="card"><div class="kicker">{time_label}</div><div class="card-title">{title}</div><div class="body">{body}</div></div>', unsafe_allow_html=True)
 
-    st.markdown('<div class="section">海外事件 → A股验证</div>', unsafe_allow_html=True)
-    ashare_rows = build_a_share_mapping(market, news, ashare_cfg)
-    map_cols = st.columns(3)
-    for col, row in zip(map_cols, ashare_rows[:3]):
-        with col:
-            st.markdown(f'''<div class="card"><div class="kicker">优先级 {row["score"]:.1f} · {escape(row["pricing"])}</div><div class="card-title">{escape(row["name"])}</div><div class="body" style="margin-top:6px">{escape(row["logic"])}</div><div class="muted" style="margin-top:8px"><b>A股：</b>{escape(" · ".join(row["a_share_themes"][:4]))}</div><div class="muted" style="margin-top:6px"><b>下一验证：</b>{escape(" · ".join(row["verify"][:3]))}</div></div>''', unsafe_allow_html=True)
-
-    memory = memory_summary(BASE, brief)
-    with st.expander(f"研究记忆｜{memory['title']}"):
-        for item in memory["items"]:
-            st.markdown(f"- {item}")
-    export = morning_markdown(brief, market, macro, ashare_rows)
-    action1, action2 = st.columns([1, 3])
-    action1.download_button("下载晨报 Markdown", data=export, file_name=f"morning_brief_{now:%Y%m%d}.md", mime="text/markdown", width="stretch")
-    with action2.expander("AI 压缩版（按需生成，避免每次刷新产生费用）"):
+    export = one_page_markdown(brief, queue, theses, now.strftime("%Y-%m-%d %H:%M 中国时间"))
+    action1, action2 = st.columns([1, 2.2])
+    action1.download_button("下载一页决策简报", data=export, file_name=f"decision_brief_{now:%Y%m%d}.md", mime="text/markdown", width="stretch")
+    with action2.expander("生成90秒AI晨报（按需调用，避免刷新即计费）"):
         if not ai["connected"]:
-            st.warning("OPENAI_API_KEY 尚未连接。")
-        if st.button("生成 90 秒可读 AI 晨报", type="primary", disabled=not ai["connected"]):
-            news_text = "\n".join(f"- {item.get('title')} | {item.get('source')} | 证据{item.get('evidence_label')}" for item in news[:12])
-            with st.spinner("压缩事实、定价与验证点…"):
+            st.info("配置 OPENAI_API_KEY 后可用；没有AI时，规则式决策台仍完整运行。")
+        if st.button("生成AI压缩版", type="primary", disabled=not ai["connected"]):
+            news_text = "\n".join(f"- {item.get('title')} | {item.get('source')} | {item.get('evidence_label')}" for item in news[:12])
+            with st.spinner("正在区分事实、定价与待验证假设…"):
                 result = generate_ai_morning_brief(market_context_text(market, macro), news_text, use_ai=True)
-            st.markdown(result or "AI 暂未返回结果，请稍后重试。")
+            st.markdown(result or "AI暂未返回结果，请稍后重试。")
 
 
-elif page == "研究流":
-    st.markdown("#### 研究流｜先压缩，再判断")
-    st.caption("同一事件的转载已合并；每条信息按事实、传导、定价和下一验证组织。")
-    f1, f2 = st.columns(2)
-    module_filter = f1.selectbox("宏观模块", ["全部"] + list(MACRO_MODULES.keys()))
-    theme_filter = f2.selectbox("研究主题", ["全部", "AI资本开支", "天气与农业", "贸易与关税", "油价与通胀", "流动性与信用"])
-    filtered = [item for item in news if (module_filter == "全部" or module_filter in item.get("modules", [])) and (theme_filter == "全部" or theme_filter in item.get("themes", []))]
-    cards = top_event_cards(filtered, limit=12)
+elif page == "信号流":
+    st.markdown('<div class="section">信号流<span class="section-note">新闻只是入口，必须进入可验证传导链</span></div>', unsafe_allow_html=True)
+    f1, f2, f3 = st.columns(3)
+    module_filter = f1.selectbox("宏观模块", ["全部"] + list(MACRO_MODULES))
+    theme_filter = f2.selectbox("研究主题", ["全部"] + list(THEMES))
+    evidence_filter = f3.selectbox("最低证据等级", ["全部", "A/B", "A"])
+    def evidence_ok(item):
+        score = item.get("evidence_score", 0)
+        return evidence_filter == "全部" or (evidence_filter == "A/B" and score >= 70) or (evidence_filter == "A" and score >= 85)
+    filtered = [item for item in news if (module_filter == "全部" or module_filter in item.get("modules", [])) and (theme_filter == "全部" or theme_filter in item.get("themes", [])) and evidence_ok(item)]
+    cards = top_event_cards(filtered, limit=15)
     if not cards:
-        st.info("当前筛选没有高价值事件。")
+        st.info("当前筛选下没有事件。")
     for item in cards:
         theme = item.get("theme_primary", "待分类")
+        title = escape(item.get("title", ""))
+        if item.get("url"):
+            title = f'<a href="{escape(item["url"])}" target="_blank">{title}</a>'
         tags = "".join(f'<span class="pill">{escape(tag)}</span>' for tag in (item.get("modules", [])[:2] + item.get("themes", [])[:2]))
-        st.markdown(f'''<div class="card"><div class="kicker">{escape(item.get("source", ""))} · 证据 {escape(item.get("evidence_label", "初步"))}</div><div class="card-title"><a href="{escape(item.get("url", ""))}" target="_blank">{escape(item.get("title", ""))}</a></div><div style="margin:5px 0">{tags}</div><div class="fact body"><b>为何重要：</b>{escape(item.get("mechanism", "待建立传导链"))}</div><div class="body"><b>价格检查：</b>{escape(pricing_check(theme, market))}</div><div class="verify body"><b>下一步：</b>核对原始来源、事件规模、市场预期差与二阶资产是否确认。</div></div>''', unsafe_allow_html=True)
+        st.markdown(f'''<div class="card"><div class="kicker">{escape(item.get("source", ""))} · {escape(item.get("evidence_label", "待核实"))}</div><div class="card-title">{title}</div><div style="margin:5px 0">{tags}</div><div class="fact body"><b>传导假设：</b>{escape(item.get("mechanism", "待建立因果链"))}</div><div class="body"><b>价格检查：</b>{escape(pricing_check(theme, market))}</div><div class="verify body"><b>下一步：</b>回到原始来源，确认规模、预期差与二阶变量。</div><div class="muted">证据说明：{escape(item.get("evidence_reason", ""))}</div></div>''', unsafe_allow_html=True)
+
+
+elif page == "定价缺口":
+    st.markdown('<div class="section">跨市场定价缺口<span class="section-note">本产品最核心的差异化页面</span></div>', unsafe_allow_html=True)
+    st.markdown('<div class="callout"><b>核心问题：</b>海外已经发生并被价格确认的变化，是否传导到了A股？若没有，是时差、结构差异、国内因子抵消，还是叙事本身错误？</div>', unsafe_allow_html=True)
+    st.markdown(" ")
+    overview = [{"主题": row["name"], "研究优先级": row["priority"], "状态": row["status"], "海外方向": row["global_direction"], "海外20日%": row["global_median"], "A股方向": row["china_direction"], "A股20日%": row["china_median"], "证据": row["evidence"], "事件数": row["event_count"]} for row in all_gaps]
+    st.dataframe(pd.DataFrame(overview), hide_index=True, width="stretch", column_config={"研究优先级": st.column_config.ProgressColumn(min_value=0, max_value=100, format="%d"), "海外20日%": st.column_config.NumberColumn(format="%+.2f%%"), "A股20日%": st.column_config.NumberColumn(format="%+.2f%%"), "证据": st.column_config.NumberColumn(format="%d/100")})
+    selected_name = st.selectbox("展开一个主题", [row["name"] for row in all_gaps])
+    selected = next(row for row in all_gaps if row["name"] == selected_name)
+    lcol, rcol = st.columns([1.25, 1])
+    with lcol:
+        st.markdown(f"#### {selected['name']} {status_pill(selected['status'])}", unsafe_allow_html=True)
+        st.write(selected["logic"])
+        st.markdown(f"**A股观察对象：** {'、'.join(selected['a_share_themes'])}")
+        st.markdown("**下一验证**")
+        for item in selected["verify"]:
+            st.markdown(f"- {item}")
+        st.error(f"反证条件：{selected['invalidation']}")
+    with rcol:
+        labels = ["海外代理中位数", "A股代理中位数"]
+        values = [selected["global_median"] or 0, selected["china_median"] or 0]
+        fig = go.Figure(go.Bar(x=labels, y=values, marker_color=["#175cd3", "#0e7090"], text=[f"{value:+.2f}%" for value in values], textposition="auto"))
+        fig.update_layout(height=285, margin=dict(l=10, r=10, t=15, b=10), yaxis_title="20日变化中位数%", showlegend=False)
+        st.plotly_chart(fig, width="stretch")
+        st.caption(f"海外代理：{' · '.join(selected['global_assets'])}｜A股代理：{' · '.join(selected['a_share_assets'])}")
+    breakdown = selected["score_breakdown"]
+    st.markdown(f'<div class="formula"><b>研究优先级 {selected["priority"]}/100</b> = 证据 {breakdown["证据"]} + 海外异动 {breakdown["海外异动"]} + 定价缺口 {breakdown["定价缺口"]} + A股相关性 {breakdown["A股相关性"]}。该分数只决定研究顺序。</div>', unsafe_allow_html=True)
 
 
 elif page == "跨资产":
-    st.markdown("#### 跨资产｜方向、期限与背离")
-    groups = [("全球股指", list(cfg["indices"])), ("汇率", list(cfg["fx"])), ("商品", list(cfg["commodities"])), ("Crypto", list(cfg["crypto"]))]
-    for title, keys in groups:
-        st.markdown(f"##### {title}")
-        cols = st.columns(min(5, len(keys)))
-        for index, key in enumerate(keys):
-            item = market.get(key, {})
-            cols[index % len(cols)].metric(item.get("name", key), fmt_num(item.get("last")), fmt_pct(item.get("change_pct")))
-    st.divider()
-    all_keys = list(cfg["indices"]) + list(cfg["fx"]) + list(cfg["commodities"]) + list(cfg["crypto"])
-    pick = st.selectbox("6个月走势", all_keys, format_func=lambda key: universe[key]["name"])
-    if st.button("加载走势图"):
-        history = load_history(universe[pick]["ticker"])
-        if history.empty:
-            st.warning("该资产历史行情暂时不可用。")
-        else:
-            close = history["Close"]
-            if isinstance(close, pd.DataFrame):
-                close = close.iloc[:, 0]
-            fig = go.Figure(go.Scatter(x=history.index, y=close, mode="lines", line=dict(color="#155eef", width=2)))
-            fig.update_layout(height=390, margin=dict(l=10, r=10, t=15, b=10), xaxis_title="", yaxis_title="")
-            st.plotly_chart(fig, width="stretch")
-    else:
-        st.caption("走势图按需加载，不再拖慢每次冷启动。")
-
-
-elif page == "主题监控":
-    theme_page = st.radio("主题页", ["宏观七维", "AI Capex", "异动雷达"], horizontal=True)
-    if theme_page == "宏观七维":
-        st.markdown("#### 宏观七维｜从变量到资产")
-        for name, meta in MACRO_MODULES.items():
-            with st.expander(f"{name}｜{meta['question']}", expanded=name in ["金融状况", "实体瓶颈"]):
-                st.write(" · ".join(meta["items"]))
+    st.markdown('<div class="section">跨资产验证<span class="section-note">验证叙事，不替代通用行情终端</span></div>', unsafe_allow_html=True)
+    key_assets = ["SP500", "NASDAQ", "RUSSELL", "DXY", "USDCNH", "GOLD", "COPPER", "WTI", "BTC", "SMH", "VRT", "GRID"]
+    asset_rows = []
+    for key in key_assets:
+        item = market.get(key, {})
+        asset_rows.append({"信号": signal_emoji(item.get("change_pct")), "资产": item.get("name", key), "最新": item.get("last"), "1日%": item.get("change_pct"), "5日%": item.get("change_5d_pct"), "20日%": item.get("change_20d_pct"), "日期": item.get("asof", "")})
+    st.dataframe(pd.DataFrame(asset_rows), hide_index=True, width="stretch", column_config={"最新": st.column_config.NumberColumn(format="%.2f"), "1日%": st.column_config.NumberColumn(format="%+.2f%%"), "5日%": st.column_config.NumberColumn(format="%+.2f%%"), "20日%": st.column_config.NumberColumn(format="%+.2f%%")})
+    c1, c2 = st.columns([1, 1])
+    with c1:
+        pick = st.selectbox("加载6个月走势", key_assets, format_func=lambda key: universe[key]["name"])
+        if st.button("加载走势图"):
+            history = load_history(universe[pick]["ticker"])
+            if history.empty:
+                st.warning("该资产历史行情暂不可用。")
+            else:
+                close = history["Close"]
+                if isinstance(close, pd.DataFrame): close = close.iloc[:, 0]
+                fig = go.Figure(go.Scatter(x=history.index, y=close, mode="lines", line=dict(color="#175cd3", width=2)))
+                fig.update_layout(height=335, margin=dict(l=10, r=10, t=15, b=10), xaxis_title="", yaxis_title="")
+                st.plotly_chart(fig, width="stretch")
+    with c2:
+        st.markdown("##### 当前跨资产背离")
+        for item in brief["divergences"]: st.markdown(f"- {item}")
+    with st.expander("宏观数据与来源层级"):
         rows = []
         for key, meta in FRED_SERIES.items():
             item = macro.get(key, {})
             rows.append({"变量": meta["name"], "最新": item.get("value"), "变化": item.get("delta"), "来源层级": source_label(item), "发布日期": item.get("date", ""), "具体来源": item.get("source", "FRED" if item.get("status") == "ok" else "")})
-        credit = macro.get("CREDIT_PROXY", {})
-        rows.append({"变量": credit.get("name", "信用风险市场代理"), "最新": credit.get("value"), "变化": credit.get("delta"), "来源层级": source_label(credit), "发布日期": credit.get("date", ""), "具体来源": credit.get("source", "")})
-        st.dataframe(pd.DataFrame(rows), hide_index=True, width="stretch", column_config={"最新": st.column_config.NumberColumn(format="%.3f"), "变化": st.column_config.NumberColumn(format="%.3f")})
-        st.markdown("##### 气候 → 农业 → 食品通胀")
-        if st.button("加载 NOAA ENSO 官方诊断"):
-            enso = load_enso()
-            agri = agriculture_transmission(enso, market)
-            e1, e2, e3 = st.columns(3)
-            e1.metric("ENSO状态", enso.get("status", "—")[:40])
-            e2.metric("Niño-3.4", enso.get("nino34", "—"))
-            e3.metric("数据模式", "LIVE" if enso.get("mode") == "live" else "DEMO")
-            st.write(enso.get("synopsis", ""))
-            st.info(agri["market_check"])
-            st.caption(agri["chain"])
-        else:
-            st.caption("NOAA 模块按需加载，避免影响首页速度。")
-    elif theme_page == "AI Capex":
-        st.markdown("#### AI Money Flow｜需求 → 算力 → 电力 → 原料 → 融资")
-        st.caption("价格代理用于发现需要调查的环节，不等同于企业基本面或资本开支数据。")
-        st.dataframe(pd.DataFrame(ai_chain_snapshot(market, macro)), hide_index=True, width="stretch", column_config={"20日代理变化%": st.column_config.NumberColumn(format="%.2f%%")})
-        st.markdown("##### 当前瓶颈与背离")
-        for item in ai_chain_bottlenecks(market, macro):
-            st.markdown(f"- {item}")
-        st.markdown("##### 主题台账")
-        st.dataframe(pd.DataFrame(theme_ledger_rows(market, macro)), hide_index=True, width="stretch", column_config={"20日资产确认%": st.column_config.NumberColumn(format="%.2f%%")})
-    else:
-        st.markdown("#### 异动雷达｜价格先于叙事")
-        ranked = radar_rank(market, list(cfg["stocks"]))
-        rows = [{"排名": index + 1, "公司": row["name"], "主题": row["theme"], "最新": row["last"], "1日%": row["day"], "20日%": row["d20"], "收益z": row["z"], "量比": row["volume_ratio"], "异动分": row["score"]} for index, row in enumerate(ranked)]
-        st.dataframe(pd.DataFrame(rows), hide_index=True, width="stretch", column_config={"最新": st.column_config.NumberColumn(format="%.2f"), "1日%": st.column_config.NumberColumn(format="%.2f%%"), "20日%": st.column_config.NumberColumn(format="%.2f%%"), "收益z": st.column_config.NumberColumn(format="%.2f"), "量比": st.column_config.NumberColumn(format="%.2f"), "异动分": st.column_config.ProgressColumn(min_value=0, max_value=4, format="%.2f")})
+        st.dataframe(pd.DataFrame(rows), hide_index=True, width="stretch")
+    with st.expander("股票异动雷达"):
+        ranked = radar_rank(market, list(cfg["stocks"]))[:20]
+        rows = [{"排名": i + 1, "公司": row["name"], "主题": row["theme"], "1日%": row["day"], "20日%": row["d20"], "收益z": row["z"], "量比": row["volume_ratio"], "异动分": row["score"]} for i, row in enumerate(ranked)]
+        st.dataframe(pd.DataFrame(rows), hide_index=True, width="stretch")
+
+
+elif page == "主题账本":
+    st.markdown('<div class="section">可证伪主题账本<span class="section-note">看板显示现在；账本检验过去的判断</span></div>', unsafe_allow_html=True)
+    st.markdown('<div class="callout">每条主题必须写明时间尺度、支持证据和反证条件。价格只算一票；若反证持续出现，应降低叙事权重，而不是不断换理由。</div>', unsafe_allow_html=True)
+    st.markdown(" ")
+    for row in theses:
+        ratio = None if row["pass_ratio"] is None else round(row["pass_ratio"] * 100)
+        ratio_text = "—" if ratio is None else f"{ratio}%"
+        st.markdown(f'<div class="card thesis"><div class="kicker">{escape(row["horizon"])} · 规则通过 {ratio_text} {status_pill(row["status"])}</div><div class="card-title">{escape(row["name"])}</div><div class="body" style="margin-top:6px">{escape(row["why"])}</div><div class="invalidate body"><b>反证：</b>{escape(row["invalidation"])}</div></div>', unsafe_allow_html=True)
+        check_rows = []
+        for check in row["checks"]:
+            observed = "—" if check["observed"] is None else f"{check['observed']:.2f}"
+            result = "✓ 通过" if check["passed"] is True else "✕ 未通过" if check["passed"] is False else "○ 待数据"
+            check_rows.append({"验证项": check["label"], "观察值": observed, "规则": f"{check['key']}.{check['field']} {check['op']} {check['value']}", "结果": result})
+        st.dataframe(pd.DataFrame(check_rows), hide_index=True, width="stretch")
+    st.markdown("##### AI资本开支链条：哪里最强，哪里最弱")
+    st.dataframe(pd.DataFrame(ai_chain_snapshot(market, macro)), hide_index=True, width="stretch", column_config={"20日代理变化%": st.column_config.NumberColumn(format="%+.2f%%")})
+    for item in ai_chain_bottlenecks(market, macro): st.markdown(f"- {item}")
+    memory = memory_summary(BASE, brief)
+    with st.expander(f"昨日判断复盘｜{memory['title']}"):
+        for item in memory["items"]: st.markdown(f"- {item}")
 
 
 elif page == "事件实验室":
-    st.markdown("#### 事件实验室｜把标题变成可证伪链条")
+    st.markdown('<div class="section">事件实验室<span class="section-note">把一个标题变成可被推翻的研究链条</span></div>', unsafe_allow_html=True)
     examples = ["厄尔尼诺概率显著上升", "Hyperscaler上调AI资本开支指引", "美国扩大先进芯片出口限制", "油价两周内快速上涨"]
     chosen = st.selectbox("快速例子", ["自定义"] + examples)
     event = st.text_area("事件", value="" if chosen == "自定义" else chosen, height=90, placeholder="例如：大型云厂商上调未来一年AI资本开支…")
-    mode = st.radio("分析模式", ["快速结构化", "Research（联网核实）"], horizontal=True, help="Research 模式会更慢、费用略高，并尝试核实最新公开信息。")
+    mode = st.radio("分析模式", ["快速结构化", "Research（联网核实）"], horizontal=True)
     st.caption(f"AI状态：{'已连接 · ' + ai['model'] if ai['connected'] else '未连接，将使用规则模板'}")
     if st.button("生成传导链", type="primary", disabled=not event.strip()):
         with st.spinner("核对事实并构建传导链…" if mode.startswith("Research") else "构建可验证传导链…"):
             result = analyze_event(event, market_context=market_context_text(market, macro), use_ai=ai["connected"], research_mode=mode.startswith("Research"))
         st.markdown(result)
+    st.markdown("##### 气候事件专用验证")
+    if st.button("加载NOAA ENSO官方诊断"):
+        enso = load_enso(); agri = agriculture_transmission(enso, market)
+        e1, e2, e3 = st.columns(3)
+        e1.metric("ENSO状态", enso.get("status", "—")[:40]); e2.metric("Niño-3.4", enso.get("nino34", "—")); e3.metric("数据模式", "LIVE" if enso.get("mode") == "live" else "DEMO")
+        st.write(enso.get("synopsis", "")); st.info(agri["market_check"]); st.caption(agri["chain"])
 
 
 else:
-    st.markdown("#### 方法、来源与数据健康")
-    st.markdown("""
-**每天开盘前的最小闭环：** 全球发生了什么 → 哪些状态变量改变 → 通过什么机制传导 → 哪些资产已经反应 → 哪些尚未反应 → 今天验证什么。
-
-- 机器负责拉取、去重、分类和异动筛选；
-- AI负责结构化因果链、区分事实与推断、提出反证；
-- 人负责判断叙事、风险与行动。
-""")
+    st.markdown('<div class="section">方法与数据<span class="section-note">让导师知道结论是如何形成的</span></div>', unsafe_allow_html=True)
+    comparison = pd.DataFrame([
+        {"普通市场看板": "把价格、新闻和图表放在一起", "本产品": "先排出今天必须回答的三个问题"},
+        {"普通市场看板": "显示哪个资产涨跌", "本产品": "解释事件如何穿过状态变量并传到A股"},
+        {"普通市场看板": "强调同步和覆盖面", "本产品": "专门寻找海外与A股之间的定价差与方向背离"},
+        {"普通市场看板": "每天刷新后忘记昨天", "本产品": "用主题账本、反证条件和昨日快照追踪判断质量"},
+        {"普通市场看板": "AI总结新闻", "本产品": "AI只做结构化与反方审查；规则评分可复核"},
+    ])
+    st.dataframe(comparison, hide_index=True, width="stretch")
+    st.markdown("##### 研究闭环")
+    st.markdown("**事实来源 → 状态变量 → 传导机制 → 海外价格确认 → A股映射 → 反证条件 → 次日复盘**")
+    st.markdown('<div class="formula"><b>研究优先级（0–100）</b> = 证据质量（30）+ 海外异动（25）+ 跨市场缺口（25）+ A股相关性（20）。<br>分数用于排序调查顺序，不是收益预测、目标价或交易信号。</div>', unsafe_allow_html=True)
+    st.markdown("##### 数据来源与刷新策略")
+    st.write("- **官方宏观：** FRED；缺失时优先使用美国财政部收益率曲线并明确标注。")
+    st.write("- **市场代理：** Yahoo Finance；展示行情日期，不把代理序列伪装成官方数据。")
+    st.write("- **新闻发现：** GDELT，失败时回退Google News RSS；证据分只衡量来源层级，不保证结论正确。")
+    st.write("- **气候：** NOAA CPC官方ENSO诊断，按需加载。")
+    st.write("- **AI：** 仅在用户主动生成晨报或事件分析时调用；基础决策台不依赖AI。")
+    st.write("- **刷新：** 行情、宏观与研究流缓存15分钟；自动晨报脚本可在A股开盘前生成每日快照。")
     h1, h2, h3 = st.columns(3)
-    h1.metric("可用市场资产", market_ratio)
-    h2.metric("可用宏观变量", macro_ratio)
-    h3.metric("研究流事件", len(news))
-    st.markdown("##### 数据来源层级")
-    st.write("- **官方：** FRED、NOAA CPC；宏观发布日期与行情日期分开显示。")
-    st.write("- **市场代理：** Yahoo Finance；当官方序列缺失时只做明确标注的代理或推导。")
-    st.write("- **新闻发现：** GDELT，失败时回退 Google News RSS；同一转载事件合并。")
-    st.write("- **AI：** OpenAI Responses API，仅在用户主动生成晨报或事件分析时调用。")
+    h1.metric("可用市场资产", market_ratio); h2.metric("可用宏观变量", macro_ratio); h3.metric("研究流事件", len(news))
     st.json(health)
     st.warning("免费数据可能延迟、缺失或临时不可用。本项目用于研究与信息整理，不构成投资建议。")

@@ -1,7 +1,6 @@
 from __future__ import annotations
 import html
 import re
-import requests
 
 HEADERS = {"User-Agent":"Mozilla/5.0 (GlobalMacroAIMonitor/0.7; research use)"}
 ENSO_URL = "https://www.cpc.ncep.noaa.gov/products/analysis_monitoring/enso_advisory/ensodisc.html"
@@ -16,6 +15,7 @@ def _clean_html(raw):
 
 def fetch_enso_summary():
     try:
+        import requests
         r = requests.get(ENSO_URL, headers=HEADERS, timeout=8)
         r.raise_for_status()
         text = _clean_html(r.text)

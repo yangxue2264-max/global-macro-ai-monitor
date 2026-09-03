@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from datetime import datetime
 from pathlib import Path
+from zoneinfo import ZoneInfo
 import json
 
 
@@ -25,15 +26,28 @@ def load_recent_briefs(base, limit=2):
     return rows
 
 
+def load_previous_brief(base):
+    """Return the most recent snapshot before today in China time."""
+    history = Path(base) / "data" / "brief_history"
+    today = datetime.now(ZoneInfo("Asia/Shanghai")).strftime("%Y-%m-%d")
+    files = sorted(history.glob("*.json"), reverse=True) if history.exists() else []
+    for path in files:
+        if path.stem >= today:
+            continue
+        payload = _read(path)
+        if payload and payload.get("generated_at") != "DEMO":
+            return payload
+    return None
+
+
 def memory_summary(base, current_brief):
-    recent = load_recent_briefs(base, limit=2)
-    if not recent:
+    previous = load_previous_brief(base)
+    if not previous:
         return {
             "available": False,
             "title": "研究记忆将在下一次自动晨报后启用",
             "items": ["系统会保存昨日状态、今日变化与前一叙事的验证结果。"],
         }
-    previous = recent[0]
     previous_brief = previous.get("brief", {})
     previous_regime = previous_brief.get("regime", "—")
     current_regime = current_brief.get("regime", "—")
