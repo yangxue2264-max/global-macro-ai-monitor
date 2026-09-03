@@ -1,0 +1,44 @@
+[
+  {
+    "ticker": "601138.SS",
+    "name": "工业富联",
+    "theme": "AI资本开支",
+    "overseas_assets": ["NVDA", "SMH", "VRT"],
+    "keywords": ["Foxconn Industrial Internet", "工业富联"]
+  },
+  {
+    "ticker": "300308.SZ",
+    "name": "中际旭创",
+    "theme": "AI资本开支",
+    "overseas_assets": ["NVDA", "AVGO", "SMH"],
+    "keywords": ["Zhongji Innolight", "中际旭创"]
+  },
+  {
+    "ticker": "300750.SZ",
+    "name": "宁德时代",
+    "theme": "贸易与关税",
+    "overseas_assets": ["NASDAQ", "TSM"],
+    "keywords": ["CATL", "宁德时代"]
+  },
+  {
+    "ticker": "002594.SZ",
+    "name": "比亚迪",
+    "theme": "贸易与关税",
+    "overseas_assets": ["NASDAQ", "BABA"],
+    "keywords": ["BYD", "比亚迪"]
+  },
+  {
+    "ticker": "601899.SS",
+    "name": "紫金矿业",
+    "theme": "黄金与美元信用",
+    "overseas_assets": ["GOLD", "COPPER", "DXY"],
+    "keywords": ["Zijin Mining", "紫金矿业"]
+  },
+  {
+    "ticker": "601088.SS",
+    "name": "中国神华",
+    "theme": "油价与通胀",
+    "overseas_assets": ["WTI", "BRENT", "XLE"],
+    "keywords": ["China Shenhua", "中国神华"]
+  }
+]

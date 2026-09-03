@@ -279,6 +279,51 @@
       "name": "北大荒",
       "ticker": "600598.SS",
       "theme": "种植业"
+    },
+    "PETROCHINA": {
+      "name": "中国石油",
+      "ticker": "601857.SS",
+      "theme": "石油上游"
+    },
+    "CNOOC": {
+      "name": "中国海油",
+      "ticker": "600938.SS",
+      "theme": "石油上游"
+    },
+    "SINOPEC": {
+      "name": "中国石化",
+      "ticker": "600028.SS",
+      "theme": "炼化"
+    },
+    "AIRCHINA": {
+      "name": "中国国航",
+      "ticker": "601111.SS",
+      "theme": "航空"
+    },
+    "SHANDONG_GOLD": {
+      "name": "山东黄金",
+      "ticker": "600547.SS",
+      "theme": "黄金矿业"
+    },
+    "ZHONGJIN_GOLD": {
+      "name": "中金黄金",
+      "ticker": "600489.SS",
+      "theme": "黄金矿业"
+    },
+    "LUXSHARE": {
+      "name": "立讯精密",
+      "ticker": "002475.SZ",
+      "theme": "消费电子"
+    },
+    "GOERTEK": {
+      "name": "歌尔股份",
+      "ticker": "002241.SZ",
+      "theme": "消费电子"
+    },
+    "DBN": {
+      "name": "大北农",
+      "ticker": "002385.SZ",
+      "theme": "种业"
     }
   },
   "macro_proxies": {

@@ -5,6 +5,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from io import StringIO
 from pathlib import Path
 from urllib.parse import quote, urlparse
+from zoneinfo import ZoneInfo
 import json
 import re
 import xml.etree.ElementTree as ET
@@ -286,9 +287,9 @@ def _parse_gdelt_seen(s):
     except Exception:
         return None
 
-def fetch_gdelt(query: str, maxrecords=15):
+def fetch_gdelt(query: str, maxrecords=15, timespan="24h"):
     endpoint = "https://api.gdeltproject.org/api/v2/doc/doc"
-    params = {"query":query, "mode":"ArtList", "maxrecords":maxrecords, "format":"json", "sort":"HybridRel"}
+    params = {"query":query, "mode":"ArtList", "maxrecords":maxrecords, "format":"json", "sort":"HybridRel", "timespan":timespan}
     try:
         r = requests.get(endpoint, params=params, headers=HEADERS, timeout=8)
         r.raise_for_status()
@@ -343,10 +344,14 @@ NEWS_QUERIES = {
 }
 
 def fetch_news_bundle(max_each=10):
+    china_now = datetime.now(ZoneInfo("Asia/Shanghai"))
+    lookback_days = 3 if china_now.weekday() == 0 else 1
+    gdelt_timespan = f"{lookback_days * 24}h"
+
     def one(bucket, q):
-        items=fetch_gdelt(q,maxrecords=max_each)
+        items=fetch_gdelt(q,maxrecords=max_each,timespan=gdelt_timespan)
         if not items:
-            items=fetch_google_news(q+" when:1d",limit=max_each)
+            items=fetch_google_news(q+f" when:{lookback_days}d",limit=max_each)
         for x in items:
             x["bucket"]=bucket
         return items

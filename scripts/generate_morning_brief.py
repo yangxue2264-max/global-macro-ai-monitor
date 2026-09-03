@@ -1,4 +1,4 @@
-"""Generate a deterministic pre-open snapshot for research memory.
+"""Generate the deterministic 09:00 A-share pre-open snapshot.
 
 Run from the repository root. The script does not call the OpenAI API.
 """
@@ -15,7 +15,6 @@ if str(BASE) not in sys.path:
     sys.path.insert(0, str(BASE))
 
 from core.briefing import morning_rule_brief
-from core.decision_engine import cross_market_gaps, evaluate_theses
 from core.evidence import add_evidence_scores
 from core.market_context import enrich_macro_with_market_proxies
 from core.providers import (
@@ -28,21 +27,15 @@ CN = ZoneInfo("Asia/Shanghai")
 
 def main():
     cfg = load_watchlist(BASE / "config" / "watchlist.json")
-    mapping = json.loads((BASE / "config" / "a_share_map.json").read_text(encoding="utf-8"))
-    thesis_cfg = json.loads((BASE / "config" / "thesis_book.json").read_text(encoding="utf-8"))
     universe = flatten_watchlist(cfg)
     market = fetch_market_snapshot(universe)
     macro = enrich_macro_with_market_proxies(fetch_fred_snapshot(), market, fetch_treasury_snapshot())
     news = add_evidence_scores(fetch_news_bundle(max_each=10))
     brief = morning_rule_brief(market, macro, news)
-    gaps = cross_market_gaps(market, news, mapping)
-    theses = evaluate_theses(market, macro, thesis_cfg)
     now = datetime.now(CN)
     payload = {
         "generated_at": now.isoformat(),
         "brief": brief,
-        "decision_gaps": gaps,
-        "theses": theses,
         "market": market,
         "macro": macro,
         "news": news[:30],
@@ -53,7 +46,7 @@ def main():
     rendered = json.dumps(payload, ensure_ascii=False, indent=2, allow_nan=True)
     (outdir / f"{day}.json").write_text(rendered, encoding="utf-8")
     (BASE / "data" / "latest_morning_brief.json").write_text(rendered, encoding="utf-8")
-    print(f"generated {day}: {len(news)} events, {len(gaps)} theme gaps")
+    print(f"generated {day}: {len(news)} events, {len(market)} market series")
 
 
 if __name__ == "__main__":
