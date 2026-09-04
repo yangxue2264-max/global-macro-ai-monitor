@@ -53,6 +53,9 @@ def normalize_watchlist_rows(rows: Iterable[dict], max_items: int = MAX_USER_STO
             continue
         name = str(row.get("name") or ticker).strip()
         theme = str(row.get("theme") or "待分类").strip()
+        relation = str(row.get("relation") or "同向").strip()
+        if relation not in {"同向", "反向", "需判断"}:
+            relation = "需判断"
         overseas_assets = _split_tokens(row.get("overseas_assets"))
         keywords = _split_tokens(row.get("keywords"))
         clean.append(
@@ -60,6 +63,7 @@ def normalize_watchlist_rows(rows: Iterable[dict], max_items: int = MAX_USER_STO
                 "ticker": ticker,
                 "name": name,
                 "theme": theme,
+                "relation": relation,
                 "overseas_assets": overseas_assets,
                 "keywords": keywords,
             }
@@ -95,6 +99,7 @@ def watchlist_editor_rows(rows: Iterable[dict]) -> list[dict]:
             "代码": row["ticker"].split(".")[0],
             "名称": row["name"],
             "映射主题": row["theme"],
+            "与海外关系": row.get("relation", "同向"),
             "海外代理": ", ".join(row.get("overseas_assets", [])),
             "新闻关键词": ", ".join(row.get("keywords", [])),
         }
@@ -108,6 +113,7 @@ def watchlist_from_editor(rows: Iterable[dict]) -> list[dict]:
             "ticker": row.get("代码", ""),
             "name": row.get("名称", ""),
             "theme": row.get("映射主题", ""),
+            "relation": row.get("与海外关系", "同向"),
             "overseas_assets": row.get("海外代理", ""),
             "keywords": row.get("新闻关键词", ""),
         }
@@ -177,13 +183,16 @@ def _targets_for_theme(theme: str, item: dict, mapping: dict, watchlist: list[di
     thematic = [stock for stock in watchlist if stock.get("theme") == theme and stock not in direct]
     targets = []
     for stock in direct + thematic:
-        targets.append({"ticker": stock["ticker"], "name": stock["name"], "source": "自选股", "role": "自选"})
+        relation = stock.get("relation", "同向")
+        beta = 1 if relation == "同向" else -1 if relation == "反向" else 0
+        targets.append({"ticker": stock["ticker"], "name": stock["name"], "source": "自选股", "role": "自选", "relation": relation, "beta": beta})
     for key in mapping.get("a_share_assets", []):
         market_item = market.get(key, {})
         ticker = market_item.get("ticker", key)
         name = market_item.get("name", key)
         if not any(row["ticker"] == ticker or row["name"] == name for row in targets):
-            targets.append({"ticker": ticker, "name": name, "source": "主题映射", "role": mapping.get("target_roles", {}).get(key, "")})
+            beta = mapping.get("target_beta", {}).get(key, 1)
+            targets.append({"ticker": ticker, "name": name, "source": "主题映射", "role": mapping.get("target_roles", {}).get(key, ""), "relation": "同向" if beta == 1 else "反向" if beta == -1 else "需判断", "beta": beta})
     return targets[:8]
 
 
@@ -238,6 +247,113 @@ def build_opportunity_signals(news: Iterable[dict], market: dict, mapping_cfg: d
         )
     signals.sort(key=lambda row: (row["category"] != "海外已验证", not row["watchlist_relevant"], -row["priority"]))
     return signals[:limit]
+
+
+def evaluate_auction_target(signal: dict, target: dict, quote: dict | None) -> dict:
+    if not quote or quote.get("status") != "ok":
+        return {"status": "竞价数据缺失", "gap_pct": None, "reason": "未取得有效集合竞价价格。", "source": ""}
+    gap = _finite(quote.get("gap_pct"))
+    if gap is None:
+        return {"status": "竞价数据缺失", "gap_pct": None, "reason": "集合竞价涨跌幅无法计算。", "source": quote.get("source", "")}
+    if signal.get("category") != "海外已验证":
+        return {"status": "等待海外确认", "gap_pct": gap, "reason": "新闻尚未获得海外价格确认，不用A股高开反推交易逻辑。", "source": quote.get("source", "")}
+    direction = signal.get("price_direction")
+    beta = int(target.get("beta", 1) or 0)
+    if direction not in {"上涨", "下跌"} or beta == 0:
+        return {"status": "方向需人工判断", "gap_pct": gap, "reason": "该主题包含受益端与受损端，需要先核对公司暴露。", "source": quote.get("source", "")}
+    overseas_sign = 1 if direction == "上涨" else -1
+    effective_gap = gap * overseas_sign * beta
+    overseas_abs = max([abs(_finite(row.get("move")) or 0) for row in signal.get("price_moves", [])] or [0])
+    priced_cutoff = max(1.0, overseas_abs * 0.45)
+    excessive_cutoff = max(3.0, overseas_abs * 1.25)
+    if effective_gap >= excessive_cutoff:
+        status = "过度定价/追高风险"
+        reason = f"竞价有效反应 {effective_gap:+.2f}%，已超过海外波动对应的高位阈值 {excessive_cutoff:.2f}%。"
+    elif effective_gap >= priced_cutoff:
+        status = "基本定价"
+        reason = f"竞价有效反应 {effective_gap:+.2f}%，已达到基本定价阈值 {priced_cutoff:.2f}%。"
+    elif effective_gap <= -0.5:
+        status = "A股不确认"
+        reason = f"竞价有效反应 {effective_gap:+.2f}%，方向与海外信号相反。"
+    else:
+        status = "仍有预期差"
+        reason = f"竞价有效反应仅 {effective_gap:+.2f}%，尚未达到基本定价阈值 {priced_cutoff:.2f}%。"
+    return {"status": status, "gap_pct": round(gap, 3), "effective_gap": round(effective_gap, 3), "reason": reason, "source": quote.get("source", ""), "price": quote.get("auction_price"), "pre_close": quote.get("pre_close")}
+
+
+def attach_auction_results(signals: Iterable[dict], quotes: dict) -> list[dict]:
+    enriched = []
+    for signal in signals:
+        row = dict(signal)
+        targets = []
+        for target in signal.get("targets", []):
+            item = dict(target)
+            item["auction"] = evaluate_auction_target(signal, target, quotes.get(target.get("ticker")))
+            targets.append(item)
+        row["targets"] = targets
+        enriched.append(row)
+    return enriched
+
+
+def auction_status_counts(signals: Iterable[dict]) -> dict:
+    counts = {"仍有预期差": 0, "基本定价": 0, "过度定价/追高风险": 0, "A股不确认": 0}
+    seen = set()
+    for signal in signals:
+        if signal.get("category") != "海外已验证":
+            continue
+        for target in signal.get("targets", []):
+            key = target.get("ticker")
+            status = target.get("auction", {}).get("status")
+            if key not in seen and status in counts:
+                counts[status] += 1
+                seen.add(key)
+    return counts
+
+
+def rerank_signals_after_auction(signals: Iterable[dict]) -> list[dict]:
+    """Put verified opportunities with residual gap first after the auction snapshot."""
+    status_rank = {
+        "仍有预期差": 0,
+        "方向需人工判断": 1,
+        "A股不确认": 2,
+        "基本定价": 3,
+        "过度定价/追高风险": 4,
+        "竞价数据缺失": 5,
+        "等待海外确认": 6,
+    }
+
+    def key(signal):
+        target_ranks = [
+            status_rank.get(target.get("auction", {}).get("status"), 7)
+            for target in signal.get("targets", [])
+        ]
+        best_target_rank = min(target_ranks or [7])
+        return (
+            signal.get("category") != "海外已验证",
+            best_target_rank,
+            not signal.get("watchlist_relevant", False),
+            -int(signal.get("priority", 0)),
+        )
+
+    return sorted((dict(signal) for signal in signals), key=key)
+
+
+def attach_auction_to_alerts(alerts: Iterable[dict], signals: Iterable[dict]) -> list[dict]:
+    by_ticker = {}
+    for signal in signals:
+        if signal.get("category") != "海外已验证":
+            continue
+        for target in signal.get("targets", []):
+            ticker = target.get("ticker")
+            assessment = target.get("auction", {})
+            if ticker and ticker not in by_ticker and assessment.get("status"):
+                by_ticker[ticker] = {**assessment, "signal_title": signal.get("title", ""), "signal_priority": signal.get("priority", 0)}
+    output = []
+    for alert in alerts:
+        row = dict(alert)
+        row["auction"] = by_ticker.get(alert.get("ticker"), {"status": "无对应海外验证信号", "gap_pct": None, "reason": "当前没有可用于第二阶段判断的海外已验证事件。", "source": ""})
+        output.append(row)
+    return output
 
 
 def build_watchlist_alerts(watchlist: Iterable[dict], news: Iterable[dict], market: dict, mapping_cfg: dict) -> list[dict]:

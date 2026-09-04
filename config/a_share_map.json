@@ -15,6 +15,7 @@
     ],
     "a_share_assets": ["FOXCONN", "ZHONGJI", "EOPTOLINK", "WUS", "XD", "TBEA", "ZIJIN"],
     "target_roles": {"FOXCONN": "算力", "ZHONGJI": "光模块", "EOPTOLINK": "光模块", "WUS": "PCB", "XD": "电网", "TBEA": "电网", "ZIJIN": "铜"},
+    "target_beta": {"FOXCONN": 1, "ZHONGJI": 1, "EOPTOLINK": 1, "WUS": 1, "XD": 1, "TBEA": 1, "ZIJIN": 1},
     "a_share_themes": [
       "AI服务器/算力基础设施",
       "光模块/高速互联",
@@ -45,6 +46,8 @@
       "GOLD"
     ],
     "a_share_assets": ["CSI300", "HSI", "BABA", "ZIJIN"],
+    "target_roles": {"CSI300": "宽基", "HSI": "港股验证", "BABA": "中概验证", "ZIJIN": "资源品"},
+    "target_beta": {"CSI300": 1, "HSI": 1, "BABA": 1, "ZIJIN": 0},
     "a_share_themes": [
       "出口制造",
       "港股互联网/成长",
@@ -75,6 +78,7 @@
     ],
     "a_share_assets": ["PETROCHINA", "CNOOC", "SINOPEC", "SHENHUA", "AIRCHINA"],
     "target_roles": {"PETROCHINA": "上游受益", "CNOOC": "上游受益", "SINOPEC": "炼化分化", "SHENHUA": "能源替代", "AIRCHINA": "成本风险"},
+    "target_beta": {"PETROCHINA": 1, "CNOOC": 1, "SINOPEC": 0, "SHENHUA": 1, "AIRCHINA": -1},
     "a_share_themes": [
       "石油石化",
       "航空机场",
@@ -106,6 +110,7 @@
     ],
     "a_share_assets": ["LONGPING", "BEIDAHUANG", "DBN"],
     "target_roles": {"LONGPING": "种业", "BEIDAHUANG": "种植", "DBN": "种业/饲料"},
+    "target_beta": {"LONGPING": 0, "BEIDAHUANG": 1, "DBN": 0},
     "a_share_themes": [
       "种业",
       "种植业",
@@ -136,6 +141,7 @@
     ],
     "a_share_assets": ["ZIJIN", "SHANDONG_GOLD", "ZHONGJIN_GOLD"],
     "target_roles": {"ZIJIN": "铜金", "SHANDONG_GOLD": "黄金矿业", "ZHONGJIN_GOLD": "黄金矿业"},
+    "target_beta": {"ZIJIN": 1, "SHANDONG_GOLD": 1, "ZHONGJIN_GOLD": 1},
     "a_share_themes": [
       "黄金矿业",
       "贵金属",
@@ -158,6 +164,7 @@
     "global_assets": ["TSM", "BABA", "NASDAQ"],
     "a_share_assets": ["FOXCONN", "ZHONGJI", "WUS", "LUXSHARE", "GOERTEK", "CSI300"],
     "target_roles": {"FOXCONN": "出口制造", "ZHONGJI": "光模块", "WUS": "PCB", "LUXSHARE": "消费电子", "GOERTEK": "消费电子", "CSI300": "宽基风险"},
+    "target_beta": {"FOXCONN": 0, "ZHONGJI": 0, "WUS": 0, "LUXSHARE": 0, "GOERTEK": 0, "CSI300": 0},
     "a_share_themes": ["出口制造", "半导体设备与材料", "AI服务器", "消费电子"],
     "logic": "关税/出口管制 → 数量与成本 → 供应链迁移和企业利润 → 人民币、海外中资股与A股出口链",
     "direction_note": "同一政策会产生受益与受损两侧；海外中资股或供应链代理下跌时，先按风险提示处理。",
@@ -170,6 +177,8 @@
     "trigger_assets": ["USDCNH", "HSI"],
     "global_assets": ["BABA", "HSI", "COPPER"],
     "a_share_assets": ["CSI300", "SSE", "CHINEXT", "MOUTAI"],
+    "target_roles": {"CSI300": "宽基", "SSE": "宽基", "CHINEXT": "成长", "MOUTAI": "消费"},
+    "target_beta": {"CSI300": 1, "SSE": 1, "CHINEXT": 1, "MOUTAI": 1},
     "a_share_themes": ["宽基指数", "消费", "互联网", "顺周期与有色"],
     "logic": "政策与增长预期 → 人民币、信用与商品需求 → 港股风险偏好 → A股宽基和顺周期行业",
     "direction_note": "港股、人民币和铜共同改善时正向意义更强；只有单一资产上涨时仍需等待A股确认。",

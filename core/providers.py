@@ -374,6 +374,164 @@ def fetch_news_bundle(max_each=10):
         seen.add(key); dedup.append(x)
     return dedup
 
+
+def _auction_ticker(value):
+    ticker = str(value or "").strip().upper()
+    return ticker.replace(".SH", ".SS")
+
+
+def _quote_symbol(ticker):
+    ticker = _auction_ticker(ticker)
+    code = ticker.split(".")[0]
+    prefix = "sh" if ticker.endswith(".SS") else "bj" if ticker.endswith(".BJ") else "sz"
+    return f"{prefix}{code}"
+
+
+def _auction_row(ticker, name, price, pre_close, date="", time="", source="", **extra):
+    try:
+        price, pre_close = float(price), float(pre_close)
+        if price <= 0 or pre_close <= 0:
+            return None
+        return {
+            "ticker": _auction_ticker(ticker),
+            "name": name or _auction_ticker(ticker),
+            "auction_price": price,
+            "pre_close": pre_close,
+            "gap_pct": round((price / pre_close - 1) * 100, 3),
+            "date": str(date or ""),
+            "time": str(time or ""),
+            "source": source,
+            "status": "ok",
+            **extra,
+        }
+    except (TypeError, ValueError, ZeroDivisionError):
+        return None
+
+
+def fetch_tushare_auction(tickers, trade_date, token=""):
+    """Official Tushare stk_auction data; requires the separate auction permission."""
+    if not token:
+        return {}
+    endpoint = "https://api.tushare.pro"
+    payload = {
+        "api_name": "stk_auction",
+        "token": token,
+        "params": {"trade_date": str(trade_date).replace("-", "")},
+        "fields": "ts_code,trade_date,vol,price,amount,pre_close,turnover_rate,volume_ratio",
+    }
+    try:
+        response = requests.post(endpoint, json=payload, headers=HEADERS, timeout=20)
+        response.raise_for_status()
+        result = response.json()
+        if result.get("code") not in (0, None):
+            return {}
+        data = result.get("data") or {}
+        fields = data.get("fields") or []
+        wanted = {_auction_ticker(value) for value in tickers}
+        out = {}
+        for values in data.get("items") or []:
+            item = dict(zip(fields, values))
+            ticker = _auction_ticker(item.get("ts_code"))
+            if ticker not in wanted:
+                continue
+            row = _auction_row(
+                ticker, ticker, item.get("price"), item.get("pre_close"),
+                date=item.get("trade_date"), time="09:25", source="Tushare stk_auction",
+                volume=item.get("vol"), amount=item.get("amount"),
+                turnover_rate=item.get("turnover_rate"), volume_ratio=item.get("volume_ratio"),
+            )
+            if row:
+                out[ticker] = row
+        return out
+    except Exception:
+        return {}
+
+
+def _parse_sina_auction(text, symbol_to_ticker):
+    out = {}
+    for line in (text or "").splitlines():
+        match = re.search(r"var hq_str_([a-z]{2}\d+)=\"(.*)\";", line.strip())
+        if not match:
+            continue
+        symbol, body = match.groups()
+        fields = body.split(",")
+        if len(fields) < 32:
+            continue
+        ticker = symbol_to_ticker.get(symbol)
+        row = _auction_row(
+            ticker, fields[0], fields[1], fields[2], date=fields[30], time=fields[31],
+            source="Sina public quote fallback", volume=fields[8] or None, amount=fields[9] or None,
+        )
+        if row:
+            out[ticker] = row
+    return out
+
+
+def fetch_sina_auction(tickers):
+    symbols = {_quote_symbol(ticker): _auction_ticker(ticker) for ticker in tickers}
+    if not symbols:
+        return {}
+    try:
+        response = requests.get(
+            "https://hq.sinajs.cn/list=" + ",".join(symbols),
+            headers={**HEADERS, "Referer": "https://finance.sina.com.cn/"}, timeout=12,
+        )
+        response.raise_for_status()
+        response.encoding = "gbk"
+        return _parse_sina_auction(response.text, symbols)
+    except Exception:
+        return {}
+
+
+def _parse_tencent_auction(text, symbol_to_ticker):
+    out = {}
+    for line in (text or "").split(";"):
+        match = re.search(r"v_([a-z]{2}\d+)=\"(.*)\"", line.strip())
+        if not match:
+            continue
+        symbol, body = match.groups()
+        fields = body.split("~")
+        if len(fields) < 31:
+            continue
+        ticker = symbol_to_ticker.get(symbol)
+        stamp = fields[30] if len(fields) > 30 else ""
+        row = _auction_row(
+            ticker, fields[1], fields[5], fields[4],
+            date=stamp[:8], time=stamp[8:14], source="Tencent public quote fallback",
+            volume=fields[6] or None,
+        )
+        if row:
+            out[ticker] = row
+    return out
+
+
+def fetch_tencent_auction(tickers):
+    symbols = {_quote_symbol(ticker): _auction_ticker(ticker) for ticker in tickers}
+    if not symbols:
+        return {}
+    try:
+        response = requests.get(
+            "https://qt.gtimg.cn/q=" + ",".join(symbols), headers=HEADERS, timeout=12,
+        )
+        response.raise_for_status()
+        response.encoding = "gbk"
+        return _parse_tencent_auction(response.text, symbols)
+    except Exception:
+        return {}
+
+
+def fetch_auction_quotes(tickers, trade_date, tushare_token=""):
+    """Fetch the 09:25 opening-auction price with official-first fallbacks."""
+    wanted = sorted({ticker for value in tickers if value for ticker in [_auction_ticker(value)] if ticker.endswith((".SS", ".SZ", ".BJ"))})
+    out = fetch_tushare_auction(wanted, trade_date, token=tushare_token)
+    missing = [ticker for ticker in wanted if ticker not in out]
+    if missing:
+        out.update(fetch_sina_auction(missing))
+    missing = [ticker for ticker in wanted if ticker not in out]
+    if missing:
+        out.update(fetch_tencent_auction(missing))
+    return out
+
 def data_health(market, macro, news):
     total_m = len(market)
     live_m = sum(1 for v in market.values() if v.get("status")=="ok")

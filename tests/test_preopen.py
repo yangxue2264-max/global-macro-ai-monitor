@@ -1,10 +1,14 @@
 from core.preopen import (
+    attach_auction_results,
+    auction_status_counts,
     build_opportunity_signals,
     build_watchlist_alerts,
     decode_watchlist,
     encode_watchlist,
+    evaluate_auction_target,
     normalize_a_share_ticker,
     normalize_watchlist_rows,
+    rerank_signals_after_auction,
 )
 
 
@@ -88,5 +92,29 @@ alerts = build_watchlist_alerts(watchlist, news, market, mapping)
 assert alerts[0]["name"] == "工业富联"
 assert alerts[0]["level"] == "重点异动"
 assert any(row["name"] == "紫金矿业" and row["level"] == "需要关注" for row in alerts)
+
+signal = signals[0]
+target = signal["targets"][0]
+base_quote = {"status": "ok", "source": "test", "auction_price": 100.4, "pre_close": 100}
+assert evaluate_auction_target(signal, target, {**base_quote, "gap_pct": 0.4})["status"] == "仍有预期差"
+assert evaluate_auction_target(signal, target, {**base_quote, "gap_pct": 2.0})["status"] == "基本定价"
+assert evaluate_auction_target(signal, target, {**base_quote, "gap_pct": 5.0})["status"] == "过度定价/追高风险"
+assert evaluate_auction_target(signal, target, {**base_quote, "gap_pct": -1.0})["status"] == "A股不确认"
+assert evaluate_auction_target(signal, {**target, "beta": -1}, {**base_quote, "gap_pct": -2.0})["status"] == "基本定价"
+
+with_auction = attach_auction_results(signals, {"601138.SS": {**base_quote, "gap_pct": 0.4}})
+counts = auction_status_counts(with_auction)
+assert counts["仍有预期差"] == 1
+
+priced = attach_auction_results([signals[0]], {"601138.SS": {**base_quote, "gap_pct": 2.0}})[0]
+residual = attach_auction_results([signals[0]], {"601138.SS": {**base_quote, "gap_pct": 0.4}})[0]
+priced["title"] = "already priced"
+residual["title"] = "residual gap"
+assert rerank_signals_after_auction([priced, residual])[0]["title"] == "residual gap"
+
+duplicate = dict(residual)
+duplicate["title"] = "same stock, second story"
+deduplicated_counts = auction_status_counts([residual, duplicate])
+assert deduplicated_counts["仍有预期差"] == 1
 
 print("PREOPEN_TEST_OK")
