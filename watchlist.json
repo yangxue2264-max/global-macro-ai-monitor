@@ -1,0 +1,351 @@
+{
+  "indices": {
+    "SP500": {
+      "name": "S&P 500",
+      "ticker": "^GSPC",
+      "region": "US"
+    },
+    "NASDAQ": {
+      "name": "Nasdaq 100",
+      "ticker": "^NDX",
+      "region": "US"
+    },
+    "RUSSELL": {
+      "name": "Russell 2000",
+      "ticker": "^RUT",
+      "region": "US"
+    },
+    "CSI300": {
+      "name": "沪深300",
+      "ticker": "000300.SS",
+      "region": "CN"
+    },
+    "SSE": {
+      "name": "上证综指",
+      "ticker": "000001.SS",
+      "region": "CN"
+    },
+    "CHINEXT": {
+      "name": "创业板指",
+      "ticker": "399006.SZ",
+      "region": "CN"
+    },
+    "HSI": {
+      "name": "恒生指数",
+      "ticker": "^HSI",
+      "region": "HK"
+    },
+    "NIKKEI": {
+      "name": "日经225",
+      "ticker": "^N225",
+      "region": "JP"
+    },
+    "KOSPI": {
+      "name": "韩国KOSPI",
+      "ticker": "^KS11",
+      "region": "KR"
+    },
+    "STOXX50": {
+      "name": "Euro Stoxx 50",
+      "ticker": "^STOXX50E",
+      "region": "EU"
+    }
+  },
+  "fx": {
+    "DXY": {
+      "name": "美元指数",
+      "ticker": "DX-Y.NYB"
+    },
+    "USDCNH": {
+      "name": "USD/CNY（人民币代理）",
+      "ticker": "CNY=X"
+    },
+    "USDJPY": {
+      "name": "USD/JPY",
+      "ticker": "JPY=X"
+    },
+    "EURUSD": {
+      "name": "EUR/USD",
+      "ticker": "EURUSD=X"
+    }
+  },
+  "commodities": {
+    "GOLD": {
+      "name": "黄金",
+      "ticker": "GC=F"
+    },
+    "SILVER": {
+      "name": "白银",
+      "ticker": "SI=F"
+    },
+    "COPPER": {
+      "name": "铜",
+      "ticker": "HG=F"
+    },
+    "WTI": {
+      "name": "WTI原油",
+      "ticker": "CL=F"
+    },
+    "BRENT": {
+      "name": "Brent原油",
+      "ticker": "BZ=F"
+    },
+    "NATGAS": {
+      "name": "美国天然气",
+      "ticker": "NG=F"
+    },
+    "CORN": {
+      "name": "玉米",
+      "ticker": "ZC=F"
+    },
+    "SOY": {
+      "name": "大豆",
+      "ticker": "ZS=F"
+    }
+  },
+  "crypto": {
+    "BTC": {
+      "name": "Bitcoin",
+      "ticker": "BTC-USD"
+    }
+  },
+  "stocks": {
+    "NVDA": {
+      "name": "NVIDIA",
+      "ticker": "NVDA",
+      "theme": "AI算力"
+    },
+    "AVGO": {
+      "name": "Broadcom",
+      "ticker": "AVGO",
+      "theme": "AI算力"
+    },
+    "AMD": {
+      "name": "AMD",
+      "ticker": "AMD",
+      "theme": "AI算力"
+    },
+    "MSFT": {
+      "name": "Microsoft",
+      "ticker": "MSFT",
+      "theme": "Hyperscaler"
+    },
+    "GOOGL": {
+      "name": "Alphabet",
+      "ticker": "GOOGL",
+      "theme": "Hyperscaler"
+    },
+    "AMZN": {
+      "name": "Amazon",
+      "ticker": "AMZN",
+      "theme": "Hyperscaler"
+    },
+    "META": {
+      "name": "Meta",
+      "ticker": "META",
+      "theme": "Hyperscaler"
+    },
+    "ORCL": {
+      "name": "Oracle",
+      "ticker": "ORCL",
+      "theme": "AI云"
+    },
+    "TSM": {
+      "name": "TSMC ADR",
+      "ticker": "TSM",
+      "theme": "半导体制造"
+    },
+    "ASML": {
+      "name": "ASML",
+      "ticker": "ASML",
+      "theme": "半导体设备"
+    },
+    "VRT": {
+      "name": "Vertiv",
+      "ticker": "VRT",
+      "theme": "数据中心电力"
+    },
+    "TCEHY": {
+      "name": "Tencent ADR",
+      "ticker": "TCEHY",
+      "theme": "中国互联网"
+    },
+    "BABA": {
+      "name": "Alibaba ADR",
+      "ticker": "BABA",
+      "theme": "中国互联网"
+    },
+    "PDD": {
+      "name": "PDD",
+      "ticker": "PDD",
+      "theme": "中国互联网"
+    },
+    "CATL": {
+      "name": "宁德时代",
+      "ticker": "300750.SZ",
+      "theme": "新能源"
+    },
+    "BYD": {
+      "name": "比亚迪",
+      "ticker": "002594.SZ",
+      "theme": "新能源"
+    },
+    "FOXCONN": {
+      "name": "工业富联",
+      "ticker": "601138.SS",
+      "theme": "AI服务器"
+    },
+    "MOUTAI": {
+      "name": "贵州茅台",
+      "ticker": "600519.SS",
+      "theme": "消费"
+    },
+    "SMH": {
+      "name": "VanEck Semiconductor ETF",
+      "ticker": "SMH",
+      "theme": "半导体"
+    },
+    "IGV": {
+      "name": "iShares Expanded Tech-Software ETF",
+      "ticker": "IGV",
+      "theme": "软件"
+    },
+    "XLU": {
+      "name": "Utilities Select Sector SPDR",
+      "ticker": "XLU",
+      "theme": "电力公用事业"
+    },
+    "GRID": {
+      "name": "First Trust Smart Grid ETF",
+      "ticker": "GRID",
+      "theme": "电网"
+    },
+    "DLR": {
+      "name": "Digital Realty",
+      "ticker": "DLR",
+      "theme": "数据中心REIT"
+    },
+    "XLE": {
+      "name": "Energy Select Sector SPDR",
+      "ticker": "XLE",
+      "theme": "能源"
+    },
+    "ZHONGJI": {
+      "name": "中际旭创",
+      "ticker": "300308.SZ",
+      "theme": "AI光模块"
+    },
+    "EOPTOLINK": {
+      "name": "新易盛",
+      "ticker": "300502.SZ",
+      "theme": "AI光模块"
+    },
+    "WUS": {
+      "name": "沪电股份",
+      "ticker": "002463.SZ",
+      "theme": "AI PCB"
+    },
+    "XD": {
+      "name": "中国西电",
+      "ticker": "601179.SS",
+      "theme": "电网设备"
+    },
+    "TBEA": {
+      "name": "特变电工",
+      "ticker": "600089.SS",
+      "theme": "电网/能源"
+    },
+    "ZIJIN": {
+      "name": "紫金矿业",
+      "ticker": "601899.SS",
+      "theme": "铜金"
+    },
+    "CMOC": {
+      "name": "洛阳钼业",
+      "ticker": "603993.SS",
+      "theme": "铜钴"
+    },
+    "SHENHUA": {
+      "name": "中国神华",
+      "ticker": "601088.SS",
+      "theme": "能源"
+    },
+    "LONGPING": {
+      "name": "隆平高科",
+      "ticker": "000998.SZ",
+      "theme": "种业"
+    },
+    "BEIDAHUANG": {
+      "name": "北大荒",
+      "ticker": "600598.SS",
+      "theme": "种植业"
+    },
+    "PETROCHINA": {
+      "name": "中国石油",
+      "ticker": "601857.SS",
+      "theme": "石油上游"
+    },
+    "CNOOC": {
+      "name": "中国海油",
+      "ticker": "600938.SS",
+      "theme": "石油上游"
+    },
+    "SINOPEC": {
+      "name": "中国石化",
+      "ticker": "600028.SS",
+      "theme": "炼化"
+    },
+    "AIRCHINA": {
+      "name": "中国国航",
+      "ticker": "601111.SS",
+      "theme": "航空"
+    },
+    "SHANDONG_GOLD": {
+      "name": "山东黄金",
+      "ticker": "600547.SS",
+      "theme": "黄金矿业"
+    },
+    "ZHONGJIN_GOLD": {
+      "name": "中金黄金",
+      "ticker": "600489.SS",
+      "theme": "黄金矿业"
+    },
+    "LUXSHARE": {
+      "name": "立讯精密",
+      "ticker": "002475.SZ",
+      "theme": "消费电子"
+    },
+    "GOERTEK": {
+      "name": "歌尔股份",
+      "ticker": "002241.SZ",
+      "theme": "消费电子"
+    },
+    "DBN": {
+      "name": "大北农",
+      "ticker": "002385.SZ",
+      "theme": "种业"
+    }
+  },
+  "macro_proxies": {
+    "US10Y_PROXY": {
+      "name": "美国10Y市场代理",
+      "ticker": "^TNX",
+      "theme": "利率代理"
+    },
+    "VIX_MARKET": {
+      "name": "VIX市场代理",
+      "ticker": "^VIX",
+      "theme": "风险代理"
+    },
+    "HYG": {
+      "name": "美国高收益债ETF",
+      "ticker": "HYG",
+      "theme": "信用代理"
+    },
+    "LQD": {
+      "name": "美国投资级债ETF",
+      "ticker": "LQD",
+      "theme": "信用代理"
+    }
+  }
+}

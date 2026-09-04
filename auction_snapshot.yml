@@ -1,0 +1,32 @@
+name: Daily 09:27 A-share auction snapshot
+
+on:
+  schedule:
+    # 01:27 UTC = 09:27 Asia/Shanghai. Tushare publishes stk_auction after 09:26.
+    - cron: "27 1 * * 1-5"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  auction-snapshot:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Generate opening-auction snapshot
+        env:
+          TUSHARE_TOKEN: ${{ secrets.TUSHARE_TOKEN }}
+        run: python scripts/generate_auction_snapshot.py
+      - name: Commit snapshot when changed
+        run: |
+          git config user.name "macro-monitor-bot"
+          git config user.email "macro-monitor-bot@users.noreply.github.com"
+          git add data/auction_history data/latest_auction_snapshot.json
+          git diff --cached --quiet || git commit -m "data: daily opening-auction snapshot"
+          git push

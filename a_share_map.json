@@ -1,0 +1,188 @@
+{
+  "AI资本开支": {
+    "question": "AI Capex是否已经从芯片扩散到电力、电网与A股硬件链？",
+    "china_relevance": 3,
+    "trigger_assets": [
+      "NASDAQ",
+      "COPPER",
+      "NATGAS"
+    ],
+    "global_assets": [
+      "NVDA",
+      "AVGO",
+      "VRT",
+      "TSM"
+    ],
+    "a_share_assets": ["FOXCONN", "ZHONGJI", "EOPTOLINK", "WUS", "XD", "TBEA", "ZIJIN"],
+    "target_roles": {"FOXCONN": "算力", "ZHONGJI": "光模块", "EOPTOLINK": "光模块", "WUS": "PCB", "XD": "电网", "TBEA": "电网", "ZIJIN": "铜"},
+    "target_beta": {"FOXCONN": 1, "ZHONGJI": 1, "EOPTOLINK": 1, "WUS": 1, "XD": 1, "TBEA": 1, "ZIJIN": 1},
+    "a_share_themes": [
+      "AI服务器/算力基础设施",
+      "光模块/高速互联",
+      "PCB",
+      "电网设备/变压器",
+      "铜产业链"
+    ],
+    "logic": "海外AI Capex → 算力与数据中心需求 → 服务器/网络/供电/铜 → A股硬件和电力基础设施映射",
+    "direction_note": "海外AI与半导体代理上涨通常是A股硬件链的正向线索；下跌则优先作为风险提示。",
+    "verify": [
+      "Hyperscaler Capex指引",
+      "GPU/ASIC出货",
+      "数据中心并网",
+      "铜库存与升贴水"
+    ],
+    "invalidation": "海外芯片上涨但电力、铜和A股硬件链持续不确认，或Hyperscaler下修Capex。"
+  },
+  "流动性与信用": {
+    "question": "美元与实际利率的变化是否会改变A股风格和外部流动性？",
+    "china_relevance": 3,
+    "trigger_assets": [
+      "DXY",
+      "USDCNH"
+    ],
+    "global_assets": [
+      "SP500",
+      "BTC",
+      "GOLD"
+    ],
+    "a_share_assets": ["CSI300", "HSI", "BABA", "ZIJIN"],
+    "target_roles": {"CSI300": "宽基", "HSI": "港股验证", "BABA": "中概验证", "ZIJIN": "资源品"},
+    "target_beta": {"CSI300": 1, "HSI": 1, "BABA": 1, "ZIJIN": 0},
+    "a_share_themes": [
+      "出口制造",
+      "港股互联网/成长",
+      "有色金属",
+      "外资敏感大盘股"
+    ],
+    "logic": "美元/实际利率 → 全球金融条件与人民币 → 外资风险偏好/估值贴现率/商品定价 → A股风格与行业相对表现",
+    "direction_note": "必须结合美元和人民币判断：风险资产上涨但美元同步走强时，不直接视为A股正向信号。",
+    "verify": [
+      "USD/CNY与离岸人民币",
+      "美国实际利率",
+      "北向/互联互通资金（若有）",
+      "离岸流动性"
+    ],
+    "invalidation": "美元/实际利率变化没有得到人民币、信用和A股风格的共同确认。"
+  },
+  "油价与通胀": {
+    "question": "油价异动是供给风险、增长信号，还是短暂噪声？",
+    "china_relevance": 3,
+    "trigger_assets": [
+      "WTI",
+      "BRENT"
+    ],
+    "global_assets": [
+      "WTI",
+      "BRENT",
+      "XLE"
+    ],
+    "a_share_assets": ["PETROCHINA", "CNOOC", "SINOPEC", "SHENHUA", "AIRCHINA"],
+    "target_roles": {"PETROCHINA": "上游受益", "CNOOC": "上游受益", "SINOPEC": "炼化分化", "SHENHUA": "能源替代", "AIRCHINA": "成本风险"},
+    "target_beta": {"PETROCHINA": 1, "CNOOC": 1, "SINOPEC": 0, "SHENHUA": 1, "AIRCHINA": -1},
+    "a_share_themes": [
+      "石油石化",
+      "航空机场",
+      "化工",
+      "煤炭/天然气",
+      "物流运输"
+    ],
+    "logic": "原油 → 能源与运输成本 → 通胀/利润率/政策预期 → 上游资源与成本敏感行业分化",
+    "direction_note": "油价与能源股上涨通常利好上游、压制航空和部分化工下游；必须区分受益与受损标的。",
+    "verify": [
+      "OPEC+",
+      "库存",
+      "裂解价差",
+      "运价",
+      "通胀预期"
+    ],
+    "invalidation": "期限结构、库存、能源股与通胀预期均不确认油价新闻。"
+  },
+  "天气与农业": {
+    "question": "天气风险是否已从气候概率传导到农产品与A股农业链？",
+    "china_relevance": 2,
+    "trigger_assets": [
+      "CORN",
+      "SOY"
+    ],
+    "global_assets": [
+      "CORN",
+      "SOY"
+    ],
+    "a_share_assets": ["LONGPING", "BEIDAHUANG", "DBN"],
+    "target_roles": {"LONGPING": "种业", "BEIDAHUANG": "种植", "DBN": "种业/饲料"},
+    "target_beta": {"LONGPING": 0, "BEIDAHUANG": 1, "DBN": 0},
+    "a_share_themes": [
+      "种业",
+      "种植业",
+      "化肥",
+      "农产品加工",
+      "水电（区域性）"
+    ],
+    "logic": "ENSO/极端天气 → 单产与供给 → 农产品价格/食品通胀 → 农业链利润与政策预期",
+    "direction_note": "农产品上涨是供给收紧线索，但种业、种植、加工企业受益方向不同，不能统一解释为利好。",
+    "verify": [
+      "ENSO概率",
+      "主产区天气",
+      "USDA/库存消费比",
+      "国内农产品现货与期货"
+    ],
+    "invalidation": "主产区天气、USDA供需与农产品价格未出现一致变化。"
+  },
+  "黄金与美元信用": {
+    "question": "黄金上涨由实际利率、避险还是储备需求主导？",
+    "china_relevance": 2,
+    "trigger_assets": [
+      "GOLD",
+      "DXY"
+    ],
+    "global_assets": [
+      "GOLD",
+      "DXY"
+    ],
+    "a_share_assets": ["ZIJIN", "SHANDONG_GOLD", "ZHONGJIN_GOLD"],
+    "target_roles": {"ZIJIN": "铜金", "SHANDONG_GOLD": "黄金矿业", "ZHONGJIN_GOLD": "黄金矿业"},
+    "target_beta": {"ZIJIN": 1, "SHANDONG_GOLD": 1, "ZHONGJIN_GOLD": 1},
+    "a_share_themes": [
+      "黄金矿业",
+      "贵金属",
+      "资源品"
+    ],
+    "logic": "实际利率/美元/央行购金/地缘风险 → 黄金定价 → 国内金价与矿企盈利弹性",
+    "direction_note": "黄金上涨通常是黄金矿业股的正向线索；若仅美元波动而黄金不确认，应降低权重。",
+    "verify": [
+      "实际利率",
+      "美元",
+      "央行购金",
+      "黄金ETF流量"
+    ],
+    "invalidation": "黄金与矿业股不确认，且实际利率、美元与ETF流量均指向相反方向。"
+  },
+  "贸易与关税": {
+    "question": "新的贸易与出口限制是否正在改变中美资产的相对定价？",
+    "china_relevance": 3,
+    "trigger_assets": ["USDCNH", "TSM"],
+    "global_assets": ["TSM", "BABA", "NASDAQ"],
+    "a_share_assets": ["FOXCONN", "ZHONGJI", "WUS", "LUXSHARE", "GOERTEK", "CSI300"],
+    "target_roles": {"FOXCONN": "出口制造", "ZHONGJI": "光模块", "WUS": "PCB", "LUXSHARE": "消费电子", "GOERTEK": "消费电子", "CSI300": "宽基风险"},
+    "target_beta": {"FOXCONN": 0, "ZHONGJI": 0, "WUS": 0, "LUXSHARE": 0, "GOERTEK": 0, "CSI300": 0},
+    "a_share_themes": ["出口制造", "半导体设备与材料", "AI服务器", "消费电子"],
+    "logic": "关税/出口管制 → 数量与成本 → 供应链迁移和企业利润 → 人民币、海外中资股与A股出口链",
+    "direction_note": "同一政策会产生受益与受损两侧；海外中资股或供应链代理下跌时，先按风险提示处理。",
+    "verify": ["政策原文与生效日期", "企业收入暴露", "人民币与相关行业相对收益", "供应链订单迁移"],
+    "invalidation": "政策细节没有实质增量，或汇率、订单与相关资产均未确认。"
+  },
+  "中国增长与政策": {
+    "question": "中国政策信号是否得到人民币、港股和A股宽基共同确认？",
+    "china_relevance": 3,
+    "trigger_assets": ["USDCNH", "HSI"],
+    "global_assets": ["BABA", "HSI", "COPPER"],
+    "a_share_assets": ["CSI300", "SSE", "CHINEXT", "MOUTAI"],
+    "target_roles": {"CSI300": "宽基", "SSE": "宽基", "CHINEXT": "成长", "MOUTAI": "消费"},
+    "target_beta": {"CSI300": 1, "SSE": 1, "CHINEXT": 1, "MOUTAI": 1},
+    "a_share_themes": ["宽基指数", "消费", "互联网", "顺周期与有色"],
+    "logic": "政策与增长预期 → 人民币、信用与商品需求 → 港股风险偏好 → A股宽基和顺周期行业",
+    "direction_note": "港股、人民币和铜共同改善时正向意义更强；只有单一资产上涨时仍需等待A股确认。",
+    "verify": ["政策落地规模", "人民币与信用数据", "港股成交与互联网股", "A股宽基与顺周期扩散"],
+    "invalidation": "政策只停留在标题，人民币、信用、港股和A股未形成共同确认。"
+  }
+}

@@ -16,11 +16,15 @@ from core.demo import demo_macro, demo_market, demo_news
 from core.evidence import add_evidence_scores
 from core.market_context import enrich_macro_with_market_proxies
 from core.preopen import (
+    attach_auction_results,
+    attach_auction_to_alerts,
+    auction_status_counts,
     build_opportunity_signals,
     build_watchlist_alerts,
     decode_watchlist,
     encode_watchlist,
     normalize_watchlist_rows,
+    rerank_signals_after_auction,
     watchlist_editor_rows,
     watchlist_from_editor,
 )
@@ -28,6 +32,7 @@ from core.providers import (
     FRED_SERIES,
     data_health,
     fetch_fred_snapshot,
+    fetch_auction_quotes,
     fetch_market_snapshot,
     fetch_news_bundle,
     fetch_treasury_snapshot,
@@ -96,6 +101,33 @@ def _saved_snapshot():
         return None
 
 
+def _saved_auction_snapshot(trade_date: str):
+    path = BASE / "data" / "latest_auction_snapshot.json"
+    if not path.exists():
+        return None
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+        return payload if payload.get("trade_date") == trade_date and payload.get("quotes") else None
+    except Exception:
+        return None
+
+
+def get_tushare_token():
+    token = os.getenv("TUSHARE_TOKEN", "")
+    if token:
+        return token
+    try:
+        return str(st.secrets.get("TUSHARE_TOKEN", ""))
+    except Exception:
+        return ""
+
+
+def auction_is_ready(now: datetime, trade_date: str) -> bool:
+    if trade_date < now.date().isoformat():
+        return True
+    return (now.hour, now.minute) >= (9, 26)
+
+
 @st.cache_data(ttl=93600, show_spinner=False)
 def load_daily_bundle(universe: dict, snapshot_key: str):
     if os.getenv("MACRO_MONITOR_OFFLINE_TEST") == "1":
@@ -148,6 +180,30 @@ def load_missing_watchlist_market(rows: list[dict], existing_tickers: tuple[str,
     return fetch_market_snapshot(extras)
 
 
+@st.cache_data(ttl=93600, show_spinner=False)
+def load_auction_bundle(tickers: tuple[str, ...], trade_date: str, _token: str):
+    if os.getenv("MACRO_MONITOR_OFFLINE_TEST") == "1":
+        gaps = [0.45, 1.65, 3.80, -0.90, 0.20, 2.40, -0.30, 5.20]
+        quotes = {}
+        for index, ticker in enumerate(tickers):
+            gap = gaps[index % len(gaps)]
+            quotes[ticker] = {
+                "ticker": ticker, "name": ticker, "auction_price": round(100 * (1 + gap / 100), 3),
+                "pre_close": 100.0, "gap_pct": gap, "date": trade_date, "time": "09:25",
+                "source": "DEMO auction", "status": "ok",
+            }
+        return quotes, "DEMO_AUCTION", f"{trade_date}T09:25:00+08:00"
+    saved = _saved_auction_snapshot(trade_date)
+    quotes = dict(saved.get("quotes", {})) if saved else {}
+    missing = tuple(ticker for ticker in tickers if ticker not in quotes)
+    if missing:
+        quotes.update(fetch_auction_quotes(missing, trade_date, tushare_token=_token))
+    sources = {row.get("source", "") for row in quotes.values()}
+    mode = "TUSHARE_AUCTION" if any("Tushare" in source for source in sources) else "PUBLIC_QUOTE_FALLBACK" if quotes else "AUCTION_UNAVAILABLE"
+    generated = saved.get("generated_at", "") if saved else datetime.now(CN_TZ).isoformat()
+    return quotes, mode, generated
+
+
 def snapshot_label(generated_at: str, mode: str, expected_day: str) -> tuple[str, bool]:
     if mode == "DEMO":
         return "DEMO 数据", True
@@ -163,6 +219,11 @@ def snapshot_label(generated_at: str, mode: str, expected_day: str) -> tuple[str
 def level_pill(level: str) -> str:
     css = "red" if level == "重点异动" else "amber" if level == "需要关注" else ""
     return f'<span class="pill {css}">{escape(level)}</span>'
+
+
+def auction_pill(status: str) -> str:
+    css = "green" if status == "仍有预期差" else "red" if status == "过度定价/追高风险" else "amber" if status == "A股不确认" else "purple" if status == "方向需人工判断" else ""
+    return f'<span class="pill {css}">{escape(status)}</span>'
 
 
 def target_pills(targets: list[dict]) -> str:
@@ -184,8 +245,12 @@ def render_alert(row: dict):
     headline = escape(row["headline"] or "无直接相关新闻")
     if row.get("news_url"):
         headline = f'<a href="{escape(row["news_url"])}" target="_blank">{headline}</a>'
+    auction = row.get("auction", {})
+    auction_gap = auction.get("gap_pct")
+    gap_text = "" if auction_gap is None else f" · 竞价 {auction_gap:+.2f}%"
+    auction_html = f'<div class="verify body"><b>09:25二次判断：</b>{auction_pill(auction.get("status", "等待09:25竞价"))}{escape(gap_text)}<br>{escape(auction.get("reason", "等待集合竞价形成后判断剩余预期差。"))}</div>'
     st.markdown(
-        f'''<div class="card {css}"><div class="kicker">{escape(row['ticker'])} · {escape(row['theme'])} · 上一交易日 {previous} {level_pill(row['level'])}</div><div class="card-title">{escape(row['name'])}</div><div class="fact body"><b>为什么提示：</b>{escape(row['reason'])}</div><div class="body"><b>相关海外：</b>{escape(moves_text(row['overseas_moves']))}</div><div class="body"><b>相关新闻：</b>{headline}</div><div class="verify body"><b>开盘验证：</b>{escape(row['next_check'])}</div></div>''',
+        f'''<div class="card {css}"><div class="kicker">{escape(row['ticker'])} · {escape(row['theme'])} · 上一交易日 {previous} {level_pill(row['level'])}</div><div class="card-title">{escape(row['name'])}</div><div class="fact body"><b>为什么提示：</b>{escape(row['reason'])}</div><div class="body"><b>相关海外：</b>{escape(moves_text(row['overseas_moves']))}</div><div class="body"><b>相关新闻：</b>{headline}</div>{auction_html}<div class="muted"><b>连续竞价复核：</b>{escape(row['next_check'])}</div></div>''',
         unsafe_allow_html=True,
     )
 
@@ -198,8 +263,16 @@ def render_signal(row: dict):
     if row.get("url"):
         title = f'<a href="{escape(row["url"])}" target="_blank">{title}</a>'
     watch_tag = '<span class="pill amber">命中自选股</span>' if row["watchlist_relevant"] else ""
+    auction_rows = []
+    if verified:
+        for target in row.get("targets", []):
+            auction = target.get("auction", {})
+            if auction.get("gap_pct") is None:
+                continue
+            auction_rows.append(f"{escape(target.get('name', ''))} {auction.get('gap_pct'):+.2f}% {auction_pill(auction.get('status', ''))}")
+    auction_html = f'<div class="verify body"><b>09:25集合竞价：</b>{"；".join(auction_rows)}</div>' if auction_rows else (f'<div class="verify body"><b>09:25集合竞价：</b>等待竞价快照形成后判断“剩余预期差”。</div>' if verified else "")
     st.markdown(
-        f'''<div class="card {css}"><div class="kicker">优先级 {row['priority']}/100 · {escape(row['theme'])} <span class="pill {category_css}">{escape(row['category'])}</span>{watch_tag}</div><div class="card-title">{title}</div><div class="muted">{escape(row['source'])} · {escape(row['evidence_label'])} · {escape(row['published'])}</div><div style="margin:7px 0"><b class="body">对应A股：</b>{target_pills(row['targets'])}</div><div class="fact body"><b>海外价格：</b>{escape(moves_text(row['price_moves']))}</div><div class="body"><b>传导链：</b>{escape(row['mechanism'])}</div><div class="body"><b>方向解释：</b>{escape(row['direction_note'])}</div><div class="verify body"><b>下一步：</b>{escape(row['next_check'])}</div><div class="invalidate muted"><b>失效条件：</b>{escape(row['risk'])}</div></div>''',
+        f'''<div class="card {css}"><div class="kicker">优先级 {row['priority']}/100 · {escape(row['theme'])} <span class="pill {category_css}">{escape(row['category'])}</span>{watch_tag}</div><div class="card-title">{title}</div><div class="muted">{escape(row['source'])} · {escape(row['evidence_label'])} · {escape(row['published'])}</div><div style="margin:7px 0"><b class="body">对应A股：</b>{target_pills(row['targets'])}</div><div class="fact body"><b>海外价格：</b>{escape(moves_text(row['price_moves']))}</div>{auction_html}<div class="body"><b>传导链：</b>{escape(row['mechanism'])}</div><div class="body"><b>方向解释：</b>{escape(row['direction_note'])}</div><div class="body"><b>下一步：</b>{escape(row['next_check'])}</div><div class="invalidate muted"><b>失效条件：</b>{escape(row['risk'])}</div></div>''',
         unsafe_allow_html=True,
     )
 
@@ -211,7 +284,13 @@ def export_markdown(alerts: list[dict], signals: list[dict], generated_at: str) 
             lines.append(f"- **{row['name']}（{row['ticker']}）｜{row['level']}**：{row['reason']}。{row['next_check']}")
     lines.extend(["", "## 今日机会"])
     for row in signals[:10]:
-        targets = "、".join(item["name"] for item in row["targets"])
+        target_parts = []
+        for item in row["targets"]:
+            assessment = item.get("auction", {})
+            gap = assessment.get("gap_pct")
+            gap_text = "" if gap is None else f" {gap:+.2f}%"
+            target_parts.append(f"{item['name']}（{assessment.get('status', '等待竞价')}{gap_text}）")
+        targets = "、".join(target_parts)
         lines.append(f"- **{row['category']}｜{row['theme']}｜{row['priority']}/100**：{row['title']}；A股：{targets}；海外：{row['price_text']}。")
     lines.extend(["", "> 研究辅助，不构成投资建议。优先级不是收益预测。"])
     return "\n".join(lines)
@@ -232,14 +311,32 @@ brief = morning_rule_brief(market, macro, news)
 health = data_health(market, macro, news)
 alerts = build_watchlist_alerts(user_watchlist, news, market, mapping_cfg)
 signals = build_opportunity_signals(news, market, mapping_cfg, user_watchlist)
+auction_ready = auction_is_ready(now, snapshot_key)
+auction_quotes, auction_mode, auction_generated_at = {}, "WAITING_09_26", ""
+if auction_ready:
+    auction_tickers = tuple(sorted({
+        ticker for ticker in ([row["ticker"] for row in user_watchlist] + [target.get("ticker", "") for signal in signals for target in signal.get("targets", [])])
+        if str(ticker).endswith((".SS", ".SZ", ".BJ"))
+    }))
+    auction_quotes, auction_mode, auction_generated_at = load_auction_bundle(auction_tickers, snapshot_key, get_tushare_token())
+signals = attach_auction_results(signals, auction_quotes)
+if auction_quotes:
+    signals = rerank_signals_after_auction(signals)
+if auction_ready:
+    alerts = attach_auction_to_alerts(alerts, signals)
+else:
+    alerts = [{**row, "auction": {"status": "等待09:25竞价", "gap_pct": None, "reason": "09:00先形成候选池，09:26后再判断交易价值。", "source": ""}} for row in alerts]
+auction_counts = auction_status_counts(signals)
 verified = [row for row in signals if row["category"] == "海外已验证"]
 transmission = [row for row in signals if row["category"] == "传导待验证"]
 important_alerts = [row for row in alerts if row["level"] == "重点异动"]
 watch_alerts = [row for row in alerts if row["level"] == "需要关注"]
+gap_alerts = [row for row in alerts if row.get("auction", {}).get("status") == "仍有预期差"]
+overpriced_alerts = [row for row in alerts if row.get("auction", {}).get("status") == "过度定价/追高风险"]
 load_notice.empty()
 
 st.markdown(
-    """<div class="hero"><div class="eyebrow">A-SHARE PRE-OPEN · DAILY 09:00</div><div class="hero-title">A股盘前机会雷达</div><div class="hero-sub">每天只回答两个问题：哪些海外新闻已经被价格验证、可能在A股形成交易窗口；哪些新闻尚未被海外价格确认，但存在可靠传导链，需要在集合竞价与开盘后继续验证。</div></div>""",
+    """<div class="hero"><div class="eyebrow">09:00 CANDIDATES · 09:25 AUCTION CHECK</div><div class="hero-title">A股盘前机会雷达</div><div class="hero-sub">09:00先用海外新闻与价格形成候选池；09:25再看A股集合竞价是否已经消化预期。只有竞价后仍存在预期差的标的，才值得进入开盘后的优先观察。</div></div>""",
     unsafe_allow_html=True,
 )
 
@@ -248,7 +345,8 @@ market_ratio = f"{health.get('market_live', 0)}/{health.get('market_total', 0)}"
 badges = [
     f'<span class="badge {"warn" if data_mode == "DEMO" else "live"}">{escape(data_mode)} · 行情 {market_ratio}</span>',
     f'<span class="badge {"warn" if stale else "live"}">{escape(snapshot_text)}</span>',
-    '<span class="badge">每个工作日 09:00 更新一次</span>',
+    '<span class="badge">09:00海外候选 · 09:27竞价复核</span>',
+    f'<span class="badge {"live" if auction_quotes else "warn"}">{escape(auction_mode)} · 竞价 {len(auction_quotes)}</span>',
     f'<span class="badge">自选股 {len(user_watchlist)}/30</span>',
 ]
 st.markdown(f'<div class="statusbar">{"".join(badges)}</div>', unsafe_allow_html=True)
@@ -256,27 +354,41 @@ if data_mode == "DEMO":
     st.warning("当前为明确标注的演示模式；演示值不会被当作真实盘前判断。")
 elif stale:
     st.warning("最近快照不是当前应使用的交易日快照，可能遇到节假日、任务排队或自动任务失败，请先核对页面日期。")
+if auction_ready and not auction_quotes and data_mode != "DEMO":
+    st.warning("09:25集合竞价数据暂不可用，因此今天只能展示海外候选，不能判断是否仍有交易价值。")
 
 page = st.radio("主导航", ["盘前决策台", "机会雷达", "方法与数据"], horizontal=True, label_visibility="collapsed")
 
 
 if page == "盘前决策台":
     cols = st.columns(4)
-    cols[0].metric("自选股重点异动", len(important_alerts), f"另有 {len(watch_alerts)} 只需关注")
-    cols[1].metric("海外已验证机会", len(verified), "优先看是否命中自选股")
-    cols[2].metric("传导待验证", len(transmission), "等待价格或集合竞价")
-    cols[3].metric("隔夜环境", brief.get("regime", "—"), "仅作风险背景")
+    if auction_ready and auction_quotes:
+        cols[0].metric("仍有预期差", auction_counts["仍有预期差"], "优先进入开盘观察")
+        cols[1].metric("基本定价", auction_counts["基本定价"], "不再视为明显预期差")
+        cols[2].metric("追高风险", auction_counts["过度定价/追高风险"], "竞价反应过度")
+        cols[3].metric("A股不确认", auction_counts["A股不确认"], "传导逻辑需要重审")
+    else:
+        cols[0].metric("自选股重点异动", len(important_alerts), f"另有 {len(watch_alerts)} 只需关注")
+        cols[1].metric("海外已验证候选", len(verified), "09:25后重新排序")
+        cols[2].metric("传导待验证", len(transmission), "不直接作为交易结论")
+        cols[3].metric("竞价阶段", "等待09:25", "09:26后读取结果")
 
     st.markdown('<div class="section">今天先处理什么</div>', unsafe_allow_html=True)
-    if important_alerts:
+    if gap_alerts:
+        top_names = "、".join(row["name"] for row in gap_alerts[:4])
+        st.markdown(f'<div class="callout"><b>竞价后仍有预期差：</b>{escape(top_names)}。这些标的没有在集合竞价中充分消化海外信号，优先检查开盘量价与板块扩散。</div>', unsafe_allow_html=True)
+    elif overpriced_alerts:
+        top_names = "、".join(row["name"] for row in overpriced_alerts[:4])
+        st.markdown(f'<div class="callout"><b>注意追高风险：</b>{escape(top_names)} 已在集合竞价中大幅反应。海外验证成立，但交易价值可能已被高开消耗。</div>', unsafe_allow_html=True)
+    elif important_alerts:
         top_names = "、".join(row["name"] for row in important_alerts[:4])
-        st.markdown(f'<div class="callout"><b>先看自选股：</b>{escape(top_names)} 出现盘前重点异动。先打开下方原因，再去机会雷达核对原始新闻、海外价格和A股映射。</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="callout"><b>09:00候选股：</b>{escape(top_names)} 出现盘前重点异动。它们要等09:25集合竞价之后，才能判断是否仍有交易价值。</div>', unsafe_allow_html=True)
     elif verified:
         st.markdown(f'<div class="callout"><b>自选股暂无重点异动。</b>今日仍有 {len(verified)} 条海外已验证信号，可在“机会雷达”中检查是否值得临时加入观察。</div>', unsafe_allow_html=True)
     else:
         st.markdown('<div class="callout"><b>今日没有达到强提示阈值的信号。</b>这也是有效结论：不为了每天都有交易机会而降低证据标准。</div>', unsafe_allow_html=True)
 
-    st.markdown('<div class="section">自选股盘前扫描<span class="section-note">重点异动优先，其次为需要关注</span></div>', unsafe_allow_html=True)
+    st.markdown('<div class="section">自选股两阶段扫描<span class="section-note">海外验证只是候选，集合竞价决定剩余预期差</span></div>', unsafe_allow_html=True)
     active_alerts = [row for row in alerts if row["level"] != "暂无异动"]
     if active_alerts:
         for row in active_alerts:
@@ -291,11 +403,12 @@ if page == "盘前决策台":
 
     st.markdown('<div class="section">管理自选股<span class="section-note">页面内直接增删，无需后台改代码</span></div>', unsafe_allow_html=True)
     with st.expander("打开自选股编辑器"):
-        st.caption("代码输入6位数字即可。映射主题决定新闻分类；海外代理使用系统中的资产键，多个值用逗号分隔。保存后请收藏当前网址，这个网址就是你的个人配置。")
+        st.caption("代码输入6位数字即可。映射主题决定新闻分类；“与海外关系”用于判断高开/低开是否已经消化海外信号。无法明确受益或受损方向时请选择“需判断”。")
         editor = st.data_editor(
             pd.DataFrame(watchlist_editor_rows(user_watchlist)), hide_index=True, num_rows="dynamic", width="stretch",
             column_config={
                 "映射主题": st.column_config.SelectboxColumn("映射主题", options=list(mapping_cfg), required=True),
+                "与海外关系": st.column_config.SelectboxColumn("与海外关系", options=["同向", "反向", "需判断"], required=True),
                 "代码": st.column_config.TextColumn("代码", required=True),
                 "名称": st.column_config.TextColumn("名称", required=True),
             }, key="watchlist_editor",
@@ -320,18 +433,29 @@ if page == "盘前决策台":
 
 elif page == "机会雷达":
     st.markdown('<div class="section">今日机会雷达<span class="section-note">信号流与主题账本已合并</span></div>', unsafe_allow_html=True)
-    st.markdown('<div class="callout"><b>海外已验证</b>代表可靠新闻出现后，相关海外代理已经显著交易；<b>传导待验证</b>代表新闻来源可靠且传导链成立，但价格还未确认。两者都只是盘前研究提示，必须用集合竞价和开盘量价做第二次验证。</div>', unsafe_allow_html=True)
-    f1, f2 = st.columns(2)
+    st.markdown('<div class="callout"><b>海外已验证只代表进入候选池。</b>09:25后还要看A股竞价：小幅反应可能“仍有预期差”，合理高开属于“基本定价”，大幅高开则标记“过度定价/追高风险”。海外验证成立，不代表开盘后仍值得交易。</div>', unsafe_allow_html=True)
+    f1, f2, f3 = st.columns(3)
     theme_filter = f1.selectbox("主题", ["全部"] + list(mapping_cfg))
     watch_only = f2.toggle("只看命中自选股", value=False)
+    auction_filter = f3.selectbox("竞价判断", ["全部", "仍有预期差", "基本定价", "过度定价/追高风险", "A股不确认", "方向需人工判断"])
 
     def visible(rows):
-        return [row for row in rows if (theme_filter == "全部" or row["theme"] == theme_filter) and (not watch_only or row["watchlist_relevant"])]
+        output = []
+        for row in rows:
+            statuses = {target.get("auction", {}).get("status") for target in row.get("targets", [])}
+            if theme_filter != "全部" and row["theme"] != theme_filter:
+                continue
+            if watch_only and not row["watchlist_relevant"]:
+                continue
+            if auction_filter != "全部" and auction_filter not in statuses:
+                continue
+            output.append(row)
+        return output
 
     verified_view, transmission_view = visible(verified), visible(transmission)
     tabs = st.tabs([f"海外已验证 · {len(verified_view)}", f"传导待验证 · {len(transmission_view)}"])
     with tabs[0]:
-        st.caption("可能存在盘前预期差：海外已经交易，A股尚未开盘。优先核对海外价格方向、A股受益/受损关系和集合竞价。")
+        st.caption("09:00看海外证据；09:25看A股已经反应多少。优先级应按竞价后的剩余预期差重新排列，而不是按新闻热度追高。")
         if not verified_view:
             st.info("当前筛选下没有达到海外价格确认阈值的可靠事件。")
         for row in verified_view:
@@ -350,7 +474,13 @@ elif page == "机会雷达":
 else:
     st.markdown('<div class="section">方法与数据<span class="section-note">明确它能做什么，也明确它不能做什么</span></div>', unsafe_allow_html=True)
     st.markdown("#### 产品定位")
-    st.write("这是一个A股盘前研究与机会筛选工具，不是行情终端。它的效率来自：只扫描用户真正关心的股票，并把可靠新闻、海外价格确认、A股映射和开盘验证步骤放到同一张卡片里。")
+    st.write("这是一个A股盘前研究与机会筛选工具，不是行情终端。它先用海外信息缩小范围，再用A股集合竞价删除已经充分定价或追高风险过高的候选。")
+    st.markdown("#### 两阶段判断")
+    stages = pd.DataFrame([
+        {"时间": "09:00", "输出": "海外候选池", "判断": "新闻是否可靠、海外价格是否验证、对应哪些A股", "不能决定": "开盘后是否仍有交易价值"},
+        {"时间": "09:25–09:27", "输出": "竞价后二次排序", "判断": "仍有预期差、基本定价、过度定价/追高风险、A股不确认", "不能决定": "开盘后一定上涨或下跌"},
+    ])
+    st.dataframe(stages, hide_index=True, width="stretch")
     st.markdown("#### 两类信号")
     method = pd.DataFrame([
         {"类型": "海外已验证", "进入条件": "证据分≥70，且相关海外代理单日显著波动或多个代理同向", "用途": "优先检查A股盘前预期差", "不能代表": "A股一定跟涨或跟跌"},
@@ -358,13 +488,16 @@ else:
     ])
     st.dataframe(method, hide_index=True, width="stretch")
     st.markdown('<div class="formula"><b>机会优先级（0–100）</b> = 来源可靠度（45）+ 海外价格响应（35）+ 自选股相关性（20）。<br>它只安排盘前核查顺序，不预测收益率，也不输出目标价。</div>', unsafe_allow_html=True)
+    st.markdown("#### 集合竞价判定")
+    st.write("系统先根据海外价格方向和标的的同向/反向关系，将A股竞价涨跌幅转换为“有效反应”。有效反应较小为“仍有预期差”；达到海外波动约45%且至少1%为“基本定价”；超过海外波动约125%且至少3%时标记“过度定价/追高风险”；反向超过0.5%则标记“A股不确认”。方向复杂的主题不自动下结论。")
     st.markdown("#### 自选股异动定义")
     st.write("系统将直接公司新闻、同主题可靠新闻和用户指定的海外代理波动合并判断。出现直接相关新闻，或可靠主题新闻与显著海外波动共同出现时，标记为“重点异动”；只有其中一类证据时，标记为“需要关注”。")
     st.markdown("#### 数据与刷新")
-    st.write("- **刷新时间：** 每个工作日北京时间09:00生成一次固定盘前快照；日内不以15分钟频率反复改写结论。")
+    st.write("- **刷新时间：** 每个工作日09:00生成海外候选快照，09:27增加一次集合竞价快照；不进行15分钟循环刷新。")
     st.write("- **市场代理：** Yahoo Finance，用于海外收盘价格和A股上一交易日数据，页面显示快照时间。")
     st.write("- **新闻发现：** GDELT，失败时回退Google News RSS；只让证据分≥70的新闻进入机会雷达。")
     st.write("- **宏观背景：** FRED与美国财政部，仅用于风险环境，不再提供独立跨资产看板。")
+    st.write("- **集合竞价：** 优先使用Tushare `stk_auction`；该接口需单独权限。缺少权限时使用公开行情的开盘价回退，并在页面标注来源。")
     st.write("- **用户配置：** 自选股保存在当前网址参数中，不需要后台操作；应收藏个人配置网址。")
     st.markdown("#### 边界")
     st.write("免费数据源可能延迟或中断；系统会明确标注快照和DEMO状态。新闻分类与价格响应只能帮助缩小研究范围，最终仍需核对原文、公司暴露和A股集合竞价。")
