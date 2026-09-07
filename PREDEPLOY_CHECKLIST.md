@@ -1,30 +1,25 @@
 # PRE-DEPLOY CHECKLIST
 
-## 已自动完成
+## 代码已完成
 
-- [x] Streamlit 主程序
-- [x] 免费行情 / FRED / GDELT / Google News fallback
-- [x] NOAA CPC ENSO 官方模块
-- [x] AI资本开支链条
-- [x] 全球跨资产监控
-- [x] 主流海外个股与A股观察池
-- [x] 新闻证据分层
-- [x] 免费源故障时 DEMO fallback，避免现场演示白屏
-- [x] 工作日北京时间 08:25 GitHub Actions 晨报
-- [x] OpenAI Responses API 接口
-- [x] Python 语法检查
-- [x] 离线核心逻辑 smoke test
+- [x] 以v4.1为基线，移除WorkBuddy
+- [x] 自选股编辑器只要求股票代码或名称
+- [x] 系统自动补齐名称、主题、海外代理、传导方向和新闻关键词
+- [x] 邮箱验证码后才允许订阅、更新或退订
+- [x] 每位订阅者保存独立自选股
+- [x] A股交易日08:45与09:27两阶段个人邮件
+- [x] GitHub Actions定时任务
+- [x] 休市日过滤
+- [x] 语法、核心逻辑、自动映射、邮件渲染与Streamlit启动测试
 
-## 用户必须亲自完成
+## 上线前账号配置
 
-因为涉及账号与密钥授权，下面三步无法代替用户执行：
+- [ ] 创建 Supabase 项目并运行建表 SQL
+- [ ] 准备专用发件邮箱与 App Password
+- [ ] 配置 Streamlit Secrets
+- [ ] 配置 GitHub Actions Secrets
+- [ ] 开启 GitHub Actions `Read and write permissions`
+- [ ] 用自己的邮箱验证完整订阅流程
+- [ ] 手动测试 morning 和 auction 两封邮件
 
-1. 登录 GitHub，新建一个仓库；
-2. 把本项目上传到该仓库；
-3. 登录 Streamlit Community Cloud，授权 GitHub 并选择 `app.py` 部署。
-
-### 如需真正开启AI功能
-还需要：
-4. 在 Streamlit App Secrets 中添加 `OPENAI_API_KEY`。
-
-在完成第 1 步后，把 GitHub 仓库地址发回聊天，我可以继续检查部署结构与后续配置。
+配置值与步骤见 [EMAIL_SUBSCRIPTION_SETUP.md](EMAIL_SUBSCRIPTION_SETUP.md)。

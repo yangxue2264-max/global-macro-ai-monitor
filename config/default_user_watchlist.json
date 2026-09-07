@@ -46,5 +46,38 @@
     "relation": "同向",
     "overseas_assets": ["WTI", "BRENT", "XLE"],
     "keywords": ["China Shenhua", "中国神华"]
+  },
+  {
+    "ticker": "300502.SZ",
+    "name": "新易盛",
+    "theme": "AI资本开支",
+    "relation": "同向",
+    "overseas_assets": ["NVDA", "AVGO", "SMH"],
+    "keywords": ["Eoptolink", "新易盛"],
+    "profile_source": "维护规则库",
+    "profile_confidence": "高",
+    "profile_reason": "海外AI资本开支和高速光通信需求通常对光模块产业链形成同向验证。"
+  },
+  {
+    "ticker": "002008.SZ",
+    "name": "大族激光",
+    "theme": "AI资本开支",
+    "relation": "需判断",
+    "overseas_assets": ["SMH", "ASML", "NASDAQ"],
+    "keywords": ["Han's Laser", "大族激光"],
+    "profile_source": "维护规则库",
+    "profile_confidence": "中",
+    "profile_reason": "激光与自动化设备受制造业资本开支影响，但下游较分散，海外信号方向需结合订单暴露判断。"
+  },
+  {
+    "ticker": "002463.SZ",
+    "name": "沪电股份",
+    "theme": "AI资本开支",
+    "relation": "同向",
+    "overseas_assets": ["NVDA", "AVGO", "SMH"],
+    "keywords": ["Wus Printed Circuit", "沪电股份"],
+    "profile_source": "维护规则库",
+    "profile_confidence": "高",
+    "profile_reason": "海外AI服务器和高速网络资本开支通常对高端PCB需求形成同向验证。"
   }
 ]

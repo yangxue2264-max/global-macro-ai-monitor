@@ -1,41 +1,82 @@
 {
-  "generated_at": "2026-09-07T17:12:49.519807+08:00",
+  "generated_at": "2026-09-04T12:43:55.436682+08:00",
   "brief": {
-    "headline": "隔夜信号分化，单一股指方向不足以概括市场，重点看跨资产共振与背离。 S&P 500 -0.38%，Nasdaq +0.21%，美元 -0.21%，铜 +1.30%，黄金 +1.06%。",
+    "headline": "隔夜信号分化，单一股指方向不足以概括市场，重点看跨资产共振与背离。 S&P 500 +0.46%，Nasdaq +0.23%，美元 -0.53%，铜 +2.55%，黄金 +3.51%。",
     "regime": "信号分化",
-    "regime_score": 0.1,
+    "regime_score": 0.12,
     "states": {
-      "增长": 0.0,
-      "通胀压力": 0.49,
-      "金融条件宽松": 0.23,
-      "久期友好": -0.69,
-      "AI资本开支": 0.03,
-      "美元流动性": 0.79,
-      "实物资产": 0.38
+      "增长": -0.08,
+      "通胀压力": 0.66,
+      "金融条件宽松": 0.26,
+      "久期友好": -0.72,
+      "AI资本开支": -0.09,
+      "美元流动性": 0.95,
+      "实物资产": 0.63
     },
     "divergences": [
       "暂未识别到高置信度跨资产背离；重点观察利率、美元、铜和科技股是否出现新的共振。"
     ],
     "checklist": [
-      "贴现率：US10Y 4.78%，实际10Y 2.43%。",
-      "风险溢价：VIX 15.04，HYG-LQD 20日代理 +0.44pp。",
-      "人民币外部条件：USD/CNY代理 -0.29%，美元指数 -0.21%。",
-      "AI实体约束：铜 +1.30%，天然气 +0.00%，AI核心股异动见雷达。",
+      "贴现率：US10Y 4.77%，实际10Y 2.42%。",
+      "风险溢价：VIX 14.32，HYG-LQD 20日代理 +0.79pp。",
+      "人民币外部条件：USD/CNY代理 -0.05%，美元指数 -0.53%。",
+      "AI实体约束：铜 +2.55%，天然气 -1.08%，AI核心股异动见雷达。",
       "新闻必须先回答“影响现金流、贴现率、风险溢价还是供给约束”，再映射资产。"
     ],
     "events": [
       {
-        "title": "Week Ahead for FX, Bonds: U.S. Inflation Data in Focus; ECB Expected to Raise Rates - WSJ",
-        "url": "https://news.google.com/rss/articles/CBMitwFBVV95cUxPYUg3NndUYW1HNGpfSzJxNUVyU3A1ZzFVbXhGMjBhVndjbFpZaHM4c0N4NTdsczFkS19XUkFEbHAyazFvbXA4T1RmY2thTUpYZHdMTXZGLTk5d1NuNmJGeGhZWnp4RFdGXzNtakUzWVpBVXhxUDZxOGFPamVmZFRQUkJ4el9ETUgxbTByc25JRGVwcGo4RlhtMTZBeUJfMGFjeC0yb212QXNPZk9wZEU3T0hZU0NSSWM?oc=5",
-        "source": "WSJ",
-        "published": "Mon, 07 Sep 2026 01:59:27 GMT",
+        "title": "Fed's Waller channels his inner John Lennon with a plea to 'give disinflation a chance' - Reuters",
+        "url": "https://news.google.com/rss/articles/CBMivwFBVV95cUxPLVJjV3EyRTlHeFIwYWxSa0EtRkM1YzFQOExsR0cwaFRrVEo0MUlXWTMtdHhpam5seDNOQWJYQ0NYVGJkVDJNMkR4NHFsX2RJTkxPM1dDd1Z4T2s3R1ZZaFdoQV9CXzE1WUw3YXNZdnpFZFJBZnVGWnkxbVpUeVdoRk11eTdHWHBLVjIwREZldUNmYzQ4TFd0WWlKWXhNYm50MW5hYkpnUE5PaHdaUHhVUUlQWnN4UTE1U21jamtTVQ?oc=5",
+        "source": "Reuters",
+        "published": "Thu, 03 Sep 2026 18:11:10 GMT",
         "modules": [
           "通胀",
           "货币政策"
         ],
         "themes": [
-          "AI资本开支",
-          "流动性与信用",
+          "油价与通胀"
+        ],
+        "score": 1.0,
+        "lang": "English",
+        "bucket": "政策原文",
+        "evidence_score": 78,
+        "evidence_label": "B·可靠报道",
+        "evidence_reason": "高可信财经媒体，仍应回看原始文件",
+        "theme_primary": "油价与通胀",
+        "module_primary": "通胀",
+        "mechanism": "原油供需/通道 → 能源与运输成本 → 通胀和政策预期 → 上游与成本敏感行业分化"
+      },
+      {
+        "title": "Fed governor Waller muddies outlook on possible rate hike later this month - pbs.org",
+        "url": "https://news.google.com/rss/articles/CBMitgFBVV95cUxPY1VTZzBtaXdkUll5UEFzY0daeWtWUGM0U05nTk96SHNveVdEd3RtdG9fMjNuSjB4bHdSSmtTdmlJYUlVZmotQWs1Qk9sMFdwcDNhelJ5NElBM2tRaDFxU2d5LW9sVzQzMGhyd0t4a3ZrNS1kVElnaGNfR0xLYl9yU3FwOU1EenpWeUhZTHh6bDRYMVR2RjZIMnUxODBBNWJEcE5aQ0NsSklQU0xZdE9aZ1F6MXpWZ9IBtgFBVV95cUxPY1VTZzBtaXdkUll5UEFzY0daeWtWUGM0U05nTk96SHNveVdEd3RtdG9fMjNuSjB4bHdSSmtTdmlJYUlVZmotQWs1Qk9sMFdwcDNhelJ5NElBM2tRaDFxU2d5LW9sVzQzMGhyd0t4a3ZrNS1kVElnaGNfR0xLYl9yU3FwOU1EenpWeUhZTHh6bDRYMVR2RjZIMnUxODBBNWJEcE5aQ0NsSklQU0xZdE9aZ1F6MXpWZw?oc=5",
+        "source": "pbs.org",
+        "published": "Fri, 04 Sep 2026 00:08:19 GMT",
+        "modules": [
+          "货币政策"
+        ],
+        "themes": [
+          "待分类"
+        ],
+        "score": 1.0,
+        "lang": "English",
+        "bucket": "政策原文",
+        "evidence_score": 58,
+        "evidence_label": "C·线索",
+        "evidence_reason": "可用于发现事件，关键数字需二次核实",
+        "theme_primary": "待分类",
+        "module_primary": "货币政策",
+        "mechanism": "事件 → 现金流 / 贴现率 / 风险溢价 / 供需约束 → 行业与资产"
+      },
+      {
+        "title": "Fed's Waller says central bank's next rate move depends on upcoming inflation report - ABC News - Breaking News, Latest News and Videos",
+        "url": "https://news.google.com/rss/articles/CBMimwFBVV95cUxNX2RscFVwaVc4aWJVT0lkMHQ0RlpRX1AwN1FpNjEzZFdjVUt1U2E1ak5iX0RBeU9DSklPdFN1dzZFbTRRSmR3OV9vZXJoNzRZRkgxcHhYOElVZ2NOWmhpWEFvSm4xMFBnRnpDMzFaZHkyMjd3RTAySklGNDhnenN6M3RVRm1JdWw5bExQd0RFR0E3OXo2Mjg0bGJVa9IBoAFBVV95cUxNV3VyTnpDZGVUZWt0eTBhZ29pQVZ3TkRZOUR5STZxOEpLU0JOYmpiS3hjY1JCeUEwcXUtekVPU0VaVmJEazdVVWQ3SXBqQmhfUmlBUWtZRlJpN2tkR29EeF9TR1RQeTFaY2RUdDQ1cmVDMnZvYkR2bWhqTDJPb1BHam80cDRIb3BqMDNyb2R6MGIyYm1KM1V1dlpnNGxmYWpJ?oc=5",
+        "source": "ABC News - Breaking News, Latest News and Videos",
+        "published": "Thu, 03 Sep 2026 14:08:40 GMT",
+        "modules": [
+          "通胀",
+          "货币政策"
+        ],
+        "themes": [
           "油价与通胀"
         ],
         "score": 1.0,
@@ -44,17 +85,16 @@
         "evidence_score": 58,
         "evidence_label": "C·线索",
         "evidence_reason": "可用于发现事件，关键数字需二次核实",
-        "theme_primary": "AI资本开支",
+        "theme_primary": "油价与通胀",
         "module_primary": "通胀",
-        "mechanism": "AI需求与Capex → 芯片/网络 → 数据中心供电与并网 → 铜与设备 → 海外及A股硬件链"
+        "mechanism": "原油供需/通道 → 能源与运输成本 → 通胀和政策预期 → 上游与成本敏感行业分化"
       },
       {
-        "title": "No, Friday's jobs report hasn't materially boosted Fed rate hike odds - CoinDesk",
-        "url": "https://news.google.com/rss/articles/CBMirwFBVV95cUxPX05UcHBkVmVjeTdwSUxocGtnOGRpbTBYQllqVFhjbG10V19hdG1STkNnR1o0dEN2MjRkQVRESGpKNDdIMFVZUDRvc1VfMUQ4ODZrbVZXM2xwaWx2bjEyUEcwTXpHV3hCM3pMMzNuVDlVRnA1UldLU1llVFoxa1JWbEd0Tk90NkZZZWNySnBYSTQ1Q2xhWFhkUU9OenltVmRSajNzWEhVZGpVaGNaZnZz?oc=5",
-        "source": "CoinDesk",
-        "published": "Mon, 07 Sep 2026 08:43:18 GMT",
+        "title": "Vance says Fed should lower interest rates: 'Would be nice to have some help' - CNBC",
+        "url": "https://news.google.com/rss/articles/CBMihgFBVV95cUxQX3ZGQmxraTBxUFRDaUFUVVZlM3NIM0JsbHVCY1VTVzRnVHBORFRXbldFbXRjYTVyZDRyRFpNV3o3TDgyU2lLVnJCdUxSNl9nY3FRbnRzd25nQkExcUZJb1hrWHUtUFp2amtrdW9BbTJTdlAxSDNLMmxlYk40VEtaaUY5aDR3Z9IBiwFBVV95cUxQb1VUX2p4NlhOSEN2X2tTMmE0M3hJS2QwMmZ5Y3VOeVhnbGMxRUMzbG5saTdGWFc5TTMyNlMwekg4WHVjTkNYT2xmZk80WE1DRWptSmFzVTJiR2hKQVA1X3F3OWowUWtsbDVhVUEtLWRpbHFFWGJZbV9WTGg1UVRmMWs4M1pLbWNpNFdv?oc=5",
+        "source": "CNBC",
+        "published": "Thu, 03 Sep 2026 19:18:59 GMT",
         "modules": [
-          "增长",
           "货币政策"
         ],
         "themes": [
@@ -67,42 +107,18 @@
         "evidence_label": "C·线索",
         "evidence_reason": "可用于发现事件，关键数字需二次核实",
         "theme_primary": "待分类",
-        "module_primary": "增长",
+        "module_primary": "货币政策",
         "mechanism": "事件 → 现金流 / 贴现率 / 风险溢价 / 供需约束 → 行业与资产"
       },
       {
-        "title": "Citigroup delays Fed rate-cut forecast to 2027 after strong U.S. jobs report - reuters.com",
-        "url": "https://news.google.com/rss/articles/CBMitwFBVV95cUxQQnlBSDN4T3YxTDREQ3A2YnFhZ1lUN2E2dm1tZmxjb0tLaHFLUlFSN3NOdERlUFM0ZjBXZUhYOU54T2tKeU5saXBLWjk3dDZxTHl0ZXIxem40LU80bVE1V1ZwYVdUalhtMmVtSGtpRVFCX3F5NVpuUWlOR3o3UDZjcVBVd3N1SFBoR2NIT040R3VGX2xzZm91cVZEQ1JndFFoT3JqdzZWWl9PR2s0OGp2RWVsUUJteGM?oc=5",
-        "source": "reuters.com",
-        "published": "Fri, 04 Sep 2026 22:49:54 GMT",
+        "title": "Will Federal Reserve hike rates later this month? Waller muddies the outlook | National News | 2news.com - KTVN",
+        "url": "https://news.google.com/rss/articles/CBMi8AFBVV95cUxNbVM4WjJsbDhod0F4VDAyd1JMNVFJX2h6RGRFOEp5Q19XeVhBcC1wZ1ZJek1vVnVMajJFMDlIS3gzSm52YjNtYVo1TEUyVW5IOXl5MHhWT0FFNjZxZ0VfSWVjVUxfV0FpQjN3R245MTdEeWhiSUFyNFlIUERheU92cVpRdk81dTNSVGphN21wVDFEMFRKalRwV0pnRVNwVFlLalpaNVViSWJqVVplb3p3ck1ua21FS3Q0SDFoaUstWF9ZODhaR2ZUZ3I3emVUNUxEN1k5MHFDT0xvZGZPQ0psQXNGMWpxSWhPX3VGaEFXUlE?oc=5",
+        "source": "KTVN",
+        "published": "Thu, 03 Sep 2026 15:35:24 GMT",
         "modules": [
-          "增长",
           "货币政策"
         ],
         "themes": [
-          "待分类"
-        ],
-        "score": 1.0,
-        "lang": "English",
-        "bucket": "政策原文",
-        "evidence_score": 78,
-        "evidence_label": "B·可靠报道",
-        "evidence_reason": "高可信财经媒体，仍应回看原始文件",
-        "theme_primary": "待分类",
-        "module_primary": "增长",
-        "mechanism": "事件 → 现金流 / 贴现率 / 风险溢价 / 供需约束 → 行业与资产"
-      },
-      {
-        "title": "Upcoming inflation data could determine if the Federal Reserve hikes interest rates soon, leaving Wall Street on edge - Fortune",
-        "url": "https://news.google.com/rss/articles/CBMimwFBVV95cUxNdmdaT3E5TjNKcU53Z0FXbDRKeGl0a2s5ZFFwNUVyaGFCUE1pODBBWU03REFMYzJyR2VhNWxzWDdTU09VdTFWVENmVzZNV2stYW11clZiNTVXRG8yQkVJRTZyZmJodk44Vl96bzd5OFRtck4wQXFWYlRSN29aRG4tZkk4WUlaSURDRUVyWWU4XzNjWUphdlRzNWljYw?oc=5",
-        "source": "Fortune",
-        "published": "Sun, 06 Sep 2026 15:03:00 GMT",
-        "modules": [
-          "通胀",
-          "货币政策"
-        ],
-        "themes": [
-          "油价与通胀",
           "黄金与美元信用"
         ],
         "score": 1.0,
@@ -111,21 +127,20 @@
         "evidence_score": 58,
         "evidence_label": "C·线索",
         "evidence_reason": "可用于发现事件，关键数字需二次核实",
-        "theme_primary": "油价与通胀",
-        "module_primary": "通胀",
-        "mechanism": "原油供需/通道 → 能源与运输成本 → 通胀和政策预期 → 上游与成本敏感行业分化"
+        "theme_primary": "黄金与美元信用",
+        "module_primary": "货币政策",
+        "mechanism": "实际利率/美元/储备需求/地缘风险 → 黄金定价 → 国内金价与矿企盈利弹性"
       },
       {
-        "title": "EUR/USD Forecast: ECB and US inflation set to test the range - FOREX.com",
-        "url": "https://news.google.com/rss/articles/CBMiqgFBVV95cUxOblAweUtjQ3ZaUVo4RlVlSHk2UTlfdEFnVG5acURYb2hPSEFzQzI1a0NzenNvak9hZ2VXVmF3N1BqQUJocHNJcW9HZHBIVUQ5Sk9PVzR1Nm04cTF5dXRtUGxDYWZPU2Q3X0dVOFZiU2FPTDk1RFM0NDNpWllxa2x5Uml3TFUtcW9fXzZ3YlZ5bko3bVhnS0ZWZzd3Yk1QY3NpY21GT3FCbkJFdw?oc=5",
-        "source": "FOREX.com",
-        "published": "Mon, 07 Sep 2026 07:06:10 GMT",
+        "title": "New doubts emerge about whether Fed will raise interest rates this month - MarketWatch",
+        "url": "https://news.google.com/rss/articles/CBMitgFBVV95cUxOV0toZjM1WkNQOExMUDhIMEpfaDJ1d0xJVEdDNGZPclBNXzRnQXlBUFZaWlhtdTMwNG40UTA3OVhTaXZDRWMwaThOOFpOTnNCTU5aeHplSG1QbWtCdXVwWkVHN0h3NnBNa2ZOOUQzX29zZ3ZIRW1HdTNBRldCNGVnRlNZQXdnUTNkRy1TZndaZzRrTHk4aHpDMzNTWTAzWTA0NXFNdmZ6akNPWE5ocVlOUnAtOC1wQQ?oc=5",
+        "source": "MarketWatch",
+        "published": "Thu, 03 Sep 2026 18:24:00 GMT",
         "modules": [
-          "通胀",
           "货币政策"
         ],
         "themes": [
-          "油价与通胀"
+          "AI资本开支"
         ],
         "score": 1.0,
         "lang": "English",
@@ -133,52 +148,30 @@
         "evidence_score": 58,
         "evidence_label": "C·线索",
         "evidence_reason": "可用于发现事件，关键数字需二次核实",
-        "theme_primary": "油价与通胀",
-        "module_primary": "通胀",
-        "mechanism": "原油供需/通道 → 能源与运输成本 → 通胀和政策预期 → 上游与成本敏感行业分化"
-      },
-      {
-        "title": "Trump threatens trade war if rates aren’t cut after strong jobs report - The Hill",
-        "url": "https://news.google.com/rss/articles/CBMilgFBVV95cUxPU3pTVTYzdUFTYjh3STFmRnZ4OWZsRHdxN1NidEtGQVptT1A1a3kzREFCVnZCUWNGWEZiYWpZNzlFT0d4MF9IeUlOVGVhNExnVGUxOWxVeThUbmkwamt0eThuSlFxbk5xOHJkRzg1cU9XUEFDQUFZTnQ0eXJlaktjYU5fbUQxZEpaV1lzejlkUVVmNXl5RVHSAZsBQVVfeXFMTWxGblEwN1BKSTZYV0Q0OFhhYUt6Mjg5blZkRTJTTGgzNDJ3M1RQTk51RjZPQThsMEI5SjJpOTI0WEdYLTlVbkxCaGh5Qll3bHZmWUw2UXhOdVdaNWtMaTYwM2prVmdfdmhTQjVHeGdlTE4wRVY5TV9TeDVyWk9kMXBCMnZtakZQT1JITFRHbnVUQ0pfalQtNFFvRzA?oc=5",
-        "source": "The Hill",
-        "published": "Fri, 04 Sep 2026 16:04:00 GMT",
-        "modules": [
-          "增长",
-          "地缘与供应链"
-        ],
-        "themes": [
-          "贸易与关税"
-        ],
-        "score": 1.0,
-        "lang": "English",
-        "bucket": "政策原文",
-        "evidence_score": 58,
-        "evidence_label": "C·线索",
-        "evidence_reason": "可用于发现事件，关键数字需二次核实",
-        "theme_primary": "贸易与关税",
-        "module_primary": "增长",
-        "mechanism": "贸易规则/关税 → 数量与成本 → 企业利润和供应链迁移 → 汇率与相关行业估值"
+        "theme_primary": "AI资本开支",
+        "module_primary": "货币政策",
+        "mechanism": "AI需求与Capex → 芯片/网络 → 数据中心供电与并网 → 铜与设备 → 海外及A股硬件链"
       }
     ],
     "focus": [
       {
-        "score": 2.337221529964717,
-        "title": "AI Capex 是否从芯片扩散到实体？",
-        "now": "半导体 -2.69%，电力设备 +2.98%，铜 +1.33%（20日）",
-        "why": "只有算力、电力、电网与原料共同确认，才是更完整的资本开支周期。",
-        "verify": "看 hyperscaler 指引、服务器/光模块、电网设备与铜能否接力。"
-      },
-      {
-        "score": 2.048481105241769,
+        "score": 5.5653767980706945,
         "title": "油价冲击是供给风险还是增长信号？",
-        "now": "WTI +0.00%，黄金 +1.06%，VIX 15.0",
+        "now": "WTI +0.92%，黄金 +3.51%，VIX 14.3",
         "why": "供给冲击与需求走强对通胀、利率和A股行业利润的含义相反。",
         "verify": "看期限结构、库存、通胀预期及航空/化工等成本敏感板块。"
       },
       {
-        "score": 0.7992387185252303,
+        "score": 3.774069181520908,
+        "title": "AI Capex 是否从芯片扩散到实体？",
+        "now": "半导体 -3.37%，电力设备 -7.64%，铜 -0.31%（20日）",
+        "why": "只有算力、电力、电网与原料共同确认，才是更完整的资本开支周期。",
+        "verify": "看 hyperscaler 指引、服务器/光模块、电网设备与铜能否接力。"
+      },
+      {
+        "score": 1.2170198695019008,
         "title": "金融条件是否继续收紧？",
-        "now": "美元 -0.21%，Nasdaq +0.21%，实际10Y 2.43%",
+        "now": "美元 -0.53%，Nasdaq +0.23%，实际10Y 2.42%",
         "why": "美元、实际利率与风险资产的共振决定外部流动性压力。",
         "verify": "看 USD/CNH、美国长端利率、VIX 与高收益信用是否同向。",
         "divergence": "暂未识别到高置信度跨资产背离；重点观察利率、美元、铜和科技股是否出现新的共振。"
@@ -192,14 +185,14 @@
       "group": "indices",
       "theme": "",
       "region": "US",
-      "last": 7718.6,
-      "change_pct": -0.3757239235851584,
-      "change_5d_pct": 0.08869570629792545,
-      "change_20d_pct": -0.503245832495447,
-      "vol_20d": 8.304312391128219,
-      "ret_z": -0.718233141965444,
+      "last": 7666.6,
+      "change_pct": 0.4603307095487619,
+      "change_5d_pct": -0.11855596232265286,
+      "change_20d_pct": -0.7373552317263443,
+      "vol_20d": 7.585294000924307,
+      "ret_z": 0.9633803869673504,
       "volume_ratio": NaN,
-      "asof": "2026-09-04",
+      "asof": "2026-09-02",
       "status": "ok"
     },
     "NASDAQ": {
@@ -208,14 +201,14 @@
       "group": "indices",
       "theme": "",
       "region": "US",
-      "last": 29544.15,
-      "change_pct": 0.2097189095023877,
-      "change_5d_pct": 0.37617090498798245,
-      "change_20d_pct": -0.5993816090948512,
-      "vol_20d": 12.942612961659473,
-      "ret_z": 0.25722661169642286,
+      "last": 29143.33,
+      "change_pct": 0.22736011214277152,
+      "change_5d_pct": -0.27781465700719155,
+      "change_20d_pct": -1.1681445099819276,
+      "vol_20d": 13.002892346024261,
+      "ret_z": 0.2775713120332594,
       "volume_ratio": NaN,
-      "asof": "2026-09-04",
+      "asof": "2026-09-02",
       "status": "ok"
     },
     "RUSSELL": {
@@ -224,14 +217,14 @@
       "group": "indices",
       "theme": "",
       "region": "US",
-      "last": 2975.65,
-      "change_pct": 0.24862967317662577,
-      "change_5d_pct": 0.11034965364340454,
-      "change_20d_pct": -1.9390408272889292,
-      "vol_20d": 12.481024277160806,
-      "ret_z": 0.31622995156592615,
+      "last": 2953.17,
+      "change_pct": 1.131456476252768,
+      "change_5d_pct": -1.7542167071426196,
+      "change_20d_pct": -2.1866792086619236,
+      "vol_20d": 13.089232362050145,
+      "ret_z": 1.372220634177545,
       "volume_ratio": NaN,
-      "asof": "2026-09-04",
+      "asof": "2026-09-02",
       "status": "ok"
     },
     "CSI300": {
@@ -240,15 +233,15 @@
       "group": "indices",
       "theme": "",
       "region": "CN",
-      "last": 4575.024,
-      "change_pct": 1.0139762866794744,
-      "change_5d_pct": -2.5632856126660664,
-      "change_20d_pct": -9.578430171197262,
-      "vol_20d": 29.110644578877498,
-      "ret_z": 0.5529377577198403,
+      "last": NaN,
+      "change_pct": NaN,
+      "change_5d_pct": NaN,
+      "change_20d_pct": NaN,
+      "vol_20d": NaN,
+      "ret_z": NaN,
       "volume_ratio": NaN,
-      "asof": "2026-09-07",
-      "status": "ok"
+      "asof": "",
+      "status": "unavailable"
     },
     "SSE": {
       "name": "上证综指",
@@ -256,14 +249,14 @@
       "group": "indices",
       "theme": "",
       "region": "CN",
-      "last": 3932.6992,
-      "change_pct": 0.06572833982507742,
-      "change_5d_pct": -1.3445758445555178,
-      "change_20d_pct": -0.8545064102855049,
-      "vol_20d": 12.969066745646995,
-      "ret_z": 0.08045336399768312,
+      "last": 3955.851,
+      "change_pct": 0.3670028766530331,
+      "change_5d_pct": -0.018197575627987295,
+      "change_20d_pct": 1.4229228541424055,
+      "vol_20d": 13.689841462030017,
+      "ret_z": 0.42557030836144666,
       "volume_ratio": NaN,
-      "asof": "2026-09-07",
+      "asof": "2026-09-04",
       "status": "ok"
     },
     "CHINEXT": {
@@ -288,14 +281,14 @@
       "group": "indices",
       "theme": "",
       "region": "HK",
-      "last": 25413.12,
-      "change_pct": -0.9268691471283397,
-      "change_5d_pct": -0.6018307200026385,
-      "change_20d_pct": -2.0216682493178872,
-      "vol_20d": 14.454279686756491,
-      "ret_z": -1.017940145483821,
+      "last": 25737.6,
+      "change_pct": 1.6845895553788237,
+      "change_5d_pct": 0.6722277547999589,
+      "change_20d_pct": 0.8120553319430845,
+      "vol_20d": 14.620158264245168,
+      "ret_z": 1.829120428463167,
       "volume_ratio": NaN,
-      "asof": "2026-09-07",
+      "asof": "2026-09-04",
       "status": "ok"
     },
     "NIKKEI": {
@@ -304,14 +297,14 @@
       "group": "indices",
       "theme": "",
       "region": "JP",
-      "last": 66399.84,
-      "change_pct": 2.1207014232645482,
-      "change_5d_pct": 0.13257041380034806,
-      "change_20d_pct": 1.2089159782589176,
-      "vol_20d": 23.389311391933617,
-      "ret_z": 1.439336578223614,
+      "last": 65049.85,
+      "change_pct": 1.125849661192646,
+      "change_5d_pct": -1.6363187674102608,
+      "change_20d_pct": -1.8862469087686407,
+      "vol_20d": 22.22491850476629,
+      "ret_z": 0.8041563481611674,
       "volume_ratio": NaN,
-      "asof": "2026-09-07",
+      "asof": "2026-09-04",
       "status": "ok"
     },
     "KOSPI": {
@@ -320,14 +313,14 @@
       "group": "indices",
       "theme": "",
       "region": "KR",
-      "last": 6995.39,
-      "change_pct": 4.608498910606973,
-      "change_5d_pct": 2.571400083870712,
-      "change_20d_pct": 11.769405170664516,
-      "vol_20d": 45.253418029228264,
-      "ret_z": 1.6166215811901274,
+      "last": 6691.82,
+      "change_pct": 1.967172148133689,
+      "change_5d_pct": -3.190656750145038,
+      "change_20d_pct": 1.4179495806470044,
+      "vol_20d": 46.41728140007043,
+      "ret_z": 0.6727642980840182,
       "volume_ratio": NaN,
-      "asof": "2026-09-07",
+      "asof": "2026-09-04",
       "status": "ok"
     },
     "STOXX50": {
@@ -336,14 +329,14 @@
       "group": "indices",
       "theme": "",
       "region": "EU",
-      "last": 6387.98,
-      "change_pct": -0.07742928516346614,
-      "change_5d_pct": -0.5012336141155371,
-      "change_20d_pct": -2.2590052665240723,
-      "vol_20d": 7.987641161128447,
-      "ret_z": -0.15388169944311325,
+      "last": 6362.15,
+      "change_pct": -0.107238521709907,
+      "change_5d_pct": -1.6781697302008736,
+      "change_20d_pct": -1.772894157462268,
+      "vol_20d": 8.200856025264036,
+      "ret_z": -0.20758305611259414,
       "volume_ratio": NaN,
-      "asof": "2026-09-07",
+      "asof": "2026-09-02",
       "status": "ok"
     },
     "DXY": {
@@ -352,14 +345,14 @@
       "group": "fx",
       "theme": "",
       "region": "",
-      "last": 98.948,
-      "change_pct": -0.21379588543768424,
-      "change_5d_pct": -0.4847631499547589,
-      "change_20d_pct": -0.8636409177437243,
-      "vol_20d": 4.775630045778888,
-      "ret_z": -0.710671562212327,
+      "last": 99.033,
+      "change_pct": -0.5293290478103674,
+      "change_5d_pct": -0.12807583703106085,
+      "change_20d_pct": -0.9372811843553097,
+      "vol_20d": 4.867503835228824,
+      "ret_z": -1.7263136132645869,
       "volume_ratio": NaN,
-      "asof": "2026-09-07",
+      "asof": "2026-09-04",
       "status": "ok"
     },
     "USDCNH": {
@@ -368,14 +361,14 @@
       "group": "fx",
       "theme": "",
       "region": "",
-      "last": 6.6993,
-      "change_pct": -0.2931983926179549,
-      "change_5d_pct": -0.3969669937555764,
-      "change_20d_pct": -0.7128671784687457,
-      "vol_20d": 1.2988085609779723,
-      "ret_z": -3.5835767717155096,
+      "last": 6.7155,
+      "change_pct": -0.05209108498289705,
+      "change_5d_pct": -0.1041279285979968,
+      "change_20d_pct": -0.49342105263158187,
+      "vol_20d": 0.8746995650015034,
+      "ret_z": -0.9453764142757292,
       "volume_ratio": NaN,
-      "asof": "2026-09-07",
+      "asof": "2026-09-04",
       "status": "ok"
     },
     "USDJPY": {
@@ -384,14 +377,14 @@
       "group": "fx",
       "theme": "",
       "region": "",
-      "last": 154.405,
-      "change_pct": -0.8062443787742457,
-      "change_5d_pct": -3.570402568041875,
-      "change_20d_pct": -2.207852252503306,
-      "vol_20d": 9.734947977454585,
-      "ret_z": -1.3147201980661238,
+      "last": 156.279,
+      "change_pct": -1.663698772361466,
+      "change_5d_pct": -1.9093528160129547,
+      "change_20d_pct": -1.344620570800903,
+      "vol_20d": 8.390095430372213,
+      "ret_z": -3.147806776254956,
       "volume_ratio": NaN,
-      "asof": "2026-09-07",
+      "asof": "2026-09-04",
       "status": "ok"
     },
     "EURUSD": {
@@ -400,14 +393,14 @@
       "group": "fx",
       "theme": "",
       "region": "",
-      "last": 1.1625,
-      "change_pct": -0.025799793601644083,
-      "change_5d_pct": 0.31063939943050123,
-      "change_20d_pct": 0.5970924195223271,
-      "vol_20d": 4.372699302248901,
-      "ret_z": -0.09366274654875897,
+      "last": 1.1631,
+      "change_pct": 0.39706517047906065,
+      "change_5d_pct": -0.2144818119423464,
+      "change_20d_pct": 0.9197396963123605,
+      "vol_20d": 4.473324408054723,
+      "ret_z": 1.409067082389266,
       "volume_ratio": NaN,
-      "asof": "2026-09-07",
+      "asof": "2026-09-04",
       "status": "ok"
     },
     "GOLD": {
@@ -416,14 +409,14 @@
       "group": "commodities",
       "theme": "",
       "region": "",
-      "last": 4476.6,
-      "change_pct": 1.0564811052417689,
-      "change_5d_pct": 1.0268330662815073,
-      "change_20d_pct": 2.631940941813027,
-      "vol_20d": 23.79461611983187,
-      "ret_z": 0.7048282490202565,
+      "last": 4519.4,
+      "change_pct": 3.506401300872586,
+      "change_5d_pct": -1.9589127275093876,
+      "change_20d_pct": 6.539368222536535,
+      "vol_20d": 25.126048757547213,
+      "ret_z": 2.2153262365493833,
       "volume_ratio": NaN,
-      "asof": "2026-09-07",
+      "asof": "2026-09-04",
       "status": "ok"
     },
     "SILVER": {
@@ -432,14 +425,14 @@
       "group": "commodities",
       "theme": "",
       "region": "",
-      "last": 66.748,
-      "change_pct": 1.0613653913122523,
-      "change_5d_pct": 0.7958200570815865,
-      "change_20d_pct": 2.5220409793260457,
-      "vol_20d": 33.10606757320899,
-      "ret_z": 0.5089294648553361,
+      "last": 67.295,
+      "change_pct": 3.973857824884508,
+      "change_5d_pct": -3.0736435783318194,
+      "change_20d_pct": 9.53140513354709,
+      "vol_20d": 35.766647233514625,
+      "ret_z": 1.7637391866555432,
       "volume_ratio": NaN,
-      "asof": "2026-09-07",
+      "asof": "2026-09-04",
       "status": "ok"
     },
     "COPPER": {
@@ -448,14 +441,14 @@
       "group": "commodities",
       "theme": "",
       "region": "",
-      "last": 6.6825,
-      "change_pct": 1.2960436562073685,
-      "change_5d_pct": 1.349814210965361,
-      "change_20d_pct": 1.334445371142623,
-      "vol_20d": 15.51044427450864,
-      "ret_z": 1.326464597114019,
+      "last": 6.6665,
+      "change_pct": 2.5457621904322325,
+      "change_5d_pct": 1.206922726582671,
+      "change_20d_pct": -0.30656497682070016,
+      "vol_20d": 18.117245607214514,
+      "ret_z": 2.2306217398673236,
       "volume_ratio": NaN,
-      "asof": "2026-09-07",
+      "asof": "2026-09-04",
       "status": "ok"
     },
     "WTI": {
@@ -464,14 +457,14 @@
       "group": "commodities",
       "theme": "",
       "region": "",
-      "last": 91.48,
-      "change_pct": 0.0,
-      "change_5d_pct": 6.669776119402981,
-      "change_20d_pct": 11.38439060026788,
-      "vol_20d": 30.728719315244255,
-      "ret_z": 0.0,
+      "last": 91.85,
+      "change_pct": 0.9229754971981086,
+      "change_5d_pct": 9.960493235963108,
+      "change_20d_pct": 18.838142062362518,
+      "vol_20d": 34.39433897375192,
+      "ret_z": 0.42599399284678374,
       "volume_ratio": NaN,
-      "asof": "2026-09-07",
+      "asof": "2026-09-04",
       "status": "ok"
     },
     "BRENT": {
@@ -480,14 +473,14 @@
       "group": "commodities",
       "theme": "",
       "region": "",
-      "last": 96.28,
-      "change_pct": 0.0,
-      "change_5d_pct": 6.39849707149962,
-      "change_20d_pct": 9.75832193342454,
-      "vol_20d": 30.187591173071525,
-      "ret_z": 0.0,
+      "last": 95.84,
+      "change_pct": 0.21959636097459434,
+      "change_5d_pct": 6.845039018952059,
+      "change_20d_pct": 16.183779852103285,
+      "vol_20d": 34.03818447864067,
+      "ret_z": 0.10241392756739919,
       "volume_ratio": NaN,
-      "asof": "2026-09-07",
+      "asof": "2026-09-04",
       "status": "ok"
     },
     "NATGAS": {
@@ -496,14 +489,14 @@
       "group": "commodities",
       "theme": "",
       "region": "",
-      "last": 2.975,
-      "change_pct": 0.0,
-      "change_5d_pct": 1.3628620102214661,
-      "change_20d_pct": 6.478167501789556,
-      "vol_20d": 28.083468919054187,
-      "ret_z": 0.0,
+      "last": 2.924,
+      "change_pct": -1.0825439783491264,
+      "change_5d_pct": 0.5847953216374213,
+      "change_20d_pct": 10.757575757575744,
+      "vol_20d": 31.70748090691721,
+      "ret_z": -0.5419810217804052,
       "volume_ratio": NaN,
-      "asof": "2026-09-07",
+      "asof": "2026-09-04",
       "status": "ok"
     },
     "CORN": {
@@ -512,12 +505,12 @@
       "group": "commodities",
       "theme": "",
       "region": "",
-      "last": 512.0,
-      "change_pct": -0.6307617661329479,
-      "change_5d_pct": 0.0,
-      "change_20d_pct": 16.628701594533023,
-      "vol_20d": 24.44220048245922,
-      "ret_z": -0.40966166796151465,
+      "last": 539.25,
+      "change_pct": 3.9518072289156603,
+      "change_5d_pct": 5.683488486036259,
+      "change_20d_pct": 22.835990888382685,
+      "vol_20d": 25.80082491395307,
+      "ret_z": 2.4314336906314513,
       "volume_ratio": NaN,
       "asof": "2026-09-04",
       "status": "ok"
@@ -528,12 +521,12 @@
       "group": "commodities",
       "theme": "",
       "region": "",
-      "last": 1293.75,
-      "change_pct": -0.9569377990430672,
-      "change_5d_pct": 1.3712047012732542,
-      "change_20d_pct": 11.867704280155644,
-      "vol_20d": 16.89861300321198,
-      "ret_z": -0.8989445829468583,
+      "last": 1314.0,
+      "change_pct": 0.941040906472046,
+      "change_5d_pct": 4.576203740549145,
+      "change_20d_pct": 13.54504212572909,
+      "vol_20d": 16.117336685227528,
+      "ret_z": 0.9268628908196114,
       "volume_ratio": NaN,
       "asof": "2026-09-04",
       "status": "ok"
@@ -544,14 +537,14 @@
       "group": "crypto",
       "theme": "",
       "region": "",
-      "last": 79524.24,
-      "change_pct": -1.0277653840912282,
-      "change_5d_pct": 2.876773857031689,
-      "change_20d_pct": 22.948928668222734,
-      "vol_20d": 46.53302061986754,
-      "ret_z": -0.3506170340377843,
+      "last": 81036.4,
+      "change_pct": 4.832984219502912,
+      "change_5d_pct": 3.5664401710455707,
+      "change_20d_pct": 28.679056207076027,
+      "vol_20d": 44.80806568229413,
+      "ret_z": 1.712219548922465,
       "volume_ratio": NaN,
-      "asof": "2026-09-07",
+      "asof": "2026-09-04",
       "status": "ok"
     },
     "NVDA": {
@@ -560,14 +553,14 @@
       "group": "stocks",
       "theme": "AI算力",
       "region": "",
-      "last": 230.36,
-      "change_pct": 0.8360691617421923,
-      "change_5d_pct": 5.888301539875895,
-      "change_20d_pct": 2.857653152348627,
-      "vol_20d": 45.53690470486274,
-      "ret_z": 0.29146000526257065,
+      "last": 224.41,
+      "change_pct": 3.205481972038271,
+      "change_5d_pct": 7.035199847371931,
+      "change_20d_pct": 2.3674847185475745,
+      "vol_20d": 45.737384192509644,
+      "ret_z": 1.1125570401338878,
       "volume_ratio": NaN,
-      "asof": "2026-09-04",
+      "asof": "2026-09-02",
       "status": "ok"
     },
     "AVGO": {
@@ -576,14 +569,14 @@
       "group": "stocks",
       "theme": "AI算力",
       "region": "",
-      "last": 357.9,
-      "change_pct": 0.20719005487734865,
-      "change_5d_pct": -2.952900024404148,
-      "change_20d_pct": -16.331587806246496,
-      "vol_20d": 35.228800252864254,
-      "ret_z": 0.09336225282665779,
+      "last": 367.24,
+      "change_pct": -0.6600302964726246,
+      "change_5d_pct": 3.2762451137546167,
+      "change_20d_pct": -12.202352491154244,
+      "vol_20d": 35.748354350790436,
+      "ret_z": -0.29309478222672675,
       "volume_ratio": NaN,
-      "asof": "2026-09-04",
+      "asof": "2026-09-02",
       "status": "ok"
     },
     "AMD": {
@@ -592,14 +585,14 @@
       "group": "stocks",
       "theme": "AI算力",
       "region": "",
-      "last": 477.57,
-      "change_pct": 4.693528586460882,
-      "change_5d_pct": 2.5752824434039256,
-      "change_20d_pct": -1.197864945382332,
-      "vol_20d": 46.37916521125481,
-      "ret_z": 1.6064855011406587,
+      "last": 457.06,
+      "change_pct": -0.554818215443531,
+      "change_5d_pct": -4.963300272388915,
+      "change_20d_pct": -5.184109532206205,
+      "vol_20d": 43.515591224070995,
+      "ret_z": -0.20239794238625705,
       "volume_ratio": NaN,
-      "asof": "2026-09-04",
+      "asof": "2026-09-02",
       "status": "ok"
     },
     "MSFT": {
@@ -608,14 +601,14 @@
       "group": "stocks",
       "theme": "Hyperscaler",
       "region": "",
-      "last": 499.7,
-      "change_pct": -2.0426566298126003,
-      "change_5d_pct": -2.6931240628590314,
-      "change_20d_pct": -0.058001160023202214,
-      "vol_20d": 23.389734735105115,
-      "ret_z": -1.386341876277079,
+      "last": 496.82,
+      "change_pct": -0.8382898886271972,
+      "change_5d_pct": 0.09065817837499157,
+      "change_20d_pct": 1.9201575513888347,
+      "vol_20d": 21.901078011684458,
+      "ret_z": -0.6076157266882444,
       "volume_ratio": NaN,
-      "asof": "2026-09-04",
+      "asof": "2026-09-02",
       "status": "ok"
     },
     "GOOGL": {
@@ -624,14 +617,14 @@
       "group": "stocks",
       "theme": "Hyperscaler",
       "region": "",
-      "last": 338.46,
-      "change_pct": -1.1737911702873305,
-      "change_5d_pct": -2.34571107071756,
-      "change_20d_pct": -4.470787468247261,
-      "vol_20d": 21.542710570197592,
-      "ret_z": -0.8649495199550258,
+      "last": 337.12,
+      "change_pct": 0.6268282490597743,
+      "change_5d_pct": -1.426900584795321,
+      "change_20d_pct": -6.983417487514831,
+      "vol_20d": 20.650399493008425,
+      "ret_z": 0.481859441699531,
       "volume_ratio": NaN,
-      "asof": "2026-09-04",
+      "asof": "2026-09-02",
       "status": "ok"
     },
     "AMZN": {
@@ -640,14 +633,14 @@
       "group": "stocks",
       "theme": "Hyperscaler",
       "region": "",
-      "last": 258.51,
-      "change_pct": -0.15063731170334993,
-      "change_5d_pct": -2.9726382164170784,
-      "change_20d_pct": -5.818274555523184,
-      "vol_20d": 26.618196694326947,
-      "ret_z": -0.0898367841017551,
+      "last": 254.98,
+      "change_pct": 0.023536795857515003,
+      "change_5d_pct": -2.0362686337790037,
+      "change_20d_pct": -6.480836236933795,
+      "vol_20d": 26.080857381284943,
+      "ret_z": 0.014326026385075519,
       "volume_ratio": NaN,
-      "asof": "2026-09-04",
+      "asof": "2026-09-02",
       "status": "ok"
     },
     "META": {
@@ -656,14 +649,14 @@
       "group": "stocks",
       "theme": "Hyperscaler",
       "region": "",
-      "last": 616.77,
-      "change_pct": 0.9972489683631514,
-      "change_5d_pct": 6.703920279575093,
-      "change_20d_pct": 4.16652592467488,
-      "vol_20d": 32.78112201500795,
-      "ret_z": 0.4829254040108813,
+      "last": 592.85,
+      "change_pct": 2.4734676945414424,
+      "change_5d_pct": 2.900336723712993,
+      "change_20d_pct": 0.6929700901880276,
+      "vol_20d": 30.926388684837068,
+      "ret_z": 1.2696303721198754,
       "volume_ratio": NaN,
-      "asof": "2026-09-04",
+      "asof": "2026-09-02",
       "status": "ok"
     },
     "ORCL": {
@@ -672,14 +665,14 @@
       "group": "stocks",
       "theme": "AI云",
       "region": "",
-      "last": 158.78,
-      "change_pct": 3.077122825240197,
-      "change_5d_pct": 5.2568776930725925,
-      "change_20d_pct": 7.998911712692136,
-      "vol_20d": 50.39894965096173,
-      "ret_z": 0.9692227880424497,
+      "last": 145.75,
+      "change_pct": 3.1347296914803424,
+      "change_5d_pct": -2.095788271646404,
+      "change_20d_pct": 0.9418934829281911,
+      "vol_20d": 46.0410354159842,
+      "ret_z": 1.0808247620149563,
       "volume_ratio": NaN,
-      "asof": "2026-09-04",
+      "asof": "2026-09-02",
       "status": "ok"
     },
     "TSM": {
@@ -688,14 +681,14 @@
       "group": "stocks",
       "theme": "半导体制造",
       "region": "",
-      "last": 428.91,
-      "change_pct": 2.8536485935589218,
-      "change_5d_pct": 2.7280130293159788,
-      "change_20d_pct": 2.11170364727169,
-      "vol_20d": 25.91857726246758,
-      "ret_z": 1.7477914234110254,
+      "last": 415.5,
+      "change_pct": 0.36231884057971175,
+      "change_5d_pct": -0.5243122890181695,
+      "change_20d_pct": 0.36231884057971175,
+      "vol_20d": 24.117556892157452,
+      "ret_z": 0.23848324731404968,
       "volume_ratio": NaN,
-      "asof": "2026-09-04",
+      "asof": "2026-09-02",
       "status": "ok"
     },
     "ASML": {
@@ -704,14 +697,14 @@
       "group": "stocks",
       "theme": "半导体设备",
       "region": "",
-      "last": 1714.88,
-      "change_pct": 4.172665366695227,
-      "change_5d_pct": 1.1036694651447965,
-      "change_20d_pct": -1.499721422868594,
-      "vol_20d": 33.4271353310767,
-      "ret_z": 1.9815939514812342,
+      "last": 1682.3,
+      "change_pct": 1.0305439782841042,
+      "change_5d_pct": -3.6284686418734724,
+      "change_20d_pct": 0.2431147287006441,
+      "vol_20d": 30.32040668668406,
+      "ret_z": 0.539550100992344,
       "volume_ratio": NaN,
-      "asof": "2026-09-04",
+      "asof": "2026-09-02",
       "status": "ok"
     },
     "VRT": {
@@ -720,14 +713,14 @@
       "group": "stocks",
       "theme": "数据中心电力",
       "region": "",
-      "last": 280.53,
-      "change_pct": 4.352192835621027,
-      "change_5d_pct": 9.121674187023498,
-      "change_20d_pct": 2.984581497797345,
-      "vol_20d": 49.151429681417504,
-      "ret_z": 1.4056339734756829,
+      "last": 256.7,
+      "change_pct": 0.2851896706645318,
+      "change_5d_pct": -2.6951214889503916,
+      "change_20d_pct": -7.641937108728502,
+      "vol_20d": 43.248491410857156,
+      "ret_z": 0.10467985177490047,
       "volume_ratio": NaN,
-      "asof": "2026-09-04",
+      "asof": "2026-09-02",
       "status": "ok"
     },
     "TCEHY": {
@@ -736,14 +729,14 @@
       "group": "stocks",
       "theme": "中国互联网",
       "region": "",
-      "last": 56.6,
-      "change_pct": 1.3428827215756556,
-      "change_5d_pct": -2.346445824706689,
-      "change_20d_pct": -8.591731266149871,
-      "vol_20d": 30.480517893538757,
-      "ret_z": 0.6993845183912558,
+      "last": 56.09,
+      "change_pct": 0.0,
+      "change_5d_pct": -0.6553312079348173,
+      "change_20d_pct": -8.885640025990904,
+      "vol_20d": 31.212529992108216,
+      "ret_z": 0.0,
       "volume_ratio": NaN,
-      "asof": "2026-09-04",
+      "asof": "2026-09-02",
       "status": "ok"
     },
     "BABA": {
@@ -752,14 +745,14 @@
       "group": "stocks",
       "theme": "中国互联网",
       "region": "",
-      "last": 113.24,
-      "change_pct": 1.2789553707181822,
-      "change_5d_pct": -4.760302775441561,
-      "change_20d_pct": -11.813721672766919,
-      "vol_20d": 43.795245276125,
-      "ret_z": 0.4635842764486687,
+      "last": 111.81,
+      "change_pct": -0.921577315019928,
+      "change_5d_pct": -6.692814820996407,
+      "change_20d_pct": -13.00863611608185,
+      "vol_20d": 43.80392642606373,
+      "ret_z": -0.33397888112750146,
       "volume_ratio": NaN,
-      "asof": "2026-09-04",
+      "asof": "2026-09-02",
       "status": "ok"
     },
     "PDD": {
@@ -768,14 +761,14 @@
       "group": "stocks",
       "theme": "中国互联网",
       "region": "",
-      "last": 82.21,
-      "change_pct": 0.7105230920004812,
-      "change_5d_pct": -4.061150659353485,
-      "change_20d_pct": -10.407585004359209,
-      "vol_20d": 31.502301702696634,
-      "ret_z": 0.35804381913611494,
+      "last": 82.25,
+      "change_pct": -1.1061680894553394,
+      "change_5d_pct": -5.176389209130727,
+      "change_20d_pct": -9.555751044644822,
+      "vol_20d": 31.690429291200317,
+      "ret_z": -0.5541065372213695,
       "volume_ratio": NaN,
-      "asof": "2026-09-04",
+      "asof": "2026-09-02",
       "status": "ok"
     },
     "CATL": {
@@ -784,14 +777,14 @@
       "group": "stocks",
       "theme": "新能源",
       "region": "",
-      "last": 348.2,
-      "change_pct": -0.7977207977208023,
-      "change_5d_pct": -4.222252785036451,
-      "change_20d_pct": -11.595196384593908,
-      "vol_20d": 20.257245649266093,
-      "ret_z": -0.6251306469721668,
+      "last": 352.17,
+      "change_pct": 0.7639484978540834,
+      "change_5d_pct": -4.431478968792401,
+      "change_20d_pct": -9.25090834127863,
+      "vol_20d": 21.783741282605607,
+      "ret_z": 0.5567136646257955,
       "volume_ratio": NaN,
-      "asof": "2026-09-07",
+      "asof": "2026-09-04",
       "status": "ok"
     },
     "BYD": {
@@ -800,14 +793,14 @@
       "group": "stocks",
       "theme": "新能源",
       "region": "",
-      "last": 86.51,
-      "change_pct": -1.0183066361556081,
-      "change_5d_pct": -1.91609977324263,
-      "change_20d_pct": -5.090510148107519,
-      "vol_20d": 22.11065159080309,
-      "ret_z": -0.7311008741493041,
+      "last": 87.94,
+      "change_pct": 0.721566830832665,
+      "change_5d_pct": -4.744367417677642,
+      "change_20d_pct": -2.332296756996899,
+      "vol_20d": 22.70981413460075,
+      "ret_z": 0.5043862650872747,
       "volume_ratio": NaN,
-      "asof": "2026-09-07",
+      "asof": "2026-09-04",
       "status": "ok"
     },
     "FOXCONN": {
@@ -816,14 +809,14 @@
       "group": "stocks",
       "theme": "AI服务器",
       "region": "",
-      "last": 66.57,
-      "change_pct": 4.521902967498814,
-      "change_5d_pct": 2.6681061073411394,
-      "change_20d_pct": -3.772766695576779,
-      "vol_20d": 47.73746331218313,
-      "ret_z": 1.5037033651991576,
+      "last": 63.54,
+      "change_pct": 0.5379746835443067,
+      "change_5d_pct": -0.780762023735182,
+      "change_20d_pct": -6.805514813728375,
+      "vol_20d": 44.8539288550809,
+      "ret_z": 0.19039766557426224,
       "volume_ratio": NaN,
-      "asof": "2026-09-07",
+      "asof": "2026-09-04",
       "status": "ok"
     },
     "MOUTAI": {
@@ -832,14 +825,14 @@
       "group": "stocks",
       "theme": "消费",
       "region": "",
-      "last": 1316.01,
-      "change_pct": -1.051879699248126,
-      "change_5d_pct": 1.2689300664860959,
-      "change_20d_pct": -2.4353898847915945,
-      "vol_20d": 21.007846717104215,
-      "ret_z": -0.7948493144046253,
+      "last": 1329.38,
+      "change_pct": 2.348176890859821,
+      "change_5d_pct": 2.4649298597194447,
+      "change_20d_pct": 1.5398481538626108,
+      "vol_20d": 23.382497971834677,
+      "ret_z": 1.5941903457245912,
       "volume_ratio": NaN,
-      "asof": "2026-09-07",
+      "asof": "2026-09-04",
       "status": "ok"
     },
     "SMH": {
@@ -848,14 +841,14 @@
       "group": "stocks",
       "theme": "半导体",
       "region": "",
-      "last": 567.01,
-      "change_pct": 2.6076728193991983,
-      "change_5d_pct": 2.51306250112997,
-      "change_20d_pct": -2.692637720954183,
-      "vol_20d": 31.22415795887405,
-      "ret_z": 1.3257530511804485,
+      "last": 550.48,
+      "change_pct": 0.9647481750486131,
+      "change_5d_pct": -0.9518325926192395,
+      "change_20d_pct": -3.3737054590135207,
+      "vol_20d": 30.53896530038969,
+      "ret_z": 0.5014872751336081,
       "volume_ratio": NaN,
-      "asof": "2026-09-04",
+      "asof": "2026-09-02",
       "status": "ok"
     },
     "IGV": {
@@ -864,14 +857,14 @@
       "group": "stocks",
       "theme": "软件",
       "region": "",
-      "last": 104.57,
-      "change_pct": -2.2253389434315207,
-      "change_5d_pct": -4.502283105022842,
-      "change_20d_pct": 1.8307527509981547,
-      "vol_20d": 40.79060814536895,
-      "ret_z": -0.8660366238470235,
+      "last": 103.42,
+      "change_pct": -2.5993595780749668,
+      "change_5d_pct": 1.0059576130481584,
+      "change_20d_pct": 2.082716414963981,
+      "vol_20d": 40.40442300735806,
+      "ret_z": -1.0212632924421752,
       "volume_ratio": NaN,
-      "asof": "2026-09-04",
+      "asof": "2026-09-02",
       "status": "ok"
     },
     "XLU": {
@@ -880,14 +873,14 @@
       "group": "stocks",
       "theme": "电力公用事业",
       "region": "",
-      "last": 43.08,
-      "change_pct": 0.1161980013943742,
-      "change_5d_pct": 0.8190966534051158,
-      "change_20d_pct": -1.2153175877092415,
-      "vol_20d": 14.039640387470381,
-      "ret_z": 0.13138414063936404,
+      "last": 42.67,
+      "change_pct": 0.25845864661653284,
+      "change_5d_pct": -1.9305906688117602,
+      "change_20d_pct": -2.2675217590471752,
+      "vol_20d": 13.93858357476468,
+      "ret_z": 0.2943558645570124,
       "volume_ratio": NaN,
-      "asof": "2026-09-04",
+      "asof": "2026-09-02",
       "status": "ok"
     },
     "GRID": {
@@ -896,14 +889,14 @@
       "group": "stocks",
       "theme": "电网",
       "region": "",
-      "last": 178.99,
-      "change_pct": 0.8167173594682886,
-      "change_5d_pct": -0.11161337128187121,
-      "change_20d_pct": -3.9907740170573414,
-      "vol_20d": 17.150380164659655,
-      "ret_z": 0.755959111286085,
+      "last": 175.53,
+      "change_pct": 0.034193879295596474,
+      "change_5d_pct": -2.9309296023889875,
+      "change_20d_pct": -5.957674792392176,
+      "vol_20d": 16.159521771670438,
+      "ret_z": 0.033590784029999245,
       "volume_ratio": NaN,
-      "asof": "2026-09-04",
+      "asof": "2026-09-02",
       "status": "ok"
     },
     "DLR": {
@@ -912,14 +905,14 @@
       "group": "stocks",
       "theme": "数据中心REIT",
       "region": "",
-      "last": 188.39,
-      "change_pct": 0.3195058309814147,
-      "change_5d_pct": 1.5743786057044185,
-      "change_20d_pct": -2.7915376676986736,
-      "vol_20d": 25.28665106894791,
-      "ret_z": 0.20058005361965808,
+      "last": 183.76,
+      "change_pct": 0.2673650897582647,
+      "change_5d_pct": -4.999224525668211,
+      "change_20d_pct": -5.7302621453855345,
+      "vol_20d": 24.134588574140015,
+      "ret_z": 0.17585919095023234,
       "volume_ratio": NaN,
-      "asof": "2026-09-04",
+      "asof": "2026-09-02",
       "status": "ok"
     },
     "XLE": {
@@ -928,14 +921,14 @@
       "group": "stocks",
       "theme": "能源",
       "region": "",
-      "last": 64.06,
-      "change_pct": -0.8666047663262177,
-      "change_5d_pct": 2.2016592214422426,
-      "change_20d_pct": 11.408695652173929,
-      "vol_20d": 21.595414853372862,
-      "ret_z": -0.6370298636770976,
+      "last": 65.1,
+      "change_pct": 0.509495136637339,
+      "change_5d_pct": 4.276790004805364,
+      "change_20d_pct": 13.592741231896689,
+      "vol_20d": 21.55042778993655,
+      "ret_z": 0.37530505813033094,
       "volume_ratio": NaN,
-      "asof": "2026-09-04",
+      "asof": "2026-09-02",
       "status": "ok"
     },
     "ZHONGJI": {
@@ -944,14 +937,14 @@
       "group": "stocks",
       "theme": "AI光模块",
       "region": "",
-      "last": 898.46,
-      "change_pct": 10.375921375921383,
-      "change_5d_pct": 5.46543021481396,
-      "change_20d_pct": 3.9186657105183986,
-      "vol_20d": 70.27776066057602,
-      "ret_z": 2.343737819117537,
+      "last": 823.9,
+      "change_pct": 1.3407134071340643,
+      "change_5d_pct": -4.013514300693199,
+      "change_20d_pct": -10.432995966821402,
+      "vol_20d": 63.05762975727108,
+      "ret_z": 0.3375192757806888,
       "volume_ratio": NaN,
-      "asof": "2026-09-07",
+      "asof": "2026-09-04",
       "status": "ok"
     },
     "EOPTOLINK": {
@@ -960,14 +953,14 @@
       "group": "stocks",
       "theme": "AI光模块",
       "region": "",
-      "last": 417.2,
-      "change_pct": 8.082901554404142,
-      "change_5d_pct": 3.8146664344190784,
-      "change_20d_pct": 4.404404404404394,
-      "vol_20d": 67.53872833093443,
-      "ret_z": 1.8998297344288981,
+      "last": 391.6,
+      "change_pct": 1.777731572928598,
+      "change_5d_pct": -1.8546365914786866,
+      "change_20d_pct": -6.972324504097871,
+      "vol_20d": 63.87263162678995,
+      "ret_z": 0.4418263835389557,
       "volume_ratio": NaN,
-      "asof": "2026-09-07",
+      "asof": "2026-09-04",
       "status": "ok"
     },
     "WUS": {
@@ -976,14 +969,14 @@
       "group": "stocks",
       "theme": "AI PCB",
       "region": "",
-      "last": 122.65,
-      "change_pct": 10.000000000000009,
-      "change_5d_pct": -1.8093026979425164,
-      "change_20d_pct": -0.04074979625101616,
-      "vol_20d": 64.56240976579757,
-      "ret_z": 2.4587849065691474,
+      "last": 113.22,
+      "change_pct": -2.7486686136402705,
+      "change_5d_pct": -6.96795398520953,
+      "change_20d_pct": -10.05005164058156,
+      "vol_20d": 52.257121586106315,
+      "ret_z": -0.8349821077961171,
       "volume_ratio": NaN,
-      "asof": "2026-09-07",
+      "asof": "2026-09-04",
       "status": "ok"
     },
     "XD": {
@@ -992,14 +985,14 @@
       "group": "stocks",
       "theme": "电网设备",
       "region": "",
-      "last": 12.51,
-      "change_pct": -0.7142857142857117,
-      "change_5d_pct": -1.1848341232227555,
-      "change_20d_pct": -11.087420042643926,
-      "vol_20d": 27.024291533062026,
-      "ret_z": -0.4195830324138012,
+      "last": 12.73,
+      "change_pct": 2.0850040096231037,
+      "change_5d_pct": -0.07849293563578774,
+      "change_20d_pct": -9.523809523809524,
+      "vol_20d": 28.131792764984265,
+      "ret_z": 1.1765482857320502,
       "volume_ratio": NaN,
-      "asof": "2026-09-07",
+      "asof": "2026-09-04",
       "status": "ok"
     },
     "TBEA": {
@@ -1008,14 +1001,14 @@
       "group": "stocks",
       "theme": "电网/能源",
       "region": "",
-      "last": 18.94,
-      "change_pct": 0.31779661016950733,
-      "change_5d_pct": -1.865284974093262,
-      "change_20d_pct": -11.204875761837773,
-      "vol_20d": 23.26402110170602,
-      "ret_z": 0.21685265698444472,
+      "last": 18.98,
+      "change_pct": 0.7966011683483876,
+      "change_5d_pct": -1.6580310880829008,
+      "change_20d_pct": -11.017346460384426,
+      "vol_20d": 23.424835470081554,
+      "ret_z": 0.539839501945324,
       "volume_ratio": NaN,
-      "asof": "2026-09-07",
+      "asof": "2026-09-04",
       "status": "ok"
     },
     "ZIJIN": {
@@ -1024,14 +1017,14 @@
       "group": "stocks",
       "theme": "铜金",
       "region": "",
-      "last": 32.87,
-      "change_pct": -1.4392803598201054,
-      "change_5d_pct": -2.376002376002384,
-      "change_20d_pct": -7.277856135401994,
-      "vol_20d": 40.19335834518011,
-      "ret_z": -0.5684488267361023,
+      "last": 33.28,
+      "change_pct": -0.09006304413089472,
+      "change_5d_pct": -3.953823953823943,
+      "change_20d_pct": -5.320056899004255,
+      "vol_20d": 40.172909706248745,
+      "ret_z": -0.035588821247476414,
       "volume_ratio": NaN,
-      "asof": "2026-09-07",
+      "asof": "2026-09-04",
       "status": "ok"
     },
     "CMOC": {
@@ -1040,14 +1033,14 @@
       "group": "stocks",
       "theme": "铜钴",
       "region": "",
-      "last": 18.37,
-      "change_pct": -0.5952380952380931,
-      "change_5d_pct": -3.620146904512056,
-      "change_20d_pct": -11.469879518072279,
-      "vol_20d": 48.38100108251512,
-      "ret_z": -0.1953062486060371,
+      "last": 18.56,
+      "change_pct": -0.2686727565824887,
+      "change_5d_pct": -4.8692977960020585,
+      "change_20d_pct": -10.897743638982238,
+      "vol_20d": 48.39174875582012,
+      "ret_z": -0.08813584748453178,
       "volume_ratio": NaN,
-      "asof": "2026-09-07",
+      "asof": "2026-09-04",
       "status": "ok"
     },
     "SHENHUA": {
@@ -1056,14 +1049,14 @@
       "group": "stocks",
       "theme": "能源",
       "region": "",
-      "last": 46.09,
-      "change_pct": -3.192606595253089,
-      "change_5d_pct": -5.514555145551448,
-      "change_20d_pct": 3.1557743957027817,
-      "vol_20d": 20.15496133253769,
-      "ret_z": -2.5145698706356545,
+      "last": 47.32,
+      "change_pct": -0.962745918794472,
+      "change_5d_pct": -0.650850304429984,
+      "change_20d_pct": 7.692307692307709,
+      "vol_20d": 16.991110057395694,
+      "ret_z": -0.8994772919255555,
       "volume_ratio": NaN,
-      "asof": "2026-09-07",
+      "asof": "2026-09-04",
       "status": "ok"
     },
     "LONGPING": {
@@ -1072,14 +1065,14 @@
       "group": "stocks",
       "theme": "种业",
       "region": "",
-      "last": 9.68,
-      "change_pct": 3.088391906283272,
-      "change_5d_pct": 6.843267108167761,
-      "change_20d_pct": 15.513126491646755,
-      "vol_20d": 68.21157997119852,
-      "ret_z": 0.7187445538057077,
+      "last": 9.5,
+      "change_pct": 3.7117903930131035,
+      "change_5d_pct": 2.7027027027026973,
+      "change_20d_pct": 15.712545676004863,
+      "vol_20d": 68.39837928293436,
+      "ret_z": 0.8614655260840324,
       "volume_ratio": NaN,
-      "asof": "2026-09-07",
+      "asof": "2026-09-04",
       "status": "ok"
     },
     "BEIDAHUANG": {
@@ -1088,14 +1081,14 @@
       "group": "stocks",
       "theme": "种植业",
       "region": "",
-      "last": 13.31,
-      "change_pct": 1.525553012967218,
-      "change_5d_pct": 3.178294573643403,
-      "change_20d_pct": 9.009009009009006,
-      "vol_20d": 69.16744187302781,
-      "ret_z": 0.35012720796289876,
+      "last": 13.17,
+      "change_pct": 4.028436018957349,
+      "change_5d_pct": -1.8628912071535053,
+      "change_20d_pct": 9.203980099502473,
+      "vol_20d": 69.41732748391533,
+      "ret_z": 0.9212316519531102,
       "volume_ratio": NaN,
-      "asof": "2026-09-07",
+      "asof": "2026-09-04",
       "status": "ok"
     },
     "PETROCHINA": {
@@ -1104,14 +1097,14 @@
       "group": "stocks",
       "theme": "石油上游",
       "region": "",
-      "last": 11.02,
-      "change_pct": -1.3428827215756556,
-      "change_5d_pct": -3.5026269702276736,
-      "change_20d_pct": 1.5668202764977046,
-      "vol_20d": 25.914005206695357,
-      "ret_z": -0.8226286194378346,
+      "last": 11.15,
+      "change_pct": -0.535236396074934,
+      "change_5d_pct": -0.7123775601068583,
+      "change_20d_pct": 3.52831940575673,
+      "vol_20d": 25.496233450414742,
+      "ret_z": -0.3332497875183304,
       "volume_ratio": NaN,
-      "asof": "2026-09-07",
+      "asof": "2026-09-04",
       "status": "ok"
     },
     "CNOOC": {
@@ -1120,14 +1113,14 @@
       "group": "stocks",
       "theme": "石油上游",
       "region": "",
-      "last": 33.12,
-      "change_pct": -0.8680035917389972,
-      "change_5d_pct": -4.580812445980998,
-      "change_20d_pct": 3.499999999999992,
-      "vol_20d": 27.19246096715197,
-      "ret_z": -0.5067261055098435,
+      "last": 33.38,
+      "change_pct": -0.14956625785221833,
+      "change_5d_pct": -2.369113775957865,
+      "change_20d_pct": 6.543249281838515,
+      "vol_20d": 27.754604525918523,
+      "ret_z": -0.08554583202956345,
       "volume_ratio": NaN,
-      "asof": "2026-09-07",
+      "asof": "2026-09-04",
       "status": "ok"
     },
     "SINOPEC": {
@@ -1136,14 +1129,14 @@
       "group": "stocks",
       "theme": "炼化",
       "region": "",
-      "last": 5.37,
-      "change_pct": -2.007299270072993,
-      "change_5d_pct": -1.6483516483516425,
-      "change_20d_pct": 4.8828125,
-      "vol_20d": 25.101176822411155,
-      "ret_z": -1.2694579333235758,
+      "last": 5.48,
+      "change_pct": 0.5504587155963359,
+      "change_5d_pct": 0.366300366300365,
+      "change_20d_pct": 7.450980392156881,
+      "vol_20d": 23.641375427436195,
+      "ret_z": 0.36961729395467935,
       "volume_ratio": NaN,
-      "asof": "2026-09-07",
+      "asof": "2026-09-04",
       "status": "ok"
     },
     "AIRCHINA": {
@@ -1152,14 +1145,14 @@
       "group": "stocks",
       "theme": "航空",
       "region": "",
-      "last": 5.86,
-      "change_pct": 0.0,
-      "change_5d_pct": 0.5145797598627766,
-      "change_20d_pct": -3.4596375617792385,
-      "vol_20d": 18.172292836359745,
-      "ret_z": 0.0,
+      "last": 5.83,
+      "change_pct": 1.2152777777777901,
+      "change_5d_pct": -1.85185185185186,
+      "change_20d_pct": -5.815831987075937,
+      "vol_20d": 18.5636969833333,
+      "ret_z": 1.0392292365308495,
       "volume_ratio": NaN,
-      "asof": "2026-09-07",
+      "asof": "2026-09-04",
       "status": "ok"
     },
     "SHANDONG_GOLD": {
@@ -1168,14 +1161,14 @@
       "group": "stocks",
       "theme": "黄金矿业",
       "region": "",
-      "last": 36.45,
-      "change_pct": -3.825857519788911,
-      "change_5d_pct": -3.6988110964332854,
-      "change_20d_pct": 15.824594852240237,
-      "vol_20d": 62.03357453450125,
-      "ret_z": -0.979044102315735,
+      "last": 37.27,
+      "change_pct": -0.6133333333333213,
+      "change_5d_pct": 5.015497323189644,
+      "change_20d_pct": 22.276902887139126,
+      "vol_20d": 60.4056107966895,
+      "ret_z": -0.16118312018212552,
       "volume_ratio": NaN,
-      "asof": "2026-09-07",
+      "asof": "2026-09-04",
       "status": "ok"
     },
     "ZHONGJIN_GOLD": {
@@ -1184,14 +1177,14 @@
       "group": "stocks",
       "theme": "黄金矿业",
       "region": "",
-      "last": 25.07,
-      "change_pct": -2.0703125000000044,
-      "change_5d_pct": -2.1467603434816573,
-      "change_20d_pct": -5.822689706987227,
-      "vol_20d": 49.456095162407394,
-      "ret_z": -0.6645326922638254,
+      "last": 25.36,
+      "change_pct": -1.2845465161541503,
+      "change_5d_pct": -4.947526236881561,
+      "change_20d_pct": -2.8352490421456045,
+      "vol_20d": 49.764265520678165,
+      "ret_z": -0.4097627798195199,
       "volume_ratio": NaN,
-      "asof": "2026-09-07",
+      "asof": "2026-09-04",
       "status": "ok"
     },
     "LUXSHARE": {
@@ -1200,14 +1193,14 @@
       "group": "stocks",
       "theme": "消费电子",
       "region": "",
-      "last": 55.93,
-      "change_pct": 3.0018416206261556,
-      "change_5d_pct": -2.9330093717459205,
-      "change_20d_pct": 0.25094102885820924,
-      "vol_20d": 44.261611708721446,
-      "ret_z": 1.0766159789633192,
+      "last": 54.89,
+      "change_pct": -2.27879651059284,
+      "change_5d_pct": -3.0212014134275655,
+      "change_20d_pct": -3.6848569924548213,
+      "vol_20d": 42.599418047086765,
+      "ret_z": -0.8491846788450763,
       "volume_ratio": NaN,
-      "asof": "2026-09-07",
+      "asof": "2026-09-04",
       "status": "ok"
     },
     "GOERTEK": {
@@ -1216,14 +1209,14 @@
       "group": "stocks",
       "theme": "消费电子",
       "region": "",
-      "last": 23.6,
-      "change_pct": 0.8116189662537465,
-      "change_5d_pct": -2.680412371134011,
-      "change_20d_pct": 3.372755146736761,
-      "vol_20d": 34.011625102757364,
-      "ret_z": 0.37881317418319715,
+      "last": 23.87,
+      "change_pct": 0.3784693019343921,
+      "change_5d_pct": 1.5312632922160674,
+      "change_20d_pct": 2.490339201373981,
+      "vol_20d": 34.254040630781496,
+      "ret_z": 0.17539577229743708,
       "volume_ratio": NaN,
-      "asof": "2026-09-07",
+      "asof": "2026-09-04",
       "status": "ok"
     },
     "DBN": {
@@ -1232,14 +1225,14 @@
       "group": "stocks",
       "theme": "种业",
       "region": "",
-      "last": 3.5,
-      "change_pct": 1.1560693641618602,
-      "change_5d_pct": 6.707317073170738,
-      "change_20d_pct": 13.268608414239491,
-      "vol_20d": 68.07569147503375,
-      "ret_z": 0.2695827514614018,
+      "last": 3.41,
+      "change_pct": 4.281345565749239,
+      "change_5d_pct": 0.5899705014749346,
+      "change_20d_pct": 14.046822742474907,
+      "vol_20d": 67.4354856012205,
+      "ret_z": 1.0078410981440262,
       "volume_ratio": NaN,
-      "asof": "2026-09-07",
+      "asof": "2026-09-04",
       "status": "ok"
     },
     "US10Y_PROXY": {
@@ -1248,14 +1241,14 @@
       "group": "macro_proxies",
       "theme": "利率代理",
       "region": "",
-      "last": 4.784,
-      "change_pct": 0.461990760184805,
-      "change_5d_pct": 1.3559322033898313,
-      "change_20d_pct": 2.6609442060085753,
-      "vol_20d": 12.53093758189554,
-      "ret_z": 0.5852615503685767,
+      "last": 4.762,
+      "change_pct": -0.7089241034195282,
+      "change_5d_pct": 1.9263698630136883,
+      "change_20d_pct": 1.970021413276224,
+      "vol_20d": 12.526302751091709,
+      "ret_z": -0.8984152371236779,
       "volume_ratio": NaN,
-      "asof": "2026-09-04",
+      "asof": "2026-09-03",
       "status": "ok"
     },
     "VIX_MARKET": {
@@ -1264,14 +1257,14 @@
       "group": "macro_proxies",
       "theme": "风险代理",
       "region": "",
-      "last": 15.04,
-      "change_pct": 3.509979353062631,
-      "change_5d_pct": 0.8042895442359255,
-      "change_20d_pct": -2.7166882276843607,
-      "vol_20d": 78.74272294895854,
-      "ret_z": 0.7076107196238068,
+      "last": 14.32,
+      "change_pct": -5.789473684210522,
+      "change_5d_pct": -1.3094417643004785,
+      "change_20d_pct": -5.478547854785476,
+      "vol_20d": 78.89770594091641,
+      "ret_z": -1.1648633435687967,
       "volume_ratio": NaN,
-      "asof": "2026-09-07",
+      "asof": "2026-09-03",
       "status": "ok"
     },
     "HYG": {
@@ -1280,14 +1273,14 @@
       "group": "macro_proxies",
       "theme": "信用代理",
       "region": "",
-      "last": 79.16,
-      "change_pct": -0.0631233430122391,
-      "change_5d_pct": -0.7273639327815329,
-      "change_20d_pct": -0.5652556211531268,
-      "vol_20d": 3.8927289158114284,
-      "ret_z": -0.2574163335983528,
+      "last": 79.11,
+      "change_pct": 0.01264222503161161,
+      "change_5d_pct": -0.9887359198998857,
+      "change_20d_pct": -0.5155935613681994,
+      "vol_20d": 3.933483156755612,
+      "ret_z": 0.051020709309072265,
       "volume_ratio": NaN,
-      "asof": "2026-09-04",
+      "asof": "2026-09-02",
       "status": "ok"
     },
     "LQD": {
@@ -1296,54 +1289,54 @@
       "group": "macro_proxies",
       "theme": "信用代理",
       "region": "",
-      "last": 105.48,
-      "change_pct": -0.018957345971559736,
-      "change_5d_pct": -0.8180535966149427,
-      "change_20d_pct": -1.0042233693101754,
-      "vol_20d": 6.332532460005483,
-      "ret_z": -0.047522620634319605,
+      "last": 105.35,
+      "change_pct": 0.12355065576885593,
+      "change_5d_pct": -1.3392020977711194,
+      "change_20d_pct": -1.302229717069514,
+      "vol_20d": 6.4401104050385145,
+      "ret_z": 0.3045453778813461,
       "volume_ratio": NaN,
-      "asof": "2026-09-04",
+      "asof": "2026-09-02",
       "status": "ok"
     }
   },
   "macro": {
     "US10Y": {
       "name": "美国10年期国债收益率",
-      "value": 4.78,
-      "prev": 4.77,
-      "delta": 0.010000000000000675,
-      "date": "2026-09-04",
+      "value": 4.77,
+      "prev": 4.79,
+      "delta": -0.020000000000000462,
+      "date": "2026-09-03",
       "unit": "%",
       "status": "treasury",
       "source": "US Treasury"
     },
     "US2Y": {
       "name": "美国2年期国债收益率",
-      "value": 4.37,
-      "prev": 4.34,
-      "delta": 0.03000000000000025,
-      "date": "2026-09-04",
+      "value": 4.34,
+      "prev": 4.39,
+      "delta": -0.04999999999999982,
+      "date": "2026-09-03",
       "unit": "%",
       "status": "treasury",
       "source": "US Treasury"
     },
     "USREAL10Y": {
       "name": "美国10年期实际利率",
-      "value": 2.43,
-      "prev": 2.42,
-      "delta": 0.010000000000000231,
-      "date": "2026-09-04",
+      "value": 2.42,
+      "prev": 2.45,
+      "delta": -0.03000000000000025,
+      "date": "2026-09-03",
       "unit": "%",
       "status": "treasury",
       "source": "US Treasury real yield curve"
     },
     "BREAKEVEN10Y": {
       "name": "美国10年期盈亏平衡通胀",
-      "value": 2.35,
-      "prev": 2.3499999999999996,
+      "value": 2.3499999999999996,
+      "prev": 2.34,
       "delta": 0.0,
-      "date": "2026-09-04",
+      "date": "2026-09-03",
       "unit": "%",
       "status": "derived",
       "source": "Treasury nominal 10Y − real 10Y"
@@ -1359,10 +1352,10 @@
     },
     "VIX": {
       "name": "VIX",
-      "value": 15.04,
+      "value": 14.32,
       "prev": NaN,
-      "delta": 3.509979353062631,
-      "date": "2026-09-07",
+      "delta": -5.789473684210522,
+      "date": "2026-09-03",
       "unit": "",
       "status": "market_proxy",
       "source": "Yahoo ^VIX"
@@ -1387,36 +1380,36 @@
     },
     "RRP": {
       "name": "美联储隔夜逆回购",
-      "value": 0.675,
-      "prev": 0.702,
-      "delta": -0.026999999999999913,
-      "date": "2026-09-04",
+      "value": NaN,
+      "prev": NaN,
+      "delta": NaN,
+      "date": "",
       "unit": "十亿美元",
-      "status": "ok"
+      "status": "unavailable"
     },
     "UNRATE": {
       "name": "美国失业率",
-      "value": 4.1,
-      "prev": 4.1,
-      "delta": 0.0,
-      "date": "2026-08-01",
+      "value": NaN,
+      "prev": NaN,
+      "delta": NaN,
+      "date": "",
       "unit": "%",
-      "status": "ok"
+      "status": "unavailable"
     },
     "CPI": {
       "name": "美国CPI",
-      "value": 332.813,
-      "prev": 332.568,
-      "delta": 0.24500000000000455,
-      "date": "2026-07-01",
+      "value": NaN,
+      "prev": NaN,
+      "delta": NaN,
+      "date": "",
       "unit": "指数",
-      "status": "ok"
+      "status": "unavailable"
     },
     "CREDIT_PROXY": {
       "name": "信用风险市场代理",
-      "value": 0.43896774815704864,
+      "value": 0.7866361557013146,
       "delta": NaN,
-      "date": "2026-09-04",
+      "date": "2026-09-02",
       "unit": "HYG-LQD 20日百分点",
       "status": "market_proxy",
       "source": "HYG相对LQD的20日表现"
@@ -1424,129 +1417,305 @@
   },
   "news": [
     {
-      "title": "Week Ahead for FX, Bonds: U.S. Inflation Data in Focus; ECB Expected to Raise Rates - WSJ",
-      "url": "https://news.google.com/rss/articles/CBMitwFBVV95cUxPYUg3NndUYW1HNGpfSzJxNUVyU3A1ZzFVbXhGMjBhVndjbFpZaHM4c0N4NTdsczFkS19XUkFEbHAyazFvbXA4T1RmY2thTUpYZHdMTXZGLTk5d1NuNmJGeGhZWnp4RFdGXzNtakUzWVpBVXhxUDZxOGFPamVmZFRQUkJ4el9ETUgxbTByc25JRGVwcGo4RlhtMTZBeUJfMGFjeC0yb212QXNPZk9wZEU3T0hZU0NSSWM?oc=5",
-      "source": "WSJ",
-      "published": "Mon, 07 Sep 2026 01:59:27 GMT",
+      "title": "Fed's Waller channels his inner John Lennon with a plea to 'give disinflation a chance' - Reuters",
+      "url": "https://news.google.com/rss/articles/CBMivwFBVV95cUxPLVJjV3EyRTlHeFIwYWxSa0EtRkM1YzFQOExsR0cwaFRrVEo0MUlXWTMtdHhpam5seDNOQWJYQ0NYVGJkVDJNMkR4NHFsX2RJTkxPM1dDd1Z4T2s3R1ZZaFdoQV9CXzE1WUw3YXNZdnpFZFJBZnVGWnkxbVpUeVdoRk11eTdHWHBLVjIwREZldUNmYzQ4TFd0WWlKWXhNYm50MW5hYkpnUE5PaHdaUHhVUUlQWnN4UTE1U21jamtTVQ?oc=5",
+      "source": "Reuters",
+      "published": "Thu, 03 Sep 2026 18:11:10 GMT",
       "modules": [
         "通胀",
         "货币政策"
       ],
       "themes": [
-        "AI资本开支",
+        "油价与通胀"
+      ],
+      "score": 1.0,
+      "lang": "English",
+      "bucket": "政策原文",
+      "evidence_score": 78,
+      "evidence_label": "B·可靠报道",
+      "evidence_reason": "高可信财经媒体，仍应回看原始文件"
+    },
+    {
+      "title": "Fed governor Waller muddies outlook on possible rate hike later this month - pbs.org",
+      "url": "https://news.google.com/rss/articles/CBMitgFBVV95cUxPY1VTZzBtaXdkUll5UEFzY0daeWtWUGM0U05nTk96SHNveVdEd3RtdG9fMjNuSjB4bHdSSmtTdmlJYUlVZmotQWs1Qk9sMFdwcDNhelJ5NElBM2tRaDFxU2d5LW9sVzQzMGhyd0t4a3ZrNS1kVElnaGNfR0xLYl9yU3FwOU1EenpWeUhZTHh6bDRYMVR2RjZIMnUxODBBNWJEcE5aQ0NsSklQU0xZdE9aZ1F6MXpWZ9IBtgFBVV95cUxPY1VTZzBtaXdkUll5UEFzY0daeWtWUGM0U05nTk96SHNveVdEd3RtdG9fMjNuSjB4bHdSSmtTdmlJYUlVZmotQWs1Qk9sMFdwcDNhelJ5NElBM2tRaDFxU2d5LW9sVzQzMGhyd0t4a3ZrNS1kVElnaGNfR0xLYl9yU3FwOU1EenpWeUhZTHh6bDRYMVR2RjZIMnUxODBBNWJEcE5aQ0NsSklQU0xZdE9aZ1F6MXpWZw?oc=5",
+      "source": "pbs.org",
+      "published": "Fri, 04 Sep 2026 00:08:19 GMT",
+      "modules": [
+        "货币政策"
+      ],
+      "themes": [
+        "待分类"
+      ],
+      "score": 1.0,
+      "lang": "English",
+      "bucket": "政策原文",
+      "evidence_score": 58,
+      "evidence_label": "C·线索",
+      "evidence_reason": "可用于发现事件，关键数字需二次核实"
+    },
+    {
+      "title": "Fed's Waller says central bank's next rate move depends on upcoming inflation report - ABC News - Breaking News, Latest News and Videos",
+      "url": "https://news.google.com/rss/articles/CBMimwFBVV95cUxNX2RscFVwaVc4aWJVT0lkMHQ0RlpRX1AwN1FpNjEzZFdjVUt1U2E1ak5iX0RBeU9DSklPdFN1dzZFbTRRSmR3OV9vZXJoNzRZRkgxcHhYOElVZ2NOWmhpWEFvSm4xMFBnRnpDMzFaZHkyMjd3RTAySklGNDhnenN6M3RVRm1JdWw5bExQd0RFR0E3OXo2Mjg0bGJVa9IBoAFBVV95cUxNV3VyTnpDZGVUZWt0eTBhZ29pQVZ3TkRZOUR5STZxOEpLU0JOYmpiS3hjY1JCeUEwcXUtekVPU0VaVmJEazdVVWQ3SXBqQmhfUmlBUWtZRlJpN2tkR29EeF9TR1RQeTFaY2RUdDQ1cmVDMnZvYkR2bWhqTDJPb1BHam80cDRIb3BqMDNyb2R6MGIyYm1KM1V1dlpnNGxmYWpJ?oc=5",
+      "source": "ABC News - Breaking News, Latest News and Videos",
+      "published": "Thu, 03 Sep 2026 14:08:40 GMT",
+      "modules": [
+        "通胀",
+        "货币政策"
+      ],
+      "themes": [
+        "油价与通胀"
+      ],
+      "score": 1.0,
+      "lang": "English",
+      "bucket": "政策原文",
+      "evidence_score": 58,
+      "evidence_label": "C·线索",
+      "evidence_reason": "可用于发现事件，关键数字需二次核实"
+    },
+    {
+      "title": "Vance says Fed should lower interest rates: 'Would be nice to have some help' - CNBC",
+      "url": "https://news.google.com/rss/articles/CBMihgFBVV95cUxQX3ZGQmxraTBxUFRDaUFUVVZlM3NIM0JsbHVCY1VTVzRnVHBORFRXbldFbXRjYTVyZDRyRFpNV3o3TDgyU2lLVnJCdUxSNl9nY3FRbnRzd25nQkExcUZJb1hrWHUtUFp2amtrdW9BbTJTdlAxSDNLMmxlYk40VEtaaUY5aDR3Z9IBiwFBVV95cUxQb1VUX2p4NlhOSEN2X2tTMmE0M3hJS2QwMmZ5Y3VOeVhnbGMxRUMzbG5saTdGWFc5TTMyNlMwekg4WHVjTkNYT2xmZk80WE1DRWptSmFzVTJiR2hKQVA1X3F3OWowUWtsbDVhVUEtLWRpbHFFWGJZbV9WTGg1UVRmMWs4M1pLbWNpNFdv?oc=5",
+      "source": "CNBC",
+      "published": "Thu, 03 Sep 2026 19:18:59 GMT",
+      "modules": [
+        "货币政策"
+      ],
+      "themes": [
+        "待分类"
+      ],
+      "score": 1.0,
+      "lang": "English",
+      "bucket": "政策原文",
+      "evidence_score": 58,
+      "evidence_label": "C·线索",
+      "evidence_reason": "可用于发现事件，关键数字需二次核实"
+    },
+    {
+      "title": "Not so fast on rate hikes, some Fed officials say - Axios",
+      "url": "https://news.google.com/rss/articles/CBMidkFVX3lxTE1xWHBtQmZjbGZySmcteGF0R3VqMVprbjlPbHZhQzdUUi0wRWZNaEhNNmxTWnRqT2ZDdjh5QkV3TGJvTk1PS2FEeW94bFROaTBZbVQzZGg4R3l4aHFWTW1pNWtfc3hWR2VDckxrNXVmZFRWcG0yYnc?oc=5",
+      "source": "Axios",
+      "published": "Thu, 03 Sep 2026 16:03:19 GMT",
+      "modules": [
+        "货币政策"
+      ],
+      "themes": [
+        "待分类"
+      ],
+      "score": 1.0,
+      "lang": "English",
+      "bucket": "政策原文",
+      "evidence_score": 58,
+      "evidence_label": "C·线索",
+      "evidence_reason": "可用于发现事件，关键数字需二次核实"
+    },
+    {
+      "title": "Will Federal Reserve hike rates later this month? Waller muddies the outlook | National News | 2news.com - KTVN",
+      "url": "https://news.google.com/rss/articles/CBMi8AFBVV95cUxNbVM4WjJsbDhod0F4VDAyd1JMNVFJX2h6RGRFOEp5Q19XeVhBcC1wZ1ZJek1vVnVMajJFMDlIS3gzSm52YjNtYVo1TEUyVW5IOXl5MHhWT0FFNjZxZ0VfSWVjVUxfV0FpQjN3R245MTdEeWhiSUFyNFlIUERheU92cVpRdk81dTNSVGphN21wVDFEMFRKalRwV0pnRVNwVFlLalpaNVViSWJqVVplb3p3ck1ua21FS3Q0SDFoaUstWF9ZODhaR2ZUZ3I3emVUNUxEN1k5MHFDT0xvZGZPQ0psQXNGMWpxSWhPX3VGaEFXUlE?oc=5",
+      "source": "KTVN",
+      "published": "Thu, 03 Sep 2026 15:35:24 GMT",
+      "modules": [
+        "货币政策"
+      ],
+      "themes": [
+        "黄金与美元信用"
+      ],
+      "score": 1.0,
+      "lang": "English",
+      "bucket": "政策原文",
+      "evidence_score": 58,
+      "evidence_label": "C·线索",
+      "evidence_reason": "可用于发现事件，关键数字需二次核实"
+    },
+    {
+      "title": "The Lawless Fed - The American Prospect",
+      "url": "https://news.google.com/rss/articles/CBMijgFBVV95cUxPMGdVMXBQeGEzOEJBMVBhVndpNlRvUmhmUXZEMTBvT211WFJEQ0hxY0ZiYTNpcWZnMGwwNTIyNjdHMm9ScjJEcUZMekhzZ3hmQzUyRmtNaElyZmZUNEpkMDJSc2ZJVzdmOFNvRGQxMGYzcVBua1o5aGJseFU5eTkyZEVwUmVSMklBeGdxbFR3?oc=5",
+      "source": "The American Prospect",
+      "published": "Thu, 03 Sep 2026 09:00:00 GMT",
+      "modules": [
+        "货币政策"
+      ],
+      "themes": [
+        "待分类"
+      ],
+      "score": 1.0,
+      "lang": "English",
+      "bucket": "政策原文",
+      "evidence_score": 58,
+      "evidence_label": "C·线索",
+      "evidence_reason": "可用于发现事件，关键数字需二次核实"
+    },
+    {
+      "title": "New doubts emerge about whether Fed will raise interest rates this month - MarketWatch",
+      "url": "https://news.google.com/rss/articles/CBMitgFBVV95cUxOV0toZjM1WkNQOExMUDhIMEpfaDJ1d0xJVEdDNGZPclBNXzRnQXlBUFZaWlhtdTMwNG40UTA3OVhTaXZDRWMwaThOOFpOTnNCTU5aeHplSG1QbWtCdXVwWkVHN0h3NnBNa2ZOOUQzX29zZ3ZIRW1HdTNBRldCNGVnRlNZQXdnUTNkRy1TZndaZzRrTHk4aHpDMzNTWTAzWTA0NXFNdmZ6akNPWE5ocVlOUnAtOC1wQQ?oc=5",
+      "source": "MarketWatch",
+      "published": "Thu, 03 Sep 2026 18:24:00 GMT",
+      "modules": [
+        "货币政策"
+      ],
+      "themes": [
+        "AI资本开支"
+      ],
+      "score": 1.0,
+      "lang": "English",
+      "bucket": "政策原文",
+      "evidence_score": 58,
+      "evidence_label": "C·线索",
+      "evidence_reason": "可用于发现事件，关键数字需二次核实"
+    },
+    {
+      "title": "Odds of a rate hike now 50-50 following Fed governor's speech - RealEstateNews.com",
+      "url": "https://news.google.com/rss/articles/CBMipAFBVV95cUxQRTdMLVRlbmE2X2JTNWtiaEZoR2lNSE5KeHI3UV9QYTRoQnBFSnlZYjF4S3hJUUIxRERPUDd6UTdTMXhpOFk0dEJ4N2Y2R1N0ODM2dkZ1RDQxQlBUcHo0SEZLbnFkZ1RVeXhHTnV0dVFDOVcyTHlUY2tkZTlnRlhDZktMYXJGQjlUOUlIQ0dLV0tRNjlFNEY2eE53c3FqNlZ1WEZyVw?oc=5",
+      "source": "RealEstateNews.com",
+      "published": "Thu, 03 Sep 2026 19:48:01 GMT",
+      "modules": [
+        "货币政策"
+      ],
+      "themes": [
+        "待分类"
+      ],
+      "score": 1.0,
+      "lang": "English",
+      "bucket": "政策原文",
+      "evidence_score": 58,
+      "evidence_label": "C·线索",
+      "evidence_reason": "可用于发现事件，关键数字需二次核实"
+    },
+    {
+      "title": "Fed Governor Waller indicates he will support holding rates steady at September meeting - CNBC",
+      "url": "https://news.google.com/rss/articles/CBMiwgFBVV95cUxON2J1REZ3U04tQUUxbFk2SjB5b1lHLU5kXzhaZi1GUmdaa0c3SVJuTldqZ3ppWEc1STBsMzBKMlVLQ2oycUF5SVh0WXh4X1ZMbDRRaDZRYlB3TFVmNV9CUDkzbjFtT2Jka2UycVF6N0pfQzMwU21mdDNxUFA3RlRxTU1nUFJVUU1IQnFrS1FabER0N3ZBX2ZJRXNKbGU4U19CZUdBeEpuX1VsZUhWdVBFOXZUUE1Ubl9SejIwQnhjS0ppZ9IBxwFBVV95cUxPRHlvbVBOcHFJVm40TGtsUWFBbmZUWjBIXzdGMHAwU2VXSmlHS1FhVnJlYmxFX1hHNEFsNUg4VmFFZUp1SzAydzllc3BBaEVrMFdzQ0hlV2oxVDJBd2dpNldpLWUybjJsX3hRdGdmdWtWUGEwOEI2MGFBYlBiRjZYSUEzeHhHcnpNQ002QjdYUGNueWZrcHJTU0RBNUlEYVRtTHV6WFZTN2hTeUl2MHJyOFJ5ejZqSkU4VEtrWG5xVjNhWWExZGZR?oc=5",
+      "source": "CNBC",
+      "published": "Thu, 03 Sep 2026 12:30:21 GMT",
+      "modules": [
+        "货币政策"
+      ],
+      "themes": [
+        "待分类"
+      ],
+      "score": 1.0,
+      "lang": "English",
+      "bucket": "政策原文",
+      "evidence_score": 58,
+      "evidence_label": "C·线索",
+      "evidence_reason": "可用于发现事件，关键数字需二次核实"
+    },
+    {
+      "title": "Global Bond Markets Take a Breather - WSJ",
+      "url": "https://news.google.com/rss/articles/CBMikgFBVV95cUxPLW1CTWp1LW5Zclhoc0hEeUlGOV9XelNnUGwtREZoeU9SOGdLR3ZBRDVtY3FDb25Ma2poRXJ5R3dmbVdJVDJTaktpVndRdXJfYWhFT1pMV0tMOURqSGFUWEF1aTVudVVTWXR1Rkh1US1CZmx4VDFVWlBlZTBnRG1RLS1vZ2swaEFtNzh5bzlmVzdKQQ?oc=5",
+      "source": "WSJ",
+      "published": "Thu, 03 Sep 2026 17:19:42 GMT",
+      "modules": [
+        "待分类"
+      ],
+      "themes": [
+        "流动性与信用"
+      ],
+      "score": 1.0,
+      "lang": "English",
+      "bucket": "全球宏观",
+      "evidence_score": 58,
+      "evidence_label": "C·线索",
+      "evidence_reason": "可用于发现事件，关键数字需二次核实"
+    },
+    {
+      "title": "Bond yields fall, stocks rally as Fed's Waller comments curb rate hike bets - Reuters",
+      "url": "https://news.google.com/rss/articles/CBMigwFBVV95cUxQZHUxMWV6alo1MWFYM191bnlDTlhjTlc0Y2t0UjE4TndrZW9PczcxTmg5a1M0ZWk5M2Fqb0RvVlNIQWFuNG1nb3BtbjhhM2NmbkhDVENZTF9qYU53UDBWR3ROTl9XSlFDVGNLUF9sN29rSlhZc0xfSGZKcWlFanB4b2R1bw?oc=5",
+      "source": "Reuters",
+      "published": "Thu, 03 Sep 2026 22:58:24 GMT",
+      "modules": [
+        "货币政策",
+        "金融状况"
+      ],
+      "themes": [
+        "流动性与信用"
+      ],
+      "score": 1.0,
+      "lang": "English",
+      "bucket": "全球宏观",
+      "evidence_score": 78,
+      "evidence_label": "B·可靠报道",
+      "evidence_reason": "高可信财经媒体，仍应回看原始文件"
+    },
+    {
+      "title": "Tradeweb Government Bond Update – August 2026 - Tradeweb",
+      "url": "https://news.google.com/rss/articles/CBMiqgFBVV95cUxPb19UUEJ3Tk1pWThjSzY4X0Y2NEtyTzZoRVVJTmt0SVF0LTc1b0VUNm9sTlJZWG02TU1HcmhqUjQ3c2hMUkdNUFRzdEFaTXBVNHhFTHkydk0wNHMxT1F4OWFleThaVW0xVVVCa0xfZGVPUnJ6S1FHMW9BN1BQem8tN2RlQllKSzZaNGJUdktRdkFLNUJDUllMOUF5LVBCSE9vbG96ZnlJWU55Zw?oc=5",
+      "source": "Tradeweb",
+      "published": "Thu, 03 Sep 2026 15:17:37 GMT",
+      "modules": [
+        "待分类"
+      ],
+      "themes": [
+        "流动性与信用",
+        "贸易与关税"
+      ],
+      "score": 1.0,
+      "lang": "English",
+      "bucket": "全球宏观",
+      "evidence_score": 58,
+      "evidence_label": "C·线索",
+      "evidence_reason": "可用于发现事件，关键数字需二次核实"
+    },
+    {
+      "title": "Why turmoil in the bond market could make borrowing more expensive - WBFF",
+      "url": "https://news.google.com/rss/articles/CBMiiwJBVV95cUxNOF9sdHE0YlB2WFpFclhCaG5sa1NWTjA1YVhzX3piYkhtUE16bzJLczNOUFFQMVdHODFiZVphU0ozdVJKbHM2cEVfWmNIZS0zVU5XWXBTd21KSExaSjBaOGJnX2F1dDV2aUhQWnRmN3ZTUlIwMGN1LXFMRkJJRG5xc0xlOHpicVhmamN0NmVKWVVfVlNPV3ZiVDBxMFQ3RTN6R2RJQlhibjJGc0tieDRHVWxXbklZSGtOU0JVcW9qampNR3pJYm1jQXFSZy1oNEs4YVhrSUFEVDZJaXRjR1JUdzdJRjlMZUlZbVNXR1QyOUhoQnhYMURZLUFtbWtBbWVTNVZyLTV5eVgxWlk?oc=5",
+      "source": "WBFF",
+      "published": "Thu, 03 Sep 2026 20:50:14 GMT",
+      "modules": [
+        "待分类"
+      ],
+      "themes": [
         "流动性与信用",
         "油价与通胀"
       ],
       "score": 1.0,
       "lang": "English",
-      "bucket": "政策原文",
+      "bucket": "全球宏观",
       "evidence_score": 58,
       "evidence_label": "C·线索",
       "evidence_reason": "可用于发现事件，关键数字需二次核实"
     },
     {
-      "title": "No, Friday's jobs report hasn't materially boosted Fed rate hike odds - CoinDesk",
-      "url": "https://news.google.com/rss/articles/CBMirwFBVV95cUxPX05UcHBkVmVjeTdwSUxocGtnOGRpbTBYQllqVFhjbG10V19hdG1STkNnR1o0dEN2MjRkQVRESGpKNDdIMFVZUDRvc1VfMUQ4ODZrbVZXM2xwaWx2bjEyUEcwTXpHV3hCM3pMMzNuVDlVRnA1UldLU1llVFoxa1JWbEd0Tk90NkZZZWNySnBYSTQ1Q2xhWFhkUU9OenltVmRSajNzWEhVZGpVaGNaZnZz?oc=5",
-      "source": "CoinDesk",
-      "published": "Mon, 07 Sep 2026 08:43:18 GMT",
+      "title": "Tech stocks lead a rally on Wall Street as bond yields ease some more - Pittsburgh Post-Gazette",
+      "url": "https://news.google.com/rss/articles/CBMisAFBVV95cUxQalAzUkk5RlpLOVdNNDd4YjFfUE52RmF6R3RVdUU3RlowdUpTS0F1aUQ5OG1UY2VwWU4yVmNaQ2pmaHFfbUFXaW1HT3VJZFNNbUNkcENYU2ExVjRVbnRxMnJQcU9adzlVRmNrbHczN0I5S2RFdm5lakFydEVMaUdqbXJhZTF5ZGt4dlMyZjdxcnJWYm9PZmwzQUdjcm4tRW9jRXo3WngyVkhqX3lGNXB2Zg?oc=5",
+      "source": "Pittsburgh Post-Gazette",
+      "published": "Fri, 04 Sep 2026 01:48:31 GMT",
       "modules": [
-        "增长",
-        "货币政策"
+        "金融状况"
       ],
       "themes": [
-        "待分类"
+        "流动性与信用"
       ],
       "score": 1.0,
       "lang": "English",
-      "bucket": "政策原文",
+      "bucket": "全球宏观",
       "evidence_score": 58,
       "evidence_label": "C·线索",
       "evidence_reason": "可用于发现事件，关键数字需二次核实"
     },
     {
-      "title": "Citigroup delays Fed rate-cut forecast to 2027 after strong U.S. jobs report - reuters.com",
-      "url": "https://news.google.com/rss/articles/CBMitwFBVV95cUxQQnlBSDN4T3YxTDREQ3A2YnFhZ1lUN2E2dm1tZmxjb0tLaHFLUlFSN3NOdERlUFM0ZjBXZUhYOU54T2tKeU5saXBLWjk3dDZxTHl0ZXIxem40LU80bVE1V1ZwYVdUalhtMmVtSGtpRVFCX3F5NVpuUWlOR3o3UDZjcVBVd3N1SFBoR2NIT040R3VGX2xzZm91cVZEQ1JndFFoT3JqdzZWWl9PR2s0OGp2RWVsUUJteGM?oc=5",
-      "source": "reuters.com",
-      "published": "Fri, 04 Sep 2026 22:49:54 GMT",
-      "modules": [
-        "增长",
-        "货币政策"
-      ],
-      "themes": [
-        "待分类"
-      ],
-      "score": 1.0,
-      "lang": "English",
-      "bucket": "政策原文",
-      "evidence_score": 78,
-      "evidence_label": "B·可靠报道",
-      "evidence_reason": "高可信财经媒体，仍应回看原始文件"
-    },
-    {
-      "title": "Upcoming inflation data could determine if the Federal Reserve hikes interest rates soon, leaving Wall Street on edge - Fortune",
-      "url": "https://news.google.com/rss/articles/CBMimwFBVV95cUxNdmdaT3E5TjNKcU53Z0FXbDRKeGl0a2s5ZFFwNUVyaGFCUE1pODBBWU03REFMYzJyR2VhNWxzWDdTU09VdTFWVENmVzZNV2stYW11clZiNTVXRG8yQkVJRTZyZmJodk44Vl96bzd5OFRtck4wQXFWYlRSN29aRG4tZkk4WUlaSURDRUVyWWU4XzNjWUphdlRzNWljYw?oc=5",
-      "source": "Fortune",
-      "published": "Sun, 06 Sep 2026 15:03:00 GMT",
-      "modules": [
-        "通胀",
-        "货币政策"
-      ],
-      "themes": [
-        "油价与通胀",
-        "黄金与美元信用"
-      ],
-      "score": 1.0,
-      "lang": "English",
-      "bucket": "政策原文",
-      "evidence_score": 58,
-      "evidence_label": "C·线索",
-      "evidence_reason": "可用于发现事件，关键数字需二次核实"
-    },
-    {
-      "title": "Trump turns up the heat on Warsh as Fed rate hike looms - CNBC",
-      "url": "https://news.google.com/rss/articles/CBMifEFVX3lxTE5DYTJSa3ZaZFdjOVppNUhHcUgwZUkzNzNkQ2dQbkxfZTV2czZOREZKemRxUDhtSlgyLVQ1eEQyRlVxRWFZNXVQSVdFUTVfc0FqMzFBSXE4Qkl1VWtzdmdQWllkSkl5QjJqZXpSOEVYWUpEU3d1TFNQeVNqX07SAYIBQVVfeXFMTi1HQkxWWlgzN1hYVGt2elQwUUVzcWJIai1VclJVUkNwVDI0ME9ZRjBlSzBtT0xoMTFVMWJfUkdWT0VPZmdrc0RRLXVDd0hkeFBpMEhMNzZhSTZ2SUx1QkQ2RW5UTVk2a3VPVjgwWWdoX1Q3b0I5THlCMHdJWHJGMWFidw?oc=5",
-      "source": "CNBC",
-      "published": "Sat, 05 Sep 2026 18:10:58 GMT",
+      "title": "Investors cheer falling bond yields after a top Fed official eases rate-hike worries - Business Insider",
+      "url": "https://news.google.com/rss/articles/CBMiowFBVV95cUxQQ2ZoSmpRdHNsUm1PNFhQWUhROTRnVkhHNU8tbV90QnlhV0lfbll0eVh5LXFVeGlOeUpEUDhDdzVYbXg0SVp6QTYxNVNOYTNTQ0VMdFV4U1lwUkN3NXJQTUJueTVydzVJWngzYlY1WmljOGJtYk5HMHNlTVhlakRtMkVLWmFmLVU0T3c5LUs1aV9HZEttM21WNXY3ejJIemExNjNR?oc=5",
+      "source": "Business Insider",
+      "published": "Thu, 03 Sep 2026 20:13:00 GMT",
       "modules": [
         "货币政策",
-        "地缘与供应链"
+        "金融状况"
       ],
       "themes": [
-        "待分类"
+        "流动性与信用"
       ],
       "score": 1.0,
       "lang": "English",
-      "bucket": "政策原文",
+      "bucket": "全球宏观",
       "evidence_score": 58,
       "evidence_label": "C·线索",
       "evidence_reason": "可用于发现事件，关键数字需二次核实"
     },
     {
-      "title": "EUR/USD Forecast: ECB and US inflation set to test the range - FOREX.com",
-      "url": "https://news.google.com/rss/articles/CBMiqgFBVV95cUxOblAweUtjQ3ZaUVo4RlVlSHk2UTlfdEFnVG5acURYb2hPSEFzQzI1a0NzenNvak9hZ2VXVmF3N1BqQUJocHNJcW9HZHBIVUQ5Sk9PVzR1Nm04cTF5dXRtUGxDYWZPU2Q3X0dVOFZiU2FPTDk1RFM0NDNpWllxa2x5Uml3TFUtcW9fXzZ3YlZ5bko3bVhnS0ZWZzd3Yk1QY3NpY21GT3FCbkJFdw?oc=5",
-      "source": "FOREX.com",
-      "published": "Mon, 07 Sep 2026 07:06:10 GMT",
+      "title": "Toto, I don’t think it’s the Fed anymore - Chase Bank",
+      "url": "https://news.google.com/rss/articles/CBMipgFBVV95cUxOR1JnRnRZcnlwX3FnZzdRbGdTN3I3amRsYmZnRDRkcGRoT0sxMFJ2TnBFcGJhdFV3cGRXZml2aWVZRXpweXdncHllVE95RDB2aEo0LVFFLWFJdHd3SGlGdkJfaVM4QUptN3BRem5Wbzl5QW1aYWJQdmNJakRXZnVMRllHeVdYY2dBRTdpb3dMem1saGJDYmp3UE4wTUhxSWpkZTBSZGVR?oc=5",
+      "source": "Chase Bank",
+      "published": "Thu, 03 Sep 2026 16:55:32 GMT",
       "modules": [
-        "通胀",
-        "货币政策"
-      ],
-      "themes": [
-        "油价与通胀"
-      ],
-      "score": 1.0,
-      "lang": "English",
-      "bucket": "政策原文",
-      "evidence_score": 58,
-      "evidence_label": "C·线索",
-      "evidence_reason": "可用于发现事件，关键数字需二次核实"
-    },
-    {
-      "title": "Surprisingly strong jobs report could set stage for Fed rate hike - Politico",
-      "url": "https://news.google.com/rss/articles/CBMigAFBVV95cUxNV2l4UGk5eTBxUUdEblVsQmhITGpsZDdram84VTJlUE9DdE1CSWNxendPOXJIZ1pta3VQX2VCRkpWRG5QQUJPaFk5X1I4Z21LQlZOZnVmNHRNVkxBTEk5NzRUTEg3dmthdWRLTFNNRm5lTHlUd051a3pqdml4elI3eQ?oc=5",
-      "source": "Politico",
-      "published": "Fri, 04 Sep 2026 14:29:00 GMT",
-      "modules": [
-        "增长",
         "货币政策"
       ],
       "themes": [
@@ -1554,109 +1723,16 @@
       ],
       "score": 1.0,
       "lang": "English",
-      "bucket": "政策原文",
+      "bucket": "全球宏观",
       "evidence_score": 58,
       "evidence_label": "C·线索",
       "evidence_reason": "可用于发现事件，关键数字需二次核实"
     },
     {
-      "title": "Trump threatens trade war if rates aren’t cut after strong jobs report - The Hill",
-      "url": "https://news.google.com/rss/articles/CBMilgFBVV95cUxPU3pTVTYzdUFTYjh3STFmRnZ4OWZsRHdxN1NidEtGQVptT1A1a3kzREFCVnZCUWNGWEZiYWpZNzlFT0d4MF9IeUlOVGVhNExnVGUxOWxVeThUbmkwamt0eThuSlFxbk5xOHJkRzg1cU9XUEFDQUFZTnQ0eXJlaktjYU5fbUQxZEpaV1lzejlkUVVmNXl5RVHSAZsBQVVfeXFMTWxGblEwN1BKSTZYV0Q0OFhhYUt6Mjg5blZkRTJTTGgzNDJ3M1RQTk51RjZPQThsMEI5SjJpOTI0WEdYLTlVbkxCaGh5Qll3bHZmWUw2UXhOdVdaNWtMaTYwM2prVmdfdmhTQjVHeGdlTE4wRVY5TV9TeDVyWk9kMXBCMnZtakZQT1JITFRHbnVUQ0pfalQtNFFvRzA?oc=5",
-      "source": "The Hill",
-      "published": "Fri, 04 Sep 2026 16:04:00 GMT",
-      "modules": [
-        "增长",
-        "地缘与供应链"
-      ],
-      "themes": [
-        "贸易与关税"
-      ],
-      "score": 1.0,
-      "lang": "English",
-      "bucket": "政策原文",
-      "evidence_score": 58,
-      "evidence_label": "C·线索",
-      "evidence_reason": "可用于发现事件，关键数字需二次核实"
-    },
-    {
-      "title": "'They're going to need to hike rates': Wall Street weighs in on Fed's next policy decision after blowout jobs report - Yahoo Finance",
-      "url": "https://news.google.com/rss/articles/CBMi7gFBVV95cUxNVTczQy11Qm9tZWdiNHItVWRuVV9lY05WU2I5ZnVWVUZORVJlbFpkbzk2UVN0bUFtb2lBMHRFUENUS2tMYWwwM1daVXYxNzBXRlV0eXhHenZaLXlmX0pROE1SaHJjV2FhTS13VlloZENRVWVhalF5UHQyQkFLdUUxNVdTQnRVRkprOGc3cmVRODRTYjdXVFNrWnJSZG03Y1V0eC1ucGs2UGRmVWU3c3BlNG02VnktQ0N2dHJxZlBPYW5rV2JJdmNfQjJXWk5UNmpkV0JkNTg2dWFqNlpfMFZTT0R4T2phRjVPNUVfdGR3?oc=5",
-      "source": "Yahoo Finance",
-      "published": "Sat, 05 Sep 2026 14:22:43 GMT",
-      "modules": [
-        "增长",
-        "货币政策"
-      ],
-      "themes": [
-        "待分类"
-      ],
-      "score": 1.0,
-      "lang": "English",
-      "bucket": "政策原文",
-      "evidence_score": 58,
-      "evidence_label": "C·线索",
-      "evidence_reason": "可用于发现事件，关键数字需二次核实"
-    },
-    {
-      "title": "Will Federal Reserve Hike Rates Later This Month? Waller Muddies the Outlook - Industrial Distribution",
-      "url": "https://news.google.com/rss/articles/CBMivgFBVV95cUxQdjJyd05kMG9rcW92V2RhSXF2Z3I2b2JUdDh5ZXpZcDlRUjZHNVI0TUE0akdxcWdqQTN6clhFeS1ZMWlfT1FQSmVfbmk0NEFfQTN0TVkyZGpkdXg1d0dxeDM4aVJiU2hqV01PR2R1TEZ0M3FOeUZDTkljNzRSWDFhYnhnMEpFcndpbkhYR1BMOHJWNEliZVRsTHU1dXFhbWd0cHU0YXNGMWhHOU1VcEdzb2l6T1pLTFY5bzluS1hB?oc=5",
-      "source": "Industrial Distribution",
-      "published": "Fri, 04 Sep 2026 14:30:31 GMT",
-      "modules": [
-        "货币政策"
-      ],
-      "themes": [
-        "黄金与美元信用"
-      ],
-      "score": 1.0,
-      "lang": "English",
-      "bucket": "政策原文",
-      "evidence_score": 58,
-      "evidence_label": "C·线索",
-      "evidence_reason": "可用于发现事件，关键数字需二次核实"
-    },
-    {
-      "title": "Equity Buybacks: Shifting Buyer Base Drives Record-High Activity - Neuberger Berman",
-      "url": "https://news.google.com/rss/articles/CBMirgFBVV95cUxQZWpyU2l1cWpuQXFZamV1b3JUQWdXRzdGejlLVFJ3S3ZaOGUwOHg4SUg3R3NHSFExNUlWcjhmTi11andQOGZLdjMtWEdWSzVudkt4UlpocU9sUmt4SndmSWMzV29JZDlNWTNnc2NaV1pfb21NN2ZHMUw4aXJtcjh5eGpDX2UyUGhqOHZMdktpc2hDSFlsNEZuekEyMGFoTTBqZXFKbFBrR2VkY2hLb2c?oc=5",
-      "source": "Neuberger Berman",
-      "published": "Mon, 07 Sep 2026 06:36:36 GMT",
-      "modules": [
-        "待分类"
-      ],
-      "themes": [
-        "待分类"
-      ],
-      "score": 1.0,
-      "lang": "English",
-      "bucket": "AI资本开支",
-      "evidence_score": 58,
-      "evidence_label": "C·线索",
-      "evidence_reason": "可用于发现事件，关键数字需二次核实"
-    },
-    {
-      "title": "South Korea Eyes $22.3 Billion Texas Gas Plant to Power AI Data Centers - Crude Oil Prices Today | OilPrice.com",
-      "url": "https://news.google.com/rss/articles/CBMiwwFBVV95cUxQNGpoTGtLV1RNeWFIc083YU1JcnJ1N0VfLTVPOGVhM0ZKUjU1R3YtVlFTdG9sZ0NQWWNRd1FhTnZ5NFhkbWRYVUszZllkR3c1OGRtNFA0U1kzRUhoTkkwbjY1dnNKeWxla3VYZmJYLWdpeVdFVlRtMHVZZW5xTXE3T3prU0VVdEhWWWp0SF9za2ZfNlAzNi1LcF9yM3JvSnFpUzc1Y0ZqcHhsRElPOFd0ZWNZMlE2bl9VQlQ3MjRpYjFUWVXSAcgBQVVfeXFMUDhvVzBZMEc4Nlg4WFBuY3YwaFJqQXJudmlHYXhFUnA1OEYtbDBOQnQzMF9rbmRnc2traFF5LWd1dnVoOUhydXlzWHNWSnlMa25qUFB4dG9EUTZGZV94RzNwZVBNLTZIQ3M3Smtrb3NPcGZob0NBTUtucG80TGVhRmZEM3ZwUVR6M2dPR0V5eUJxN2ZZb05CRzdvOHFLaU5vcXczYUpoWDJCRkZXcjMxRjlEY1B3MnRMcUFwMFVyMmlONTlETE1EN0w?oc=5",
-      "source": "Crude Oil Prices Today | OilPrice.com",
-      "published": "Mon, 07 Sep 2026 07:15:00 GMT",
-      "modules": [
-        "实体瓶颈"
-      ],
-      "themes": [
-        "AI资本开支",
-        "油价与通胀"
-      ],
-      "score": 1.0,
-      "lang": "English",
-      "bucket": "AI资本开支",
-      "evidence_score": 58,
-      "evidence_label": "C·线索",
-      "evidence_reason": "可用于发现事件，关键数字需二次核实"
-    },
-    {
-      "title": "Israel’s AI industry captures 89% of high-tech investment as funding surges to $11.8 billion - calcalistech.com",
-      "url": "https://news.google.com/rss/articles/CBMiZ0FVX3lxTE5nbWNmWlI0WmFCSUtycnJOcU9Vbk5UZ3pxcnU2a2F1YkgtQ3I0b1NITjNnQjhNNXp0RlJkY2V4NVEwYTRDOXhjQ2RyYURuR1piY0VfWUtLOGJwVVJCbnpvVUF4N1dqZWs?oc=5",
-      "source": "calcalistech.com",
-      "published": "Mon, 07 Sep 2026 06:43:00 GMT",
+      "title": "CNBC Daily Open: Washington's house is divided over interest rates - CNBC",
+      "url": "https://news.google.com/rss/articles/CBMiowFBVV95cUxQUlh2Q1FJLW5vSDNKMXVNelVvb2pXdUNaeXExR3ZWNjFMcEJVTGpjQWJIR2daU0pZRE0xN05Nd2dwbllITjV1Wl9RVjh3R3VQNDVrTkIwX0VuaGZHYkEweG9uQ1VrYVdGeDBVZkIxUHVfZ1ZqdUZFYjJHazBlNjBrSVMyTDJpUFAzczZrRDJMVm4tZTJTdzBWVHNERy1GbTNkZ3Jz0gGoAUFVX3lxTE8tck94ZlVKTmtWOHNzdzQ1R2RGWE5DOUJmYjI2WHI3SXJrYjUzTTFITlRzTGNDekFYMzRCdDJUNkVmY1pLRENiWlZfMzNpbExtQVhpeDNuWUVKR2x5NlhLNkhvbmlycE11OENUMk1ELW5OeWY1ekE1X3VmZlFJTU5mRUpUcnV5VGZLbE1PTHYyUWx0MW95djJtQ2hsb2JuNjhrbXdyZVc3Ug?oc=5",
+      "source": "CNBC",
+      "published": "Fri, 04 Sep 2026 01:35:00 GMT",
       "modules": [
         "待分类"
       ],
@@ -1665,162 +1741,18 @@
       ],
       "score": 1.0,
       "lang": "English",
-      "bucket": "AI资本开支",
+      "bucket": "全球宏观",
       "evidence_score": 58,
       "evidence_label": "C·线索",
       "evidence_reason": "可用于发现事件，关键数字需二次核实"
     },
     {
-      "title": "Engineering AI Leveraged for In-Flight Wireless Power Transfer to UAVs - Unmanned Systems Technology",
-      "url": "https://news.google.com/rss/articles/CBMivgFBVV95cUxNOUtSSjMxYnEzeDQ4UzV0Z1FxLVdzOV9WMFFlZXdIR1pwWm1ESUtBcUhQN0N2dU9Sc0tFcnF4REJ5djZMSGNkc3loNzR5VlA4UjVKYzJSTFYwSlNzaEtNOUpBM3hxNm1RLXJsRUFSUHRrd016SnBwR05Kd21MR0xZbFpmTXg3R0xEamQ5YmN5dzNZOWMxcmJQUUVCQ1RXM1hFaTBwVm5CSzFJenFMdDZONU1sbDVnTy1uNEFNeWF3?oc=5",
-      "source": "Unmanned Systems Technology",
-      "published": "Mon, 07 Sep 2026 06:37:01 GMT",
-      "modules": [
-        "实体瓶颈"
-      ],
-      "themes": [
-        "AI资本开支"
-      ],
-      "score": 1.0,
-      "lang": "English",
-      "bucket": "AI资本开支",
-      "evidence_score": 58,
-      "evidence_label": "C·线索",
-      "evidence_reason": "可用于发现事件，关键数字需二次核实"
-    },
-    {
-      "title": "Australia’s AI Boom Risks Demand Surge and Higher Rates, BE Says - Bloomberg.com",
-      "url": "https://news.google.com/rss/articles/CBMitAFBVV95cUxQZ2xBODJEYXJEVkZObWZJcnpZa2lZNTFETkNKZVFTc1VqTUpGQ05yWDBhMURsNWZnQ3ZReEMzTFBlVVJVeWs2eHlPWUVISFYzQ2VnOWYtX2pkdkZjeEVOUVdfUmJhU3IxakNNYjRWb0p0a1BSc1dBRDlBYzFMaXpPVlY1ZGRVX1FjRnVOLXBWNmlSQUdPdU8xUEh4T0JGbFlKNjJ0Skd3dG9MMS1RNkdYTWc1NWw?oc=5",
-      "source": "Bloomberg.com",
-      "published": "Mon, 07 Sep 2026 01:23:00 GMT",
-      "modules": [
-        "待分类"
-      ],
-      "themes": [
-        "AI资本开支"
-      ],
-      "score": 1.0,
-      "lang": "English",
-      "bucket": "AI资本开支",
-      "evidence_score": 78,
-      "evidence_label": "B·可靠报道",
-      "evidence_reason": "高可信财经媒体，仍应回看原始文件"
-    },
-    {
-      "title": "Forget AI Stocks: This Clean-Power Play Is the Real Winner - Yahoo Finance",
-      "url": "https://news.google.com/rss/articles/CBMijgFBVV95cUxPeWFPak51cmg0NGhYZTI1cUlUZ29DTVVCRUZ3Z3BMRnlvdF9xbk1BQVB6TVcyNEFnY3A2b2pMN1BsNjFmZTFWSFItTUpqZ01jdzRjbmNZa2lvVXVJUDhvdEFRS2FJUzBudzBTMGtIZDh6QnBkNmFBY0RFcF81eUJ1bEFrd2o1alN4M0lQdndR?oc=5",
-      "source": "Yahoo Finance",
-      "published": "Sun, 06 Sep 2026 20:35:00 GMT",
-      "modules": [
-        "实体瓶颈"
-      ],
-      "themes": [
-        "AI资本开支"
-      ],
-      "score": 1.0,
-      "lang": "English",
-      "bucket": "AI资本开支",
-      "evidence_score": 58,
-      "evidence_label": "C·线索",
-      "evidence_reason": "可用于发现事件，关键数字需二次核实"
-    },
-    {
-      "title": "PwC mapped where $31.6T in AI investment will land - thestreet.com",
-      "url": "https://news.google.com/rss/articles/CBMikAFBVV95cUxQSVZKSmszM2RlZzVCd3NZVzBBN0gxamV4bnh2a083clBSTWkxMDZWOGpmUEdlNlVqUjFraFI5X2dRQmhkUDdTTE5mMEtkcGZ0eEtfbUM0eG4tZzM3R1cxZlRBTExjcTQ4LXpXTTVmbllXR05qVE0xcm5JdVJHUWxhV3ZsZGxkWGZFbjZMMl9ncEs?oc=5",
-      "source": "thestreet.com",
-      "published": "Sun, 06 Sep 2026 14:07:00 GMT",
-      "modules": [
-        "待分类"
-      ],
-      "themes": [
-        "AI资本开支"
-      ],
-      "score": 1.0,
-      "lang": "English",
-      "bucket": "AI资本开支",
-      "evidence_score": 58,
-      "evidence_label": "C·线索",
-      "evidence_reason": "可用于发现事件，关键数字需二次核实"
-    },
-    {
-      "title": "Harnessing the power of quantum AI - Technology Org",
-      "url": "https://news.google.com/rss/articles/CBMifkFVX3lxTE9EQjlpdEMxdVhqSEhpU25VMmRNSkpyM0YxZUhTa25KcGlPaW91T2xWel9lZHBtdXlDY0VWX1JERmxJai14ckdOaThRR3AwbWdZTDJ6R1lOMlM0c0RsTEk0UlUwV25VMjVOYWRIUDlMTTFRTlNUb19VMEJ1b0tuUQ?oc=5",
-      "source": "Technology Org",
-      "published": "Mon, 07 Sep 2026 07:00:00 GMT",
-      "modules": [
-        "实体瓶颈"
-      ],
-      "themes": [
-        "AI资本开支"
-      ],
-      "score": 1.0,
-      "lang": "English",
-      "bucket": "AI资本开支",
-      "evidence_score": 58,
-      "evidence_label": "C·线索",
-      "evidence_reason": "可用于发现事件，关键数字需二次核实"
-    },
-    {
-      "title": "User reports melted GeForce RTX 5090 power connector after testing DLSS 5 in NBA 2K27 - tweaktown.com",
-      "url": "https://news.google.com/rss/articles/CBMizwFBVV95cUxNbnQ3dU1lb1k5VnpvNDFkWnZtaHhTaXFCUm9kelB6NVlVdlNnaDh1OHg2QjJiWFhpYzlULXVwWTJvYkxURXh1UTVjVDFpQURnc1BIM0pKUXB6eXREbEZTT2RhM0lRRW1VSW5femg1bXpwM0lMaEwxb3lBUXNIQllaNE5PYWt4ejZYMXlLRUhOYkZvRkllQ2h2TGIycndQRVlpNlo1clVxLUU3TjJzTGFTS0tEbzJYelVuczBWLWhUZ1J4RVZXdW5FZ2o2Vmp5Q2M?oc=5",
-      "source": "tweaktown.com",
-      "published": "Mon, 07 Sep 2026 06:31:13 GMT",
-      "modules": [
-        "实体瓶颈"
-      ],
-      "themes": [
-        "待分类"
-      ],
-      "score": 1.0,
-      "lang": "English",
-      "bucket": "AI资本开支",
-      "evidence_score": 58,
-      "evidence_label": "C·线索",
-      "evidence_reason": "可用于发现事件，关键数字需二次核实"
-    },
-    {
-      "title": "3 US Grid Stocks Riding The AI Data Center Buildout - simplywall.st",
-      "url": "https://news.google.com/rss/articles/CBMiuAFBVV95cUxPNUZOQUtfMEpkaHdiRzdZbkxuUGduXzdhb3FQTjNFajB5MG9mZEtRRV9JWGQ0WlFubXJrYVBjVkZXZjNfNS0xYjFFUGU3dk84b2ZUSFM4SmlMdkJseWx5RUVUOXFjd3N4TktZcDlhRnRYNU1aaWdqOGt4TzE3RHRPT0o0WDEtYllPR29ReEVoTW1Ua1ZTRUYyZXY2NklvTjFGMzkyYVE4OGp2dmFzc2lDYk04Zm10bWZL0gG-AUFVX3lxTE5EU3BvOWd6clpyTzdpdmZYa3hmNFBPbXNvNl8xM0c0R0QzQTR1dGM1UjBETjVMYlJxWG84VktiLXEyUm5nV2ZUNy1zb1lJY2xSRFo2SkVuR3RGTXJ1MGNQQ0NTT003NUNRckN0Skk0NGFDOUdfZEExMFdiV0dJYk5jVUZiNkFYcG9kZDgzQl9lZnliUWtMUV9tWFo3QjNRZ0ttZHdGRVBOci1rNDU0bmxEQ09JXzA4Y2d2MkdITXc?oc=5",
-      "source": "simplywall.st",
-      "published": "Sun, 06 Sep 2026 20:30:12 GMT",
-      "modules": [
-        "实体瓶颈"
-      ],
-      "themes": [
-        "AI资本开支"
-      ],
-      "score": 1.0,
-      "lang": "English",
-      "bucket": "AI资本开支",
-      "evidence_score": 58,
-      "evidence_label": "C·线索",
-      "evidence_reason": "可用于发现事件，关键数字需二次核实"
-    },
-    {
-      "title": "BloombergNEF’s South Africa Transition Factbook: Power-Market Reform and Private Investments Drive Energy Transition - BloombergNEF",
-      "url": "https://news.google.com/rss/articles/CBMi8gFBVV95cUxPRFpmVW80YmR4c0UyZnV4bmxKS1JCUkFlZDB5aWFUMDFMc3NsUkZvMUNtUXR3MW8wUVFFOFZSd2p5YS1LMHVvWHFjYXpJVWZtWExraEVRUjZOdTgxZWxneEs3UDNhZTVaWU9YTmI4aVNvdmJ4a21DYnVfVGo1MHRKYTFPRGQ1WElxWXl1MHpWY3RzRldnNS16T0FwbzFDbVQ5aUhSS0lsSWp5VTNOSHZ3TDlLZGJKeHpVMTk3dk1GTWZieDhXbXNUaEdIZEpqYm11Zkg1NFhHOVJOUkxHY1h4Q1RLMzB1UzVrZ2xIR3ZTYmVGUQ?oc=5",
-      "source": "BloombergNEF",
-      "published": "Mon, 07 Sep 2026 03:14:24 GMT",
-      "modules": [
-        "实体瓶颈"
-      ],
-      "themes": [
-        "油价与通胀"
-      ],
-      "score": 1.0,
-      "lang": "English",
-      "bucket": "商品与瓶颈",
-      "evidence_score": 78,
-      "evidence_label": "B·可靠报道",
-      "evidence_reason": "高可信财经媒体，仍应回看原始文件"
-    },
-    {
-      "title": "Oil Rises as Escalating U.S.-Iran Conflict Stokes Supply Disruption Fears - WSJ",
-      "url": "https://news.google.com/rss/articles/CBMitwFBVV95cUxORDVpM3I5V29ZOW1vb0ZvZ3UyOVpjRWx0T0JacE9iOHBCOUlGd251QVNNRG9HbTA3cDVVb3ZfQ2VtMW9xY21MUXJaSmkxRG13aUVtUGF5T2tDZXhueTJxVmZaSE1TQkVPa21qT1R1M1pXYWJjUTlGeE9wX0VPY2tWREZPeE1qeTNHYnZGa3ZrdDByeHhLb2tLUHF6UEJNcHNlQ3ctc1d2LTFKU1ZlTzlnNldoVWxIY3c?oc=5",
+      "title": "Oil Rises Amid Elevated Supply-Disruption Concerns - WSJ",
+      "url": "https://news.google.com/rss/articles/CBMiqwFBVV95cUxPZWdtX2IwaGpUZzJTdUp3VzRMNk9ZZ3UzbTBxZDFyZ2ZsSFY0ODN3VXA5NjUzaldWc24zRGxYVTl3SVlZMGZFcXRrVkxfZVZDMUNES1E0Z0xWMVhoLW9oUVM1Z1lTdFBuSjdEUkc2WUdOS2JOdFFWdGUya09DZmtzUG9XNFFocVI0UG1Ma2pJbWFzOHZVRDBGbHJucWFkbHZySzlNMGxmWk9uNlE?oc=5",
       "source": "WSJ",
-      "published": "Mon, 07 Sep 2026 06:07:11 GMT",
+      "published": "Fri, 04 Sep 2026 00:27:17 GMT",
       "modules": [
-        "地缘与供应链"
+        "待分类"
       ],
       "themes": [
         "油价与通胀"
@@ -1833,71 +1765,16 @@
       "evidence_reason": "可用于发现事件，关键数字需二次核实"
     },
     {
-      "title": "China Oil Demand Revival Spurs Price Spikes From Congo to Brazil - Bloomberg.com",
-      "url": "https://news.google.com/rss/articles/CBMitgFBVV95cUxNMXpSaHpXNnJWS1p6MEtfMjdyRnNaU1lBam1DdDhUNFdiU2ZPMzRoRkNtVF9FbW9ObjZvQWotQTZ3Yk5fVU5Memt4eGM1SmVoUjk4a2dkN0xNQTBhZTFUOWkzV0pFOENWYURmejlTN1pkcG1idTVEOHhwajlSRWljMVhfM3lRQ0NNdFFmRUdXTHdNTW9WTmgtcmhTMzl6T1FvSkNwUXF5OHN6bUVuMk9aNl83WklIdw?oc=5",
+      "title": "Oil Heads for Biggest Weekly Gain Since July on Iran War Risks - Bloomberg.com",
+      "url": "https://news.google.com/rss/articles/CBMingFBVV95cUxOZmlMNk5vNjRnVi00am9mQnRFQUVldkdaN0pjaXluVGFEbGFxMHRuZnpPcEU3YXA3ZjhYbFI5NWF0bTdUQU55SEx4T3pIS0E1QWxhU3hVQzEwaWdLMGxoTHlBMWhVYjA5emp6eWV6anhaaGJLYU56THRIUnRaQmVXT1lCYjA3UGc0LXktcUF0SUtpU0tja185ZWNCSmNOdw?oc=5",
       "source": "Bloomberg.com",
-      "published": "Mon, 07 Sep 2026 06:55:00 GMT",
-      "modules": [
-        "待分类"
-      ],
-      "themes": [
-        "油价与通胀",
-        "中国增长与政策"
-      ],
-      "score": 1.0,
-      "lang": "English",
-      "bucket": "商品与瓶颈",
-      "evidence_score": 78,
-      "evidence_label": "B·可靠报道",
-      "evidence_reason": "高可信财经媒体，仍应回看原始文件"
-    },
-    {
-      "title": "PPL Electricity Demand Expected To Surge Dramatically | - WKOK.com",
-      "url": "https://news.google.com/rss/articles/CBMigAFBVV95cUxQSXEtclpXN0tpVC1HeEFYWE9pQ0hLempZU2VhcUVCZjVTRGo4YS02eFBSTEVXaUMwSk1aZzlGa1lTVXdER1plQ25jaTBMTWFjaTlsM0dnczA4OTMzRHNSNTBOTmdYRkliaVJzNnpoOUI2c24wdm90Y2NVWG1KbEdvWQ?oc=5",
-      "source": "WKOK.com",
-      "published": "Mon, 07 Sep 2026 03:32:56 GMT",
-      "modules": [
-        "待分类"
-      ],
-      "themes": [
-        "待分类"
-      ],
-      "score": 1.0,
-      "lang": "English",
-      "bucket": "商品与瓶颈",
-      "evidence_score": 58,
-      "evidence_label": "C·线索",
-      "evidence_reason": "可用于发现事件，关键数字需二次核实"
-    },
-    {
-      "title": "How China’s green tech is undercutting US energy strategy in Africa - South China Morning Post",
-      "url": "https://news.google.com/rss/articles/CBMi0gFBVV95cUxQbnhRWHZ4azNWX0h2QTN1MTk5VmJTVlBHRloyMmVpUE1Lb2RfNG4wQ083dHExU3JsbkxuTVZBeU5xZWhVM0doZWY5UG13UFRfUl81a1FBRXNyOTFsUjhPYndLYjBmckVQR2xBcmFFT0xVSlFhTHVwUG5qaDdKY2FhblJwMFc3enhoUDhCTzd0amVLWDRlNTd0enNENkg5Q2ppQk9uVGpqeGZrVl8zbS0xcGJCU2RDb2NYUGtGV1U1RTdicmQwcXktTVo5LXlqVGlXX0HSAdIBQVVfeXFMTWc2LXk3M1o5Nk1nbFdUSFJfbHBSQUNNallpLXRtNmFYRFAtYzU2TjFRTE5jUnBXeFpSNzVRSFM2Y0U4endEV3g4TC11WkljRDkzYmxWYnQyRno0VzczeWFBd0p6RU5jdEVxVDZhZFhpamVxWU5pUzlQbW5WeHF0VTk5QTdwNHJJZEJGaG1VTTlLTlNyTEdycFhQeFFycjducEJ1VGVCWmZrUXFsOFNNU245dHBaTkREVzYyNHJUNEdBLUlIVC1LOGg4dmtfQjdQbWt3?oc=5",
-      "source": "South China Morning Post",
-      "published": "Mon, 07 Sep 2026 04:00:09 GMT",
-      "modules": [
-        "待分类"
-      ],
-      "themes": [
-        "油价与通胀",
-        "中国增长与政策"
-      ],
-      "score": 1.0,
-      "lang": "English",
-      "bucket": "商品与瓶颈",
-      "evidence_score": 58,
-      "evidence_label": "C·线索",
-      "evidence_reason": "可用于发现事件，关键数字需二次核实"
-    },
-    {
-      "title": "Ship fuel shortage looms as refiners strained by war favour other products - reuters.com",
-      "url": "https://news.google.com/rss/articles/CBMiwAFBVV95cUxQcjJsRnYxdWplZmMxWnZxd2JBRjdaR2YtV0VrMEJCNmFTUjF1U1oyaVhiZk5XZ2Rvc1lXVEdhQjd0bWxxZ1R6Sl9Eckl0S3NXSXpjbGZ5QjJ6dnVkbG9tc2RtRl8tNy1heW1RVHh1VlZ2ZUVtQnJTREdYRlJsRFo5VjRoNUhRTEV2c0dwd01fNWphVkg4LW9oeExqdm1jQW9nRFdGYm16WTRkUjkxUmpaN2NPdDZpUVl2Tk1KQ0xZZWY?oc=5",
-      "source": "reuters.com",
-      "published": "Mon, 07 Sep 2026 01:02:00 GMT",
+      "published": "Fri, 04 Sep 2026 04:03:00 GMT",
       "modules": [
         "地缘与供应链"
       ],
       "themes": [
-        "AI资本开支"
+        "AI资本开支",
+        "油价与通胀"
       ],
       "score": 1.0,
       "lang": "English",
@@ -1907,10 +1784,119 @@
       "evidence_reason": "高可信财经媒体，仍应回看原始文件"
     },
     {
-      "title": "Supply pressure, rigid demand: Blister copper market supply-demand imbalance hard to reverse in the short term [SMM Analysis] - Shanghai Metals Market",
-      "url": "https://news.google.com/rss/articles/CBMi_gFBVV95cUxPSjk3ZWF4a1dzdWhEbHpLWWRYdXJGbEo1VTBLNzNkWmxRRUwtRzIzMXFCTUVleWx6VDFOZ2VicUZqSFdvSnJ6ZEF5NUczc3JvR0tMaEV5dUdTZW00OG44cllENkJOT2QzTENKNWRwZWlxbUs5b1cyZElCZmNjU0ZCSlR5bTRpeTVwZ3pTQjVwc3FQUVlDYTVWRGxtb3pOOUxqVzlod3NDQXM2eU9NYjRrZU9VMElVZk5FVmF1TXQ3aW9lbDFlSEN2a1F4MUFjbURBemxzUWEtNXZDaGVzWHFNdHVicmphRHowLXdqWmdfSDlqMm15U0JfNENwdENhQQ?oc=5",
-      "source": "Shanghai Metals Market",
-      "published": "Mon, 07 Sep 2026 06:35:10 GMT",
+      "title": "China's shrinking appetite for oil behind emissions cut for first time - Reuters",
+      "url": "https://news.google.com/rss/articles/CBMiswFBVV95cUxQbk1zSkdxY0hYV1lUVk55aTRqMC1jc3l2cmxLY01UYzQ3SDVoOFBrX0phTXR0Wkd0b1RfNVBMdXBOMFc4OURWTy0xNzM3SEFwOGNiX1k0Uk1TcnZGOTZndldnZzRLajA4V3BfM1ZSZUx3VHFIbmx4anV0TUtQSWFjeW1GSVc3b1QzT1dERlZ1aVpyUzRDSUxNT3VlZFU1dlc0WXNaNXNydWRIcllfNjNMRVZVUQ?oc=5",
+      "source": "Reuters",
+      "published": "Thu, 03 Sep 2026 15:35:18 GMT",
+      "modules": [
+        "待分类"
+      ],
+      "themes": [
+        "油价与通胀",
+        "中国增长与政策"
+      ],
+      "score": 1.0,
+      "lang": "English",
+      "bucket": "商品与瓶颈",
+      "evidence_score": 78,
+      "evidence_label": "B·可靠报道",
+      "evidence_reason": "高可信财经媒体，仍应回看原始文件"
+    },
+    {
+      "title": "COAL Surges 23% in August Driven by Global Power Demand - ETF Database",
+      "url": "https://news.google.com/rss/articles/CBMioAFBVV95cUxPVWFPOHJHWXdRN2dmQVFXWGx3RmRwNkdtaEFWeEhaakhwQ2RqMXEweTl4eEVJMV9WR3pKUndnTGNpNVNhMFY1MWFGV3ZEZFJLQ1ZvQURqVEFmMDlzZHhFNUhEcnZuN010S1RtSGVFTENuWjVJekZwNDZNQWsxbFhrdjVYdHNHN0xtTUY3WFRreUszV3JRT1lEV25NWkJGX0NK?oc=5",
+      "source": "ETF Database",
+      "published": "Thu, 03 Sep 2026 16:17:40 GMT",
+      "modules": [
+        "实体瓶颈"
+      ],
+      "themes": [
+        "待分类"
+      ],
+      "score": 1.0,
+      "lang": "English",
+      "bucket": "商品与瓶颈",
+      "evidence_score": 58,
+      "evidence_label": "C·线索",
+      "evidence_reason": "可用于发现事件，关键数字需二次核实"
+    },
+    {
+      "title": "Oil (USCrude) Price Forecast for Today, Tomorrow, Next Week, and Next 30 Days - LiteFinance",
+      "url": "https://news.google.com/rss/articles/CBMinwFBVV95cUxQcm51RHFTMGNQcnB2aFl5bjNQQzFXUVVHckh1eW1IVktpM0lfaXlCQ2p6RF9nYWxkajlxb2R2V0lkRi1FNnljalUwMlhaU2FFT2dCUDBwem9tVG14Y1FXZGVKbWJvSm0xNlVVZ1BwdTItWnJkOTF3TnFTU2FQLWZibmhXRXlnX2RJY25leTB2ekVVUHZMZS1zbjBhWkNJLWs?oc=5",
+      "source": "LiteFinance",
+      "published": "Fri, 04 Sep 2026 00:11:12 GMT",
+      "modules": [
+        "待分类"
+      ],
+      "themes": [
+        "油价与通胀"
+      ],
+      "score": 1.0,
+      "lang": "English",
+      "bucket": "商品与瓶颈",
+      "evidence_score": 58,
+      "evidence_label": "C·线索",
+      "evidence_reason": "可用于发现事件，关键数字需二次核实"
+    },
+    {
+      "title": "Abraham says power demand is about to surge to unseen levels - WCHS Network",
+      "url": "https://news.google.com/rss/articles/CBMinAFBVV95cUxNdnNvZVZPamZyWWxDX0pKMWZPRzhSTU9MN2trX1hNeWJtaGZtREZvcEpFc3k4NlRZYmJGbnFibW16VkZIR1N5LXk4cXRqVXV6ek04MUFERjBHbXVabkZYRk9PTnpyYWJHWlhaUzJjLUZ2N2plUHJTbGpqc2VkeF9nZ3p3c1BCMWx0SUNwdGJtWXl3dGkzR3FjQnhHbmI?oc=5",
+      "source": "WCHS Network",
+      "published": "Thu, 03 Sep 2026 22:07:37 GMT",
+      "modules": [
+        "实体瓶颈"
+      ],
+      "themes": [
+        "待分类"
+      ],
+      "score": 1.0,
+      "lang": "English",
+      "bucket": "商品与瓶颈",
+      "evidence_score": 58,
+      "evidence_label": "C·线索",
+      "evidence_reason": "可用于发现事件，关键数字需二次核实"
+    },
+    {
+      "title": "Public Utility Commission Power Outlook Highlights Changing Electricity Demand as Large Loads Reshape Future Forecasts - Berks Community Television",
+      "url": "https://news.google.com/rss/articles/CBMi5gFBVV95cUxQYV9Dc3NwSDlzM2h2eVBLUEtNdVhnMXU5dWM5MTljTWZZbnZ3dmpwMTVwVS1HbEtYVU5KYVJZNlJFcmQyMDlWQWZuTTFnY2E4clcyVUNnR3hlV05sOU12NGFCU1duQ0dZZ0Y4ZTBsQnN1VFlET2lqRFF1WHhoSW5rNUJrVWVKU0FLczFBNGdfZnkwMWhPYmgzS1U3NHMtSmNPczF6SUtVelJIZkMtTGdpZ05iLVBUUEVVeXRnUDZ6bEt4eGZSNVdqd3VOMTVESC1lRjdVQnVOdU45bGJrRG5nWVpnbWdHdw?oc=5",
+      "source": "Berks Community Television",
+      "published": "Thu, 03 Sep 2026 13:28:01 GMT",
+      "modules": [
+        "实体瓶颈"
+      ],
+      "themes": [
+        "待分类"
+      ],
+      "score": 1.0,
+      "lang": "English",
+      "bucket": "商品与瓶颈",
+      "evidence_score": 58,
+      "evidence_label": "C·线索",
+      "evidence_reason": "可用于发现事件，关键数字需二次核实"
+    },
+    {
+      "title": "Smaller Companies Take Chance on Venezuela Market - Hart Energy",
+      "url": "https://news.google.com/rss/articles/CBMikAFBVV95cUxPMk1GVW40c0tySERCdFRMZTdPLXdHZzMxRGVEN3dla2dwbm9mRkFGY0NPSUZ3RExJNDl0aU52N2hWeUVxbGg5NE91MFJ2djMwWlBiSUJ4RXpIQXRJcUdvUkt3ZTZiX1F4VnVabmU1T2JqTUt4azExcEptMWFySV9vRzJlTmswQTg0blpGUDdQc24?oc=5",
+      "source": "Hart Energy",
+      "published": "Thu, 03 Sep 2026 20:51:00 GMT",
+      "modules": [
+        "待分类"
+      ],
+      "themes": [
+        "油价与通胀"
+      ],
+      "score": 1.0,
+      "lang": "English",
+      "bucket": "商品与瓶颈",
+      "evidence_score": 58,
+      "evidence_label": "C·线索",
+      "evidence_reason": "可用于发现事件，关键数字需二次核实"
+    },
+    {
+      "title": "AI wants electricity now. The electric grid needs years to catch up - fortune.com",
+      "url": "https://news.google.com/rss/articles/CBMid0FVX3lxTE9xQmdLTWVjakx0N1AzV0VWZWhweFFHSXZfdmc1Vm14SEVNREl3SEJzc1R6ZnpCYjRZWEEzd2Z1ZTZrT04tVHplU1lYUTdMbEFQR1RzdUxXM0kzSGNoRkFrQ1Rfd014dUhWa3Rrd3M2V3IySXZqeC04?oc=5",
+      "source": "fortune.com",
+      "published": "Thu, 03 Sep 2026 16:12:00 GMT",
       "modules": [
         "实体瓶颈"
       ],
@@ -1925,15 +1911,15 @@
       "evidence_reason": "可用于发现事件，关键数字需二次核实"
     },
     {
-      "title": "Oil rises as renewed US-Iran tensions fuel supply concerns - Anadolu Ajansı",
-      "url": "https://news.google.com/rss/articles/CBMiogFBVV95cUxQNzQ4QWJVaGVqLVIzbHhLdTdOUWpmanlDaUZLSy03aFhKc3U1R2NCYTdFTjVYRUxaYmxLYVh0VnROMmFJY1FKNE42SWFMdVJWUGhzLUZieThsU0NmWHJ2VWJFQ2kyMmtRNWtma0JBQWttT1RuM08wNENZYXI2UUl4Z3I3NjQzVXFKcDNCRHFsZzFPd1NWbzBMYjVqVUhjWkxQVEE?oc=5",
-      "source": "Anadolu Ajansı",
-      "published": "Mon, 07 Sep 2026 08:04:52 GMT",
+      "title": "ZAWYA: Middle East power demand set to more than double by 2050 as AI, data centres grow - TradingView",
+      "url": "https://news.google.com/rss/articles/CBMi9AFBVV95cUxNWjZEeTVKNTdkMlVoZzZqOFBWYnZEdkVTbGlwR3I2bFFILWxBYkRhLTBIbWRYLXVnZEJzbERPelZCbVVSZjRGd3RxYVVndTFwSDdZOVQzUHdBOEdFY3VmMWdTZW1yOUtkcXJ4SU51a0FoSmh5RnZ6YjZ0LWljRHZ2YlRONVBsZ19RUVNlTGNob2YzLVFVVXR5YktnX1gxZDQyd25LOUgtUlRSTGRHNE43Ml8ybHFOQzJCOFN5N2lsd1hSX3k5dEhKMjkzNDFrdHV5bE1mRWtCakZ5aEtMeTdKNG01U1dpNk1IRy10ZUpRVjdwVDBH?oc=5",
+      "source": "TradingView",
+      "published": "Fri, 04 Sep 2026 03:31:00 GMT",
       "modules": [
-        "待分类"
+        "实体瓶颈"
       ],
       "themes": [
-        "油价与通胀"
+        "AI资本开支"
       ],
       "score": 1.0,
       "lang": "English",
@@ -1943,38 +1929,38 @@
       "evidence_reason": "可用于发现事件，关键数字需二次核实"
     },
     {
-      "title": "Fuel Oil Supply Faces Q3 Shortfall Amid Refinery Disruptions - Egypt Oil & Gas",
-      "url": "https://news.google.com/rss/articles/CBMilgFBVV95cUxQLUw1WXQ2M1VjN2xDUURtWDJ3WG5vQzVlcWxqZ1dpSXp3SjJkQjZrWHdtS093X0VOdURmWkd5cC1XMUs5R1g5dGQ4cS1BcFFjbG5ZNHVQb2YzQjczWGtMbE1Ia3VPYTZPVUlTdFFweXNJZDN0d043T1JaajhrbW1nTEJaak4wLWdFT251bThIN0RUbFc5MXc?oc=5",
-      "source": "Egypt Oil & Gas",
-      "published": "Mon, 07 Sep 2026 06:46:06 GMT",
+      "title": "How China’s AI race axes jobs, forcing workers into low-paid roles - South China Morning Post",
+      "url": "https://news.google.com/rss/articles/CBMi0gFBVV95cUxQZ2dONVlMXzY0WUd2TXp3QmN3OTRiRFJnWTBnV3RuTXdrZ0w0eVRrNmI5Slh1bTJuSzluZVh5bXpsWHNqTWpZXy1qd004Y3gyNVhWSGowY21wdVVLeEUyNEZSSXJmZUgwZ2FiMjJHY2M5UGdlbFdFeHAyYlJsV09JdlQ0MTBhbl9wYkg0T3lhUXNtSGV2V1RZNlh1SGY0b2p4LTJpSHVBY3QtVzNDZGZpeV93amdKZm02ZWhuRUdPMnRLdHB1ZC1SN0IyZzBYMmY3U3fSAdIBQVVfeXFMTVlfMm5RU1ZSYVhGUVA5cmVmdmkwUGx4S3N4bm9QOWdmMmQzd1ZnWm9kZUlkNDlkVTdXLTdvWWZOUFRqSzRKOGUxc3ZCcjhUa181R1NZaE9sTVphZVRqejdlcnJMSHRZbi02dGcxSGs3Y0tZMy1ZTEpqYndkMkVVZS1JLXNXMjBoYWNOR2g2amZDX2xITk1NeC1qUmd2UmgyVFpZUTRvOWVaSnRTLW5TclFkYUswUEtpTDRvMTYwOHhwcmNsVXBscHE1dWt0OFpwOURB?oc=5",
+      "source": "South China Morning Post",
+      "published": "Fri, 04 Sep 2026 01:00:07 GMT",
       "modules": [
-        "待分类"
-      ],
-      "themes": [
-        "油价与通胀"
-      ],
-      "score": 1.0,
-      "lang": "English",
-      "bucket": "商品与瓶颈",
-      "evidence_score": 58,
-      "evidence_label": "C·线索",
-      "evidence_reason": "可用于发现事件，关键数字需二次核实"
-    },
-    {
-      "title": "Japan announces energy policy package to diversify oil supply and reduce Strait of Hormuz dependence - Energies Media",
-      "url": "https://news.google.com/rss/articles/CBMib0FVX3lxTE5OMGF4TGxjeU1mUDhkM1BGMWxia1dsNnM3QXVzWkd0cGhEdkQwTjBxWEFXV1pXcjBfVkxjWWcyang4bW1JMTI5LThJSVNzSHRPTTdXN0JtQmh4UlpLV2ZjU2pTMmpLMXQ0elktc25mZw?oc=5",
-      "source": "Energies Media",
-      "published": "Sun, 06 Sep 2026 17:38:42 GMT",
-      "modules": [
-        "待分类"
+        "增长"
       ],
       "themes": [
         "AI资本开支",
-        "油价与通胀"
+        "中国增长与政策"
       ],
       "score": 1.0,
       "lang": "English",
-      "bucket": "商品与瓶颈",
+      "bucket": "中国与亚洲",
+      "evidence_score": 58,
+      "evidence_label": "C·线索",
+      "evidence_reason": "可用于发现事件，关键数字需二次核实"
+    },
+    {
+      "title": "China hits back at G20 statement on its reliance on exports, accusing them of 'promoting protectionism' - CNBC",
+      "url": "https://news.google.com/rss/articles/CBMibEFVX3lxTE13cVBlaFl4djM0LV9CdjRLdHpVdWtaZkdiTkExdzlKREYxRXhQUmlIdmI1OVgwaHhVV28tVGNNbW9OSE1ncUFWcE5xSFRzY0JOVXlkZnJVLVJ4eHNpSDFwbm5IUFdoWVJ2OExpX9IBckFVX3lxTE9pR1dRY1hyMTh1aVZVWENOUThmdm5mWHZhM19ZS0tSZDRCZDBXMmR0VFU2cWVqSU9pQmM5NkFoTkFrMEtXZGpUeTVlVHFKNzRxaFc2WjhRNlh0bVZOME5wLXJkbnhQWWZORzZ2ZFd3bE1sQQ?oc=5",
+      "source": "CNBC",
+      "published": "Thu, 03 Sep 2026 11:12:54 GMT",
+      "modules": [
+        "待分类"
+      ],
+      "themes": [
+        "中国增长与政策"
+      ],
+      "score": 1.0,
+      "lang": "English",
+      "bucket": "中国与亚洲",
       "evidence_score": 58,
       "evidence_label": "C·线索",
       "evidence_reason": "可用于发现事件，关键数字需二次核实"

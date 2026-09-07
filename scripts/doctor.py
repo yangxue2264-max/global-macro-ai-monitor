@@ -6,7 +6,7 @@ required = [
     "app.py", "requirements.txt", "README.md", "DEPLOY.md",
     "config/watchlist.json", "config/a_share_map.json",
     "core/providers.py", "core/briefing.py", "core/ontology.py", "core/ai.py",
-    ".github/workflows/morning_brief.yml",
+    ".github/workflows/two_stage_reports.yml",
 ]
 missing=[x for x in required if not (BASE/x).exists()]
 syntax=[]

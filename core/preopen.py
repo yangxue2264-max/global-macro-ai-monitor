@@ -66,6 +66,9 @@ def normalize_watchlist_rows(rows: Iterable[dict], max_items: int = MAX_USER_STO
                 "relation": relation,
                 "overseas_assets": overseas_assets,
                 "keywords": keywords,
+                "profile_source": str(row.get("profile_source") or "").strip(),
+                "profile_confidence": str(row.get("profile_confidence") or "").strip(),
+                "profile_reason": str(row.get("profile_reason") or "").strip(),
             }
         )
         seen.add(ticker)
@@ -94,20 +97,21 @@ def decode_watchlist(value: str, fallback: Iterable[dict] | None = None) -> list
 
 
 def watchlist_editor_rows(rows: Iterable[dict]) -> list[dict]:
-    return [
-        {
-            "代码": row["ticker"].split(".")[0],
-            "名称": row["name"],
-            "映射主题": row["theme"],
-            "与海外关系": row.get("relation", "同向"),
-            "海外代理": ", ".join(row.get("overseas_assets", [])),
-            "新闻关键词": ", ".join(row.get("keywords", [])),
-        }
-        for row in normalize_watchlist_rows(rows)
-    ]
+    """Only expose the user's intent; research fields are system-owned."""
+    return [{"股票代码或名称": row["ticker"].split(".")[0]} for row in normalize_watchlist_rows(rows)]
+
+
+def watchlist_inputs_from_editor(rows: Iterable[dict]) -> list[str]:
+    values = []
+    for row in rows:
+        value = str(row.get("股票代码或名称") or row.get("代码") or "").strip()
+        if value and value not in values:
+            values.append(value)
+    return values[:MAX_USER_STOCKS]
 
 
 def watchlist_from_editor(rows: Iterable[dict]) -> list[dict]:
+    """Legacy parser retained for old encoded links; new UI uses automatic enrichment."""
     return normalize_watchlist_rows(
         {
             "ticker": row.get("代码", ""),
@@ -338,7 +342,7 @@ def rerank_signals_after_auction(signals: Iterable[dict]) -> list[dict]:
     return sorted((dict(signal) for signal in signals), key=key)
 
 
-def attach_auction_to_alerts(alerts: Iterable[dict], signals: Iterable[dict]) -> list[dict]:
+def attach_auction_to_alerts(alerts: Iterable[dict], signals: Iterable[dict], quotes: dict | None = None) -> list[dict]:
     by_ticker = {}
     for signal in signals:
         if signal.get("category") != "海外已验证":
@@ -351,7 +355,33 @@ def attach_auction_to_alerts(alerts: Iterable[dict], signals: Iterable[dict]) ->
     output = []
     for alert in alerts:
         row = dict(alert)
-        row["auction"] = by_ticker.get(alert.get("ticker"), {"status": "无对应海外验证信号", "gap_pct": None, "reason": "当前没有可用于第二阶段判断的海外已验证事件。", "source": ""})
+        ticker = alert.get("ticker")
+        assessment = by_ticker.get(ticker)
+        if assessment is None:
+            quote = (quotes or {}).get(ticker, {})
+            gap = _finite(quote.get("gap_pct")) if quote.get("status") == "ok" else None
+            if gap is not None and abs(gap) >= 2.0:
+                assessment = {
+                    "status": "竞价独立异动",
+                    "gap_pct": round(gap, 3),
+                    "reason": "集合竞价出现显著跳空，但当前没有对应的海外已验证事件；需反查公司公告、行业消息和资金驱动。",
+                    "source": quote.get("source", ""),
+                }
+            elif gap is not None:
+                assessment = {
+                    "status": "暂无竞价异动",
+                    "gap_pct": round(gap, 3),
+                    "reason": "集合竞价未达到独立异动阈值，且当前没有可用于第二阶段判断的海外已验证事件。",
+                    "source": quote.get("source", ""),
+                }
+            else:
+                assessment = {
+                    "status": "竞价数据缺失",
+                    "gap_pct": None,
+                    "reason": "当前没有海外已验证事件，且未取得有效集合竞价价格。",
+                    "source": "",
+                }
+        row["auction"] = assessment
         output.append(row)
     return output
 

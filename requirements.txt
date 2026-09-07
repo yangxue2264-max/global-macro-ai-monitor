@@ -5,3 +5,4 @@ plotly>=5.24
 requests>=2.32
 yfinance>=0.2.54
 openai>=1.65
+exchange-calendars>=4.5

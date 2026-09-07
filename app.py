@@ -7,6 +7,8 @@ from pathlib import Path
 from zoneinfo import ZoneInfo
 import json
 import os
+import secrets
+import time
 
 import pandas as pd
 import streamlit as st
@@ -26,7 +28,7 @@ from core.preopen import (
     normalize_watchlist_rows,
     rerank_signals_after_auction,
     watchlist_editor_rows,
-    watchlist_from_editor,
+    watchlist_inputs_from_editor,
 )
 from core.providers import (
     FRED_SERIES,
@@ -38,6 +40,14 @@ from core.providers import (
     fetch_treasury_snapshot,
     flatten_watchlist,
     load_watchlist,
+)
+from core.emailing import email_configured, send_email, send_verification_code
+from core.stock_enrichment import enrich_watchlist_inputs
+from core.subscriptions import (
+    deactivate_subscription,
+    normalize_email,
+    subscriptions_configured,
+    upsert_subscription,
 )
 
 
@@ -68,7 +78,7 @@ div[data-testid="stRadio"]>div{gap:.35rem;flex-wrap:wrap}div[data-testid="stRadi
 
 
 def expected_snapshot_day(now: datetime) -> str:
-    day = now.date() if now.hour >= 9 else (now - timedelta(days=1)).date()
+    day = now.date() if (now.hour, now.minute) >= (8, 45) else (now - timedelta(days=1)).date()
     while day.weekday() >= 5:
         day -= timedelta(days=1)
     return day.isoformat()
@@ -222,7 +232,7 @@ def level_pill(level: str) -> str:
 
 
 def auction_pill(status: str) -> str:
-    css = "green" if status == "仍有预期差" else "red" if status == "过度定价/追高风险" else "amber" if status == "A股不确认" else "purple" if status == "方向需人工判断" else ""
+    css = "green" if status == "仍有预期差" else "red" if status == "过度定价/追高风险" else "amber" if status in {"A股不确认", "竞价独立异动"} else "purple" if status == "方向需人工判断" else ""
     return f'<span class="pill {css}">{escape(status)}</span>'
 
 
@@ -296,6 +306,82 @@ def export_markdown(alerts: list[dict], signals: list[dict], generated_at: str) 
     return "\n".join(lines)
 
 
+def render_subscription_panel(user_watchlist: list[dict]):
+    st.markdown('<div class="section">邮件订阅<span class="section-note">交易日08:45与09:27发送个人报告</span></div>', unsafe_allow_html=True)
+    if not (subscriptions_configured() and email_configured()):
+        st.info("邮件订阅服务正在配置中；网页分析仍可正常使用。")
+        return
+
+    st.caption("先保存上方自选股，再输入你本人可接收验证码的邮箱。只有验证成功后，订阅或退订操作才会生效。")
+    email = st.text_input("接收邮箱", placeholder="name@example.com", key="subscription_email")
+    send_col, code_col = st.columns([1, 2])
+    if send_col.button("发送验证码", width="stretch"):
+        address = normalize_email(email)
+        if not address:
+            st.error("请输入有效邮箱地址。")
+        else:
+            last_sent = float(st.session_state.get("verification_sent_at", 0))
+            if time.time() - last_sent < 60:
+                st.warning("请等待60秒后再重新发送。")
+            else:
+                code = f"{secrets.randbelow(1_000_000):06d}"
+                try:
+                    send_verification_code(address, code)
+                    st.session_state["verification_email"] = address
+                    st.session_state["verification_code"] = code
+                    st.session_state["verification_expires"] = time.time() + 600
+                    st.session_state["verification_sent_at"] = time.time()
+                    st.success("验证码已发送，有效期10分钟。")
+                except Exception as exc:
+                    st.error(f"验证码发送失败：{exc}")
+
+    code = code_col.text_input("邮箱验证码", max_chars=6, placeholder="6位数字", key="subscription_code")
+    action_col, cancel_col = st.columns(2)
+
+    def verified() -> tuple[bool, str]:
+        address = normalize_email(email)
+        ok = bool(
+            address
+            and address == st.session_state.get("verification_email")
+            and code == st.session_state.get("verification_code")
+            and time.time() <= float(st.session_state.get("verification_expires", 0))
+        )
+        return ok, address
+
+    if action_col.button("订阅或更新", type="primary", width="stretch"):
+        ok, address = verified()
+        if not ok:
+            st.error("验证码不正确、已过期，或邮箱已更改。")
+        elif not user_watchlist:
+            st.error("请先保存至少一只自选股。")
+        else:
+            try:
+                upsert_subscription(address, user_watchlist)
+                st.success("订阅已生效；以后用同一邮箱重新验证，即可覆盖更新自选股。")
+                try:
+                    send_email(
+                        address,
+                        "A股盘前机会雷达｜订阅已生效",
+                        "<p>订阅已生效。系统将在A股交易日北京时间08:45和09:27，按你当前的自选股发送两阶段报告。</p>",
+                        "订阅已生效：A股交易日北京时间08:45和09:27发送两阶段报告。",
+                    )
+                except Exception:
+                    st.warning("订阅已经保存，但确认邮件发送失败；定时报告配置不受影响。")
+            except Exception as exc:
+                st.error(f"保存订阅失败：{exc}")
+
+    if cancel_col.button("取消订阅", width="stretch"):
+        ok, address = verified()
+        if not ok:
+            st.error("取消订阅也需要先完成邮箱验证。")
+        else:
+            try:
+                deactivate_subscription(address)
+                st.success("该邮箱已取消后续推送。")
+            except Exception as exc:
+                st.error(f"取消订阅失败：{exc}")
+
+
 cfg, universe, mapping_cfg, default_watchlist = load_config()
 watch_payload = st.query_params.get("watch", "")
 user_watchlist = decode_watchlist(watch_payload, default_watchlist)
@@ -303,7 +389,7 @@ now = datetime.now(CN_TZ)
 snapshot_key = expected_snapshot_day(now)
 
 load_notice = st.empty()
-load_notice.info("正在读取北京时间 09:00 盘前快照…")
+load_notice.info("正在读取北京时间 08:45 盘前快照…")
 market, macro, news, data_mode, generated_at = load_daily_bundle(universe, snapshot_key)
 existing_tickers = tuple(item.get("ticker", "") for item in market.values())
 market.update(load_missing_watchlist_market(user_watchlist, existing_tickers, snapshot_key))
@@ -323,9 +409,9 @@ signals = attach_auction_results(signals, auction_quotes)
 if auction_quotes:
     signals = rerank_signals_after_auction(signals)
 if auction_ready:
-    alerts = attach_auction_to_alerts(alerts, signals)
+    alerts = attach_auction_to_alerts(alerts, signals, auction_quotes)
 else:
-    alerts = [{**row, "auction": {"status": "等待09:25竞价", "gap_pct": None, "reason": "09:00先形成候选池，09:26后再判断交易价值。", "source": ""}} for row in alerts]
+    alerts = [{**row, "auction": {"status": "等待09:25竞价", "gap_pct": None, "reason": "08:45先形成候选池，09:26后再判断交易价值。", "source": ""}} for row in alerts]
 auction_counts = auction_status_counts(signals)
 verified = [row for row in signals if row["category"] == "海外已验证"]
 transmission = [row for row in signals if row["category"] == "传导待验证"]
@@ -333,10 +419,11 @@ important_alerts = [row for row in alerts if row["level"] == "重点异动"]
 watch_alerts = [row for row in alerts if row["level"] == "需要关注"]
 gap_alerts = [row for row in alerts if row.get("auction", {}).get("status") == "仍有预期差"]
 overpriced_alerts = [row for row in alerts if row.get("auction", {}).get("status") == "过度定价/追高风险"]
+independent_auction_alerts = [row for row in alerts if row.get("auction", {}).get("status") == "竞价独立异动"]
 load_notice.empty()
 
 st.markdown(
-    """<div class="hero"><div class="eyebrow">09:00 CANDIDATES · 09:25 AUCTION CHECK</div><div class="hero-title">A股盘前机会雷达</div><div class="hero-sub">09:00先用海外新闻与价格形成候选池；09:25再看A股集合竞价是否已经消化预期。只有竞价后仍存在预期差的标的，才值得进入开盘后的优先观察。</div></div>""",
+    """<div class="hero"><div class="eyebrow">08:45 CANDIDATES · 09:27 AUCTION CHECK</div><div class="hero-title">A股盘前机会雷达</div><div class="hero-sub">08:45先用海外新闻与价格形成候选池；09:27再看A股集合竞价是否已经消化预期。只有竞价后仍存在预期差的标的，才值得进入开盘后的优先观察。</div></div>""",
     unsafe_allow_html=True,
 )
 
@@ -345,7 +432,7 @@ market_ratio = f"{health.get('market_live', 0)}/{health.get('market_total', 0)}"
 badges = [
     f'<span class="badge {"warn" if data_mode == "DEMO" else "live"}">{escape(data_mode)} · 行情 {market_ratio}</span>',
     f'<span class="badge {"warn" if stale else "live"}">{escape(snapshot_text)}</span>',
-    '<span class="badge">09:00海外候选 · 09:27竞价复核</span>',
+    '<span class="badge">08:45海外候选 · 09:27竞价复核</span>',
     f'<span class="badge {"live" if auction_quotes else "warn"}">{escape(auction_mode)} · 竞价 {len(auction_quotes)}</span>',
     f'<span class="badge">自选股 {len(user_watchlist)}/30</span>',
 ]
@@ -366,7 +453,7 @@ if page == "盘前决策台":
         cols[0].metric("仍有预期差", auction_counts["仍有预期差"], "优先进入开盘观察")
         cols[1].metric("基本定价", auction_counts["基本定价"], "不再视为明显预期差")
         cols[2].metric("追高风险", auction_counts["过度定价/追高风险"], "竞价反应过度")
-        cols[3].metric("A股不确认", auction_counts["A股不确认"], "传导逻辑需要重审")
+        cols[3].metric("独立竞价异动", len(independent_auction_alerts), f"另有 {auction_counts['A股不确认']} 只A股不确认")
     else:
         cols[0].metric("自选股重点异动", len(important_alerts), f"另有 {len(watch_alerts)} 只需关注")
         cols[1].metric("海外已验证候选", len(verified), "09:25后重新排序")
@@ -380,16 +467,22 @@ if page == "盘前决策台":
     elif overpriced_alerts:
         top_names = "、".join(row["name"] for row in overpriced_alerts[:4])
         st.markdown(f'<div class="callout"><b>注意追高风险：</b>{escape(top_names)} 已在集合竞价中大幅反应。海外验证成立，但交易价值可能已被高开消耗。</div>', unsafe_allow_html=True)
+    elif independent_auction_alerts:
+        top_names = "、".join(row["name"] for row in independent_auction_alerts[:4])
+        st.markdown(f'<div class="callout"><b>竞价独立异动：</b>{escape(top_names)} 出现显著跳空，但暂时没有对应的海外验证事件。优先反查公司公告、行业消息与资金驱动。</div>', unsafe_allow_html=True)
     elif important_alerts:
         top_names = "、".join(row["name"] for row in important_alerts[:4])
-        st.markdown(f'<div class="callout"><b>09:00候选股：</b>{escape(top_names)} 出现盘前重点异动。它们要等09:25集合竞价之后，才能判断是否仍有交易价值。</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="callout"><b>08:45候选股：</b>{escape(top_names)} 出现盘前重点异动。它们要等09:27集合竞价复核后，才能判断是否仍有交易价值。</div>', unsafe_allow_html=True)
     elif verified:
         st.markdown(f'<div class="callout"><b>自选股暂无重点异动。</b>今日仍有 {len(verified)} 条海外已验证信号，可在“机会雷达”中检查是否值得临时加入观察。</div>', unsafe_allow_html=True)
     else:
         st.markdown('<div class="callout"><b>今日没有达到强提示阈值的信号。</b>这也是有效结论：不为了每天都有交易机会而降低证据标准。</div>', unsafe_allow_html=True)
 
     st.markdown('<div class="section">自选股两阶段扫描<span class="section-note">海外验证只是候选，集合竞价决定剩余预期差</span></div>', unsafe_allow_html=True)
-    active_alerts = [row for row in alerts if row["level"] != "暂无异动"]
+    active_alerts = [
+        row for row in alerts
+        if row["level"] != "暂无异动" or row.get("auction", {}).get("status") == "竞价独立异动"
+    ]
     if active_alerts:
         for row in active_alerts:
             render_alert(row)
@@ -398,34 +491,55 @@ if page == "盘前决策台":
     remaining_count = len(alerts) - len(active_alerts)
     with st.expander(f"查看其余 {remaining_count} 只暂无异动的自选股", expanded=False):
         for row in alerts:
-            if row["level"] == "暂无异动":
+            if row not in active_alerts:
                 render_alert(row)
 
     st.markdown('<div class="section">管理自选股<span class="section-note">页面内直接增删，无需后台改代码</span></div>', unsafe_allow_html=True)
     with st.expander("打开自选股编辑器"):
-        st.caption("代码输入6位数字即可。映射主题决定新闻分类；“与海外关系”用于判断高开/低开是否已经消化海外信号。无法明确受益或受损方向时请选择“需判断”。")
+        st.caption("只需要输入股票代码或名称。公司名称、主题、海外代理、传导方向和新闻关键词均由系统自动识别与判断。")
         editor = st.data_editor(
             pd.DataFrame(watchlist_editor_rows(user_watchlist)), hide_index=True, num_rows="dynamic", width="stretch",
             column_config={
-                "映射主题": st.column_config.SelectboxColumn("映射主题", options=list(mapping_cfg), required=True),
-                "与海外关系": st.column_config.SelectboxColumn("与海外关系", options=["同向", "反向", "需判断"], required=True),
-                "代码": st.column_config.TextColumn("代码", required=True),
-                "名称": st.column_config.TextColumn("名称", required=True),
+                "股票代码或名称": st.column_config.TextColumn("股票代码或名称", required=True),
             }, key="watchlist_editor",
         )
         save_col, reset_col, note_col = st.columns([1, 1, 2.3])
         if save_col.button("保存自选股", type="primary", width="stretch"):
-            edited_rows = watchlist_from_editor(editor.to_dict("records"))
-            if not edited_rows:
+            inputs = watchlist_inputs_from_editor(editor.to_dict("records"))
+            if not inputs:
                 st.error("至少保留一只有效的A股代码。")
             else:
-                st.query_params["watch"] = encode_watchlist(edited_rows)
-                st.rerun()
+                with st.spinner("正在识别公司并自动完成主题、海外代理与传导关系…"):
+                    edited_rows, errors = enrich_watchlist_inputs(
+                        inputs, [*default_watchlist, *user_watchlist], universe, mapping_cfg
+                    )
+                if errors:
+                    st.warning("；".join(errors))
+                if not edited_rows:
+                    st.error("没有识别到有效A股，请检查输入。")
+                else:
+                    st.query_params["watch"] = encode_watchlist(edited_rows)
+                    st.rerun()
         if reset_col.button("恢复默认", width="stretch"):
             if "watch" in st.query_params:
                 del st.query_params["watch"]
             st.rerun()
-        note_col.caption("当前方案不使用后台账户：自选股被编码在网址中，收藏或复制该网址即可保留配置。")
+        note_col.caption("网页配置仍保存在当前网址；完成邮箱验证并订阅后，同一份自选股会保存为邮件推送配置。")
+
+        with st.expander("查看系统自动补齐的研究映射"):
+            st.dataframe(pd.DataFrame([
+                {
+                    "股票": f"{row['name']}（{row['ticker'].split('.')[0]}）",
+                    "主题": row["theme"],
+                    "传导方向": row["relation"],
+                    "海外代理": ", ".join(row.get("overseas_assets", [])),
+                    "判断来源": row.get("profile_source") or "历史配置",
+                    "置信度": row.get("profile_confidence") or "未标注",
+                }
+                for row in user_watchlist
+            ]), hide_index=True, width="stretch")
+
+    render_subscription_panel(user_watchlist)
 
     export = export_markdown(alerts, signals, generated_at or snapshot_text)
     st.download_button("下载今日盘前简报", data=export, file_name=f"A股盘前简报_{snapshot_key}.md", mime="text/markdown")
@@ -455,7 +569,7 @@ elif page == "机会雷达":
     verified_view, transmission_view = visible(verified), visible(transmission)
     tabs = st.tabs([f"海外已验证 · {len(verified_view)}", f"传导待验证 · {len(transmission_view)}"])
     with tabs[0]:
-        st.caption("09:00看海外证据；09:25看A股已经反应多少。优先级应按竞价后的剩余预期差重新排列，而不是按新闻热度追高。")
+        st.caption("08:45看海外证据；09:27看A股已经反应多少。优先级应按竞价后的剩余预期差重新排列，而不是按新闻热度追高。")
         if not verified_view:
             st.info("当前筛选下没有达到海外价格确认阈值的可靠事件。")
         for row in verified_view:
@@ -468,7 +582,7 @@ elif page == "机会雷达":
             render_signal(row)
 
     st.markdown('<div class="section">信号如何被保留和复盘</div>', unsafe_allow_html=True)
-    st.write("每日09:00快照保存当时的新闻、海外价格和映射结果。下一交易日可以检查：是否命中集合竞价、是否出现板块扩散、是否在收盘前失效。研究记忆被并入机会流，不再单独维护一个抽象的主题账本。")
+    st.write("每日08:45快照保存当时的新闻、海外价格和映射结果。下一交易日可以检查：是否命中集合竞价、是否出现板块扩散、是否在收盘前失效。研究记忆被并入机会流，不再单独维护一个抽象的主题账本。")
 
 
 else:
@@ -477,7 +591,7 @@ else:
     st.write("这是一个A股盘前研究与机会筛选工具，不是行情终端。它先用海外信息缩小范围，再用A股集合竞价删除已经充分定价或追高风险过高的候选。")
     st.markdown("#### 两阶段判断")
     stages = pd.DataFrame([
-        {"时间": "09:00", "输出": "海外候选池", "判断": "新闻是否可靠、海外价格是否验证、对应哪些A股", "不能决定": "开盘后是否仍有交易价值"},
+        {"时间": "08:45", "输出": "海外候选池", "判断": "新闻是否可靠、海外价格是否验证、对应哪些A股", "不能决定": "开盘后是否仍有交易价值"},
         {"时间": "09:25–09:27", "输出": "竞价后二次排序", "判断": "仍有预期差、基本定价、过度定价/追高风险、A股不确认", "不能决定": "开盘后一定上涨或下跌"},
     ])
     st.dataframe(stages, hide_index=True, width="stretch")
@@ -493,15 +607,12 @@ else:
     st.markdown("#### 自选股异动定义")
     st.write("系统将直接公司新闻、同主题可靠新闻和用户指定的海外代理波动合并判断。出现直接相关新闻，或可靠主题新闻与显著海外波动共同出现时，标记为“重点异动”；只有其中一类证据时，标记为“需要关注”。")
     st.markdown("#### 数据与刷新")
-    st.write("- **刷新时间：** 每个工作日09:00生成海外候选快照，09:27增加一次集合竞价快照；不进行15分钟循环刷新。")
+    st.write("- **刷新与邮件：** 每个A股交易日08:45生成海外候选并发送第一封邮件，09:27生成集合竞价复核并发送第二封邮件；不进行15分钟循环刷新。")
     st.write("- **市场代理：** Yahoo Finance，用于海外收盘价格和A股上一交易日数据，页面显示快照时间。")
     st.write("- **新闻发现：** GDELT，失败时回退Google News RSS；只让证据分≥70的新闻进入机会雷达。")
     st.write("- **宏观背景：** FRED与美国财政部，仅用于风险环境，不再提供独立跨资产看板。")
     st.write("- **集合竞价：** 优先使用Tushare `stk_auction`；该接口需单独权限。缺少权限时使用公开行情的开盘价回退，并在页面标注来源。")
-    st.write("- **用户配置：** 自选股保存在当前网址参数中，不需要后台操作；应收藏个人配置网址。")
-    st.markdown("#### WorkBuddy接入")
-    st.write("网站每天把同一套公开数据、映射规则与定价判断同步成只读接口。WorkBuddy可以据此生成盘前摘要、分析自选股，并在09:27后复核集合竞价状态；它不会修改网站数据，也不连接券商账户或执行交易。")
-    st.markdown("[查看WorkBuddy只读数据状态](app/static/workbuddy/latest.json)")
+    st.write("- **用户配置：** 网页只要求输入股票；系统自动补齐研究映射。通过邮箱验证后，订阅配置会持久化保存，用于两次个性化邮件。")
     st.markdown("#### 边界")
     st.write("免费数据源可能延迟或中断；系统会明确标注快照和DEMO状态。新闻分类与价格响应只能帮助缩小研究范围，最终仍需核对原文、公司暴露和A股集合竞价。")
     st.caption("研究辅助，不构成投资建议。")

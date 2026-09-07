@@ -1,26 +1,18 @@
 # 部署步骤
 
-项目已按 Streamlit Community Cloud + GitHub 准备。
+项目按 GitHub + Streamlit Community Cloud + Supabase 准备。
 
-最终需要用户参与的账号操作：
-1. 创建/选择 GitHub 仓库并上传本项目；
-2. 用 GitHub 登录 Streamlit Community Cloud；
-3. 选择仓库和 `app.py` 部署；
-4. 在 Streamlit Secrets 中粘贴 `FRED_API_KEY`；若启用 AI，再添加 `OPENAI_API_KEY`；
-5. 如需每天自动保存晨报，允许 GitHub Actions workflow 写入 contents。
-6. 若希望自动晨报也使用FRED官方API，在GitHub仓库 `Settings → Secrets and variables → Actions` 中另建同名 `FRED_API_KEY`。
+1. 将整个项目上传到 GitHub 仓库根目录，不要再套一层文件夹。
+2. 保持 `app.py` 为 Streamlit 入口。
+3. 在 Supabase 创建 `subscriptions` 表。
+4. 将数据库、SMTP和可选API密钥同时加入 Streamlit Secrets 与 GitHub Actions Secrets。
+5. 将 GitHub Actions 的 Workflow permissions 设为 `Read and write permissions`。
+6. 先用自己的邮箱完成验证码订阅。
+7. 手动运行 `A-share personalized email reports`，分别测试 morning 与 auction；确认无误后依靠定时任务运行。
 
-cron 已换算为北京时间工作日 08:25。
+详细字段、SQL和安全测试顺序见 [EMAIL_SUBSCRIPTION_SETUP.md](EMAIL_SUBSCRIPTION_SETUP.md)。
 
+定时安排：
 
-## 当前我已经替你准备好的内容
-
-- `app.py`：网页主程序
-- `requirements.txt`：部署依赖
-- `.streamlit/config.toml`：网页主题
-- `.github/workflows/morning_brief.yml`：工作日 08:25（北京时间）晨报任务
-- `.streamlit/secrets.toml.example`：AI密钥模板
-- `config/watchlist.json`：资产池，可后续直接修改
-- DEMO fallback：免费行情源临时失败时，网页仍可演示，并会明确标识非实时数据
-
-因此，真正需要用户亲自操作的步骤只剩 **GitHub/Streamlit账号授权与API Key粘贴**。
+- A股交易日北京时间08:45：第一阶段个人盘前报告；
+- A股交易日北京时间09:27：集合竞价后二次个人报告。

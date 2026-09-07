@@ -1,10 +1,10 @@
-# A股盘前机会雷达 v4.2
+# A股盘前机会雷达｜v4.1 邮件订阅版
 
-一个每天北京时间 09:00 形成候选池、09:27 用集合竞价二次筛选的 A 股盘前研究工具。它不重复行情终端，而是把用户自选股、可靠新闻、海外价格确认、A 股传导映射和“剩余预期差”放进同一个核查流程。
+以 v4.1 为干净基线，不包含 WorkBuddy。系统在每个A股交易日北京时间 08:45 形成候选池，09:27 用集合竞价二次筛选，并向完成邮箱验证的用户发送两封个性化报告。
 
 ## 产品回答三个连续问题
 
-1. **海外已验证：** 可靠新闻出现后，相关美股或海外代理已经显著交易，因此进入 09:00 候选池。
+1. **海外已验证：** 可靠新闻出现后，相关美股或海外代理已经显著交易，因此进入 08:45 候选池。
 2. **传导待验证：** 新闻可靠且存在明确 A 股传导链，但海外价格尚未确认。先加入观察，等待集合竞价与开盘量价验证。
 3. **竞价后还有没有交易价值：** 09:27 读取 A 股集合竞价，将候选分成“仍有预期差、基本定价、过度定价/追高风险、A 股不确认”。
 
@@ -12,7 +12,7 @@
 
 ## v4.1 信息架构
 
-- **盘前决策台：** 扫描用户自选股，09:00 显示海外候选，09:27 后突出竞价仍有预期差或追高风险的股票。
+- **盘前决策台：** 扫描用户自选股，08:45 显示海外候选，09:27 后突出竞价仍有预期差或追高风险的股票。
 - **机会雷达：** 合并原“信号流”和“主题账本”，呈现事件、A 股标的、传导链、集合竞价判断与失效条件。
 - **方法与数据：** 解释阈值、来源、刷新方式与边界。
 
@@ -20,19 +20,27 @@
 
 ## 自选股
 
-用户可以在“盘前决策台 → 管理自选股”中直接增删股票，不需要后台修改代码。
+用户可以在“盘前决策台 → 管理自选股”中直接增删股票。用户只负责输入股票代码或名称，系统负责补齐其余研究字段。
 
-- 输入 6 位 A 股代码即可，系统会转换成对应市场后缀。
-- 映射主题决定相关新闻和默认传导链。
-- 海外代理决定盘前使用哪些海外资产进行价格验证。
-- 公司专属关键词只填写公司名称、英文名或常用别名，不要填写“AI、黄金、能源”等宽泛行业词。
+- 自动识别证券名称与交易所后缀；
+- 自动判断映射主题、海外代理和同向/反向/需判断关系；
+- 自动生成公司新闻关键词；
+- 优先使用维护规则库；未覆盖的股票在配置了 OpenAI API 时由AI补齐，失败时使用保守映射并降低置信度；
+- 自动结果可查看，但不要求用户编辑。
+
 - 保存后，自选股配置会编码进当前网址。收藏或复制该网址即可保留个人配置。
+- 输入并验证邮箱后，自选股还会保存到订阅数据库，供定时邮件使用。
 
-这种方案不依赖账户数据库。不同用户可以各自保留自己的配置链接。
+## 邮件订阅
+
+用户在网页输入自己的邮箱，系统发送6位验证码。验证成功后，该邮箱与当前自选股会保存到 Supabase；再次用相同邮箱验证可以覆盖更新或取消订阅。未验证的邮箱不会收到日报。
+
+- **08:45邮件：** 自选股新闻、海外代理波动、海外已验证候选及待验证线索；
+- **09:27邮件：** 集合竞价后二次判断，区分仍有预期差、基本定价、追高风险、A股不确认和数据缺失。
 
 ## 每日两次快照
 
-`.github/workflows/daily_snapshot.yml` 在每个工作日 `01:00 UTC` 运行，即北京时间 `09:00`。它执行：
+`.github/workflows/two_stage_reports.yml` 在每个周一至周五运行，并由交易日历再次排除A股休市日。第一阶段在 `00:45 UTC`（北京时间 `08:45`）执行：
 
 ```bash
 python scripts/generate_morning_brief.py
@@ -45,7 +53,7 @@ python scripts/generate_morning_brief.py
 
 网站优先读取该快照，日内不会每 15 分钟反复改写结论。若最新快照缺失，网站会做一次按需回退抓取并明确标注。
 
-`.github/workflows/auction_snapshot.yml` 在每个工作日 `01:27 UTC` 运行，即北京时间 `09:27`。它执行：
+第二阶段在 `01:27 UTC`（北京时间 `09:27`）执行：
 
 ```bash
 python scripts/generate_auction_snapshot.py
@@ -58,7 +66,7 @@ python scripts/generate_auction_snapshot.py
 
 系统优先读取 Tushare `stk_auction`；未配置权限时尝试公开行情回退，并在页面明确标注数据模式。用户临时添加的自选股若不在固定快照中，页面会单独按需补取。
 
-> GitHub 定时任务可能因平台排队延迟几分钟；页面会显示真实生成时间。
+> GitHub 定时任务可能因平台排队延迟几分钟；页面与邮件均显示真实生成时间。
 
 ## 信号规则
 
@@ -114,13 +122,14 @@ PYTHONPATH=. python tests/smoke_test.py
 
 1. 将本文件夹内的全部内容上传到现有 GitHub 仓库根目录。
 2. 保持 `app.py` 为入口。
-3. 确认 GitHub Actions 的 Workflow permissions 为 `Read and write permissions`。
-4. 在 Actions 页面手动运行一次 `Daily 09:00 A-share pre-open snapshot`，确认生成 `data/latest_morning_brief.json`。
-5. 可选：在 GitHub 仓库 `Settings → Secrets and variables → Actions` 添加 `TUSHARE_TOKEN`，以使用官方竞价接口。该接口需要单独的数据权限。
-6. 手动运行一次 `Daily 09:27 A-share auction snapshot`，确认生成 `data/latest_auction_snapshot.json`。
-7. 重新打开 Streamlit 网站，确认页面同时显示当日 09:00 与竞价数据状态。
+3. 按 [EMAIL_SUBSCRIPTION_SETUP.md](EMAIL_SUBSCRIPTION_SETUP.md) 创建 Supabase 表并配置 Streamlit/GitHub Secrets。
+4. 确认 GitHub Actions 的 Workflow permissions 为 `Read and write permissions`。
+5. 在 Actions 页面手动运行 `A-share personalized email reports`；先分别选择 morning 与 auction，并保持 `send_emails=false` 检查数据。
+6. 用你自己的邮箱在网页完成一次订阅，再手动测试 `send_emails=true`。
+7. 可选添加 `TUSHARE_TOKEN`，以使用官方竞价接口；该接口需要单独的数据权限。
+8. 重新打开网站，确认页面同时显示当日08:45与竞价数据状态。
 
-基础功能不依赖 OpenAI API。当前 v4.1 日常工作流不再把 AI 作为单点依赖。
+已维护股票的基础功能不依赖 OpenAI API。只有规则库尚未覆盖的新股票会尝试用AI自动补齐；AI不可用时系统使用低置信度保守映射，不会要求用户填写研究栏目。
 
 ## 数据来源与边界
 
@@ -131,15 +140,3 @@ PYTHONPATH=. python tests/smoke_test.py
 - 免费数据可能延迟或中断；页面必须保留快照、DEMO 与过期状态标注。
 
 研究辅助，不构成投资建议。
-
-## WorkBuddy 接入
-
-本版本新增只读的 WorkBuddy 数据通道和 MCP 连接器。网站仍负责数据、规则和证据链，WorkBuddy 负责自然语言调用、定时执行与消息推送。
-
-- 09:00 工作流会在生成晨报后同步生成 `static/workbuddy/latest.json`。
-- 09:27 工作流会用当日集合竞价更新同一文件。
-- Streamlit 静态地址为 `https://yang-global-macro-ai-monitor.streamlit.app/app/static/workbuddy/latest.json`。
-- WorkBuddy 连接器位于 `workbuddy_connector/`，提供 `get_daily_brief`、`analyze_watchlist` 和 `analyze_stock` 三个只读工具。
-- 连接器不会修改网站、不会下单，也不会接触券商账户。
-
-完整的安装、测试和自动化设置步骤见 `WORKBUDDY_SETUP.md`。
