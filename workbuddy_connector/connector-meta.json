@@ -1,0 +1,22 @@
+{
+  "name": "A股盘前机会雷达",
+  "name_zh": "A股盘前机会雷达",
+  "name_en": "A-share Pre-market Radar",
+  "description": "读取09:00海外候选与09:27集合竞价复核结果，分析自选股的影响、定价状态和证据链。",
+  "description_zh": "读取09:00海外候选与09:27集合竞价复核结果，分析自选股的影响、定价状态和证据链。",
+  "description_en": "Read the 09:00 overseas candidate pool and 09:27 call-auction review to explain watchlist impact, pricing status, and evidence.",
+  "source": "a-share-preopen-radar",
+  "type": "mcp",
+  "version": "1.0.0",
+  "minWorkbuddyVersion": "5.0.0",
+  "examples_zh": [
+    "生成今天的A股盘前晨报，只保留最值得研究的三项",
+    "检查我的自选股今天是否受到隔夜新闻影响",
+    "集合竞价后，哪些股票仍有预期差，哪些已经定价"
+  ],
+  "examples_en": [
+    "Generate today's A-share pre-market brief with the top three research items",
+    "Check whether overnight events affect my watchlist",
+    "After the call auction, identify residual gaps and already-priced names"
+  ]
+}

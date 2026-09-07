@@ -1,4 +1,4 @@
-# A股盘前机会雷达 v4.1
+# A股盘前机会雷达 v4.2
 
 一个每天北京时间 09:00 形成候选池、09:27 用集合竞价二次筛选的 A 股盘前研究工具。它不重复行情终端，而是把用户自选股、可靠新闻、海外价格确认、A 股传导映射和“剩余预期差”放进同一个核查流程。
 
@@ -131,3 +131,15 @@ PYTHONPATH=. python tests/smoke_test.py
 - 免费数据可能延迟或中断；页面必须保留快照、DEMO 与过期状态标注。
 
 研究辅助，不构成投资建议。
+
+## WorkBuddy 接入
+
+本版本新增只读的 WorkBuddy 数据通道和 MCP 连接器。网站仍负责数据、规则和证据链，WorkBuddy 负责自然语言调用、定时执行与消息推送。
+
+- 09:00 工作流会在生成晨报后同步生成 `static/workbuddy/latest.json`。
+- 09:27 工作流会用当日集合竞价更新同一文件。
+- Streamlit 静态地址为 `https://yang-global-macro-ai-monitor.streamlit.app/app/static/workbuddy/latest.json`。
+- WorkBuddy 连接器位于 `workbuddy_connector/`，提供 `get_daily_brief`、`analyze_watchlist` 和 `analyze_stock` 三个只读工具。
+- 连接器不会修改网站、不会下单，也不会接触券商账户。
+
+完整的安装、测试和自动化设置步骤见 `WORKBUDDY_SETUP.md`。
