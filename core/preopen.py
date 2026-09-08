@@ -7,8 +7,9 @@ import statistics
 import zlib
 from typing import Iterable
 
+from .opportunity_model import detect_market_auction_anomalies
 
-VERIFIED_MOVE_THRESHOLD = 2.0
+
 RELIABLE_EVIDENCE_THRESHOLD = 70
 MAX_USER_STOCKS = 30
 
@@ -147,7 +148,15 @@ def _asset_moves(keys: Iterable[str], market: dict) -> list[dict]:
         move = _finite(item.get("change_pct"))
         if move is None:
             continue
-        moves.append({"key": key, "name": item.get("name", key), "move": round(move, 2)})
+        historical = [abs(float(row["return_pct"])) for row in item.get("history", []) if _finite(row.get("return_pct")) is not None]
+        percentile = None
+        if len(historical) >= 40:
+            percentile = sum(value <= abs(move) for value in historical) / len(historical)
+        moves.append({
+            "key": key, "name": item.get("name", key), "move": round(move, 2),
+            "tail_percentile": None if percentile is None else round(percentile, 3),
+            "history_count": len(historical),
+        })
     return sorted(moves, key=lambda row: abs(row["move"]), reverse=True)
 
 
@@ -156,11 +165,14 @@ def price_confirmation(keys: Iterable[str], market: dict) -> dict:
     values = [row["move"] for row in moves]
     median = statistics.median(values) if values else None
     strongest = moves[0] if moves else None
+    same_direction = [row for row in moves if median and row["move"] * median > 0]
     confirmed = bool(
-        strongest
-        and (
-            abs(strongest["move"]) >= VERIFIED_MOVE_THRESHOLD
-            or (len(values) >= 2 and median is not None and abs(median) >= 1.0)
+        strongest and (
+            (strongest.get("tail_percentile") or 0) >= 0.85
+            or (
+                len(same_direction) >= 2
+                and sum((row.get("tail_percentile") or 0) >= 0.65 for row in same_direction) >= 2
+            )
         )
     )
     anchor = median if median not in (None, 0) else strongest["move"] if strongest else None
@@ -223,7 +235,8 @@ def build_opportunity_signals(news: Iterable[dict], market: dict, mapping_cfg: d
         move_score = min(abs(strongest["move"]) / 4 * 35, 35) if strongest else 0
         priority = round(min(100, evidence * 0.45 + move_score + (20 if direct_watch else 14 if watch_relevant else 7)))
         if strongest:
-            price_text = f"{strongest['name']} {strongest['move']:+.2f}%"
+            tail = strongest.get("tail_percentile")
+            price_text = f"{strongest['name']} {strongest['move']:+.2f}%" + (f"（近一年{tail:.0%}分位）" if tail is not None else "（历史样本不足）")
         else:
             price_text = "相关海外代理暂无有效价格"
         signals.append(
@@ -265,24 +278,33 @@ def evaluate_auction_target(signal: dict, target: dict, quote: dict | None) -> d
     beta = int(target.get("beta", 1) or 0)
     if direction not in {"上涨", "下跌"} or beta == 0:
         return {"status": "方向需人工判断", "gap_pct": gap, "reason": "该主题包含受益端与受损端，需要先核对公司暴露。", "source": quote.get("source", "")}
+    guidance = target.get("guidance") or {}
+    max_gap = _finite(guidance.get("max_gap_pct"))
+    excessive_cutoff = _finite(guidance.get("overpriced_gap_pct"))
+    primary_horizon = guidance.get("primary_horizon") or "未判定"
+    if max_gap is None:
+        return {
+            "status": "数据不足/仅观察", "gap_pct": round(gap, 3),
+            "reason": f"竞价结果已取得，但08:45动态模型为“{guidance.get('action', '样本不足')}”：{guidance.get('reason', '没有足够个股历史样本')}，因此不使用固定百分比代替。",
+            "source": quote.get("source", ""), "price": quote.get("auction_price"),
+            "pre_close": quote.get("pre_close"), "primary_horizon": primary_horizon,
+        }
     overseas_sign = 1 if direction == "上涨" else -1
     effective_gap = gap * overseas_sign * beta
-    overseas_abs = max([abs(_finite(row.get("move")) or 0) for row in signal.get("price_moves", [])] or [0])
-    priced_cutoff = max(1.0, overseas_abs * 0.45)
-    excessive_cutoff = max(3.0, overseas_abs * 1.25)
+    excessive_cutoff = excessive_cutoff if excessive_cutoff is not None else max_gap
     if effective_gap >= excessive_cutoff:
         status = "过度定价/追高风险"
-        reason = f"竞价有效反应 {effective_gap:+.2f}%，已超过海外波动对应的高位阈值 {excessive_cutoff:.2f}%。"
-    elif effective_gap >= priced_cutoff:
+        reason = f"竞价有效反应 {effective_gap:+.2f}%，超过该股历史条件分布的过度定价线 {excessive_cutoff:.2f}%。"
+    elif effective_gap > max_gap:
         status = "基本定价"
-        reason = f"竞价有效反应 {effective_gap:+.2f}%，已达到基本定价阈值 {priced_cutoff:.2f}%。"
-    elif effective_gap <= -0.5:
+        reason = f"竞价有效反应 {effective_gap:+.2f}%，高于08:45动态上限 {max_gap:.2f}%，主要观察期限为{primary_horizon}。"
+    elif effective_gap < min(-0.30, -abs(max_gap) * 0.35):
         status = "A股不确认"
         reason = f"竞价有效反应 {effective_gap:+.2f}%，方向与海外信号相反。"
     else:
         status = "仍有预期差"
-        reason = f"竞价有效反应仅 {effective_gap:+.2f}%，尚未达到基本定价阈值 {priced_cutoff:.2f}%。"
-    return {"status": status, "gap_pct": round(gap, 3), "effective_gap": round(effective_gap, 3), "reason": reason, "source": quote.get("source", ""), "price": quote.get("auction_price"), "pre_close": quote.get("pre_close")}
+        reason = f"竞价有效反应 {effective_gap:+.2f}%，未超过08:45动态参与上限 {max_gap:.2f}%；主要历史观察期限为{primary_horizon}。"
+    return {"status": status, "gap_pct": round(gap, 3), "effective_gap": round(effective_gap, 3), "reason": reason, "source": quote.get("source", ""), "price": quote.get("auction_price"), "pre_close": quote.get("pre_close"), "primary_horizon": primary_horizon, "dynamic_max_gap_pct": round(max_gap, 3)}
 
 
 def attach_auction_results(signals: Iterable[dict], quotes: dict) -> list[dict]:
@@ -300,7 +322,7 @@ def attach_auction_results(signals: Iterable[dict], quotes: dict) -> list[dict]:
 
 
 def auction_status_counts(signals: Iterable[dict]) -> dict:
-    counts = {"仍有预期差": 0, "基本定价": 0, "过度定价/追高风险": 0, "A股不确认": 0}
+    counts = {"仍有预期差": 0, "基本定价": 0, "过度定价/追高风险": 0, "A股不确认": 0, "数据不足/仅观察": 0}
     seen = set()
     for signal in signals:
         if signal.get("category") != "海外已验证":
@@ -319,11 +341,12 @@ def rerank_signals_after_auction(signals: Iterable[dict]) -> list[dict]:
     status_rank = {
         "仍有预期差": 0,
         "方向需人工判断": 1,
-        "A股不确认": 2,
-        "基本定价": 3,
-        "过度定价/追高风险": 4,
-        "竞价数据缺失": 5,
-        "等待海外确认": 6,
+        "数据不足/仅观察": 2,
+        "A股不确认": 3,
+        "基本定价": 4,
+        "过度定价/追高风险": 5,
+        "竞价数据缺失": 6,
+        "等待海外确认": 7,
     }
 
     def key(signal):
@@ -342,7 +365,7 @@ def rerank_signals_after_auction(signals: Iterable[dict]) -> list[dict]:
     return sorted((dict(signal) for signal in signals), key=key)
 
 
-def attach_auction_to_alerts(alerts: Iterable[dict], signals: Iterable[dict], quotes: dict | None = None) -> list[dict]:
+def attach_auction_to_alerts(alerts: Iterable[dict], signals: Iterable[dict], quotes: dict | None = None, market_anomalies: Iterable[dict] | None = None) -> list[dict]:
     by_ticker = {}
     for signal in signals:
         if signal.get("category") != "海外已验证":
@@ -352,6 +375,7 @@ def attach_auction_to_alerts(alerts: Iterable[dict], signals: Iterable[dict], qu
             assessment = target.get("auction", {})
             if ticker and ticker not in by_ticker and assessment.get("status"):
                 by_ticker[ticker] = {**assessment, "signal_title": signal.get("title", ""), "signal_priority": signal.get("priority", 0)}
+    anomaly_by_ticker = {row.get("ticker"): dict(row) for row in (market_anomalies or detect_market_auction_anomalies(quotes or {}))}
     output = []
     for alert in alerts:
         row = dict(alert)
@@ -360,18 +384,20 @@ def attach_auction_to_alerts(alerts: Iterable[dict], signals: Iterable[dict], qu
         if assessment is None:
             quote = (quotes or {}).get(ticker, {})
             gap = _finite(quote.get("gap_pct")) if quote.get("status") == "ok" else None
-            if gap is not None and abs(gap) >= 2.0:
+            anomaly = anomaly_by_ticker.get(ticker)
+            if anomaly:
                 assessment = {
                     "status": "竞价独立异动",
                     "gap_pct": round(gap, 3),
-                    "reason": "集合竞价出现显著跳空，但当前没有对应的海外已验证事件；需反查公司公告、行业消息和资金驱动。",
+                    "reason": f"绝对竞价跳空超过{anomaly.get('board','同板块')}×{anomaly.get('size_bucket','同规模')}当日95%分位阈值 {anomaly.get('dynamic_threshold_pct', 0):.2f}%；暂无已验证事件解释，不能直接视为买入信号。",
                     "source": quote.get("source", ""),
+                    "primary_horizon": "T+0",
                 }
             elif gap is not None:
                 assessment = {
                     "status": "暂无竞价异动",
                     "gap_pct": round(gap, 3),
-                    "reason": "集合竞价未达到独立异动阈值，且当前没有可用于第二阶段判断的海外已验证事件。",
+                    "reason": "集合竞价未进入同板块、同规模股票的当日异常尾部，且当前没有可用于第二阶段判断的海外已验证事件。",
                     "source": quote.get("source", ""),
                 }
             else:
@@ -425,10 +451,17 @@ def build_watchlist_alerts(watchlist: Iterable[dict], news: Iterable[dict], mark
                 "headline": headline.get("title", ""),
                 "news_url": headline.get("url", ""),
                 "source": headline.get("source", ""),
+                "published": headline.get("published", ""),
+                "evidence_score": int(headline.get("evidence_score") or 0),
+                "evidence_label": headline.get("evidence_label", ""),
+                "profile_source": stock.get("profile_source", ""),
+                "profile_confidence": stock.get("profile_confidence", ""),
+                "profile_reason": stock.get("profile_reason", ""),
                 "previous_close": _finite(own_market.get("last")),
                 "previous_day_move": _finite(own_market.get("change_pct")),
                 "asof": own_market.get("asof", ""),
-                "next_check": "09:15后检查集合竞价、开盘量价和所属板块是否同步。" if level != "暂无异动" else "无需优先处理，除非集合竞价出现新的异常。",
+                "data_source": own_market.get("source", "Yahoo Finance") if own_market else "行情缺失",
+                "next_check": "08:45先查看对应事件的动态参与条件；09:27再检查最终竞价、开盘量价和板块扩散。" if level != "暂无异动" else "无需优先处理，除非全市场竞价扫描出现新的异常。",
             }
         )
     rank = {"重点异动": 0, "需要关注": 1, "暂无异动": 2}

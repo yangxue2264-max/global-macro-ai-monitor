@@ -55,10 +55,11 @@ assert [row["name"] for row in watchlist] == ["工业富联", "新易盛", "大�
 assert all(row["theme"] and row["overseas_assets"] and row["keywords"] for row in watchlist)
 assert all(row["profile_source"] == "维护规则库" for row in watchlist)
 
+ordinary_history = [{"date": f"2026-06-{(index % 28) + 1:02d}", "return_pct": ((index % 9) - 4) * 0.25} for index in range(60)]
 market = {
-    "NVDA": {"name": "NVIDIA", "ticker": "NVDA", "change_pct": 3.2},
-    "AVGO": {"name": "Broadcom", "ticker": "AVGO", "change_pct": 2.4},
-    "SMH": {"name": "Semiconductor ETF", "ticker": "SMH", "change_pct": 2.1},
+    "NVDA": {"name": "NVIDIA", "ticker": "NVDA", "change_pct": 3.2, "history": ordinary_history},
+    "AVGO": {"name": "Broadcom", "ticker": "AVGO", "change_pct": 2.4, "history": ordinary_history},
+    "SMH": {"name": "Semiconductor ETF", "ticker": "SMH", "change_pct": 2.1, "history": ordinary_history},
     "FOXCONN": {"name": "工业富联", "ticker": "601138.SS", "change_pct": 0.8, "last": 52.1},
 }
 news = [{
@@ -71,16 +72,17 @@ news = [{
 }]
 alerts, signals = build_personal_analysis(watchlist[:1], news, market, mapping)
 subject, html, text = render_morning_email(alerts, signals, "2026-09-07T08:45:00+08:00")
-assert "08:45" in subject and "工业富联" in html and "最终是否仍有预期差" in html
+assert "08:45" in subject and "工业富联" in html and "最高可接受高开幅度" in html
 
 auction = {"601138.SS": {"status": "ok", "gap_pct": 0.4, "source": "test"}}
 alerts, signals = build_personal_analysis(watchlist[:1], news, market, mapping, auction)
 subject, html, text = render_auction_email(alerts, signals, "2026-09-07T09:27:00+08:00")
-assert "09:27" in subject and "仍有预期差" in html
+assert "09:27" in subject and "数据不足/仅观察" in html
 
 quiet_alerts, quiet_signals = build_personal_analysis(
     watchlist[1:2], [], market, mapping,
     {"300502.SZ": {"status": "ok", "gap_pct": 3.2, "source": "test"}},
+    market_anomalies=[{"ticker": "300502.SZ", "board": "创业板", "size_bucket": "中市值", "dynamic_threshold_pct": 2.6}],
 )
 assert quiet_alerts[0]["auction"]["status"] == "竞价独立异动"
 

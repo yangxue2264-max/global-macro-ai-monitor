@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 
 
 BASE_VALUES = {
@@ -19,11 +19,25 @@ def demo_market(universe):
         day = ((index % 9) - 4) * 0.18
         d5 = ((index % 7) - 3) * 0.65
         d20 = ((index % 11) - 5) * 1.25
+        history = []
+        close = BASE_VALUES.get(key, 80 + index * 3.5)
+        start = datetime.now(timezone.utc).date() - timedelta(days=220)
+        for offset in range(180):
+            move = ((offset + index) % 9 - 4) * 0.28
+            opening = close * (1 + move * 0.30 / 100)
+            close *= 1 + move / 100
+            history.append({
+                "date": (start + timedelta(days=offset)).isoformat(),
+                "open": round(opening, 6), "close": round(close, 6),
+                "return_pct": round(move, 4), "open_gap_pct": round(move * 0.30, 4),
+                "volume": 1_000_000 + offset * 1000,
+            })
         rows[key] = {
             **meta, "last": BASE_VALUES.get(key, 80 + index * 3.5), "change_pct": day,
             "change_5d_pct": d5, "change_20d_pct": d20, "vol_20d": 18 + index % 12,
             "ret_z": day / 0.7, "volume_ratio": 0.9 + (index % 6) * 0.12,
             "asof": asof, "status": "demo",
+            "history": history,
         }
     return rows
 

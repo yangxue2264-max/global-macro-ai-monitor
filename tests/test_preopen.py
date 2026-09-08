@@ -36,11 +36,12 @@ assert normalize_a_share_ticker("300750") == "300750.SZ"
 assert normalize_a_share_ticker("830001") == "830001.BJ"
 assert decode_watchlist(encode_watchlist(watchlist)) == watchlist
 
+ordinary_history = [{"date": f"2026-06-{(index % 28) + 1:02d}", "return_pct": ((index % 9) - 4) * 0.25} for index in range(60)]
 market = {
-    "NVDA": {"name": "NVIDIA", "ticker": "NVDA", "change_pct": 3.2},
-    "SMH": {"name": "Semiconductor ETF", "ticker": "SMH", "change_pct": 2.4},
-    "GOLD": {"name": "Gold", "ticker": "GC=F", "change_pct": 0.3},
-    "DXY": {"name": "Dollar Index", "ticker": "DX-Y.NYB", "change_pct": -0.2},
+    "NVDA": {"name": "NVIDIA", "ticker": "NVDA", "change_pct": 3.2, "history": ordinary_history},
+    "SMH": {"name": "Semiconductor ETF", "ticker": "SMH", "change_pct": 2.4, "history": ordinary_history},
+    "GOLD": {"name": "Gold", "ticker": "GC=F", "change_pct": 0.3, "history": ordinary_history},
+    "DXY": {"name": "Dollar Index", "ticker": "DX-Y.NYB", "change_pct": -0.2, "history": ordinary_history},
     "FOXCONN": {"name": "工业富联", "ticker": "601138.SS", "change_pct": 0.8, "last": 52.1, "asof": "2026-09-02"},
     "ZIJIN": {"name": "紫金矿业", "ticker": "601899.SS", "change_pct": -0.4, "last": 31.8, "asof": "2026-09-02"},
 }
@@ -95,6 +96,10 @@ assert any(row["name"] == "紫金矿业" and row["level"] == "需要关注" for 
 
 signal = signals[0]
 target = signal["targets"][0]
+target["guidance"] = {
+    "action": "可条件参与", "max_gap_pct": 0.8, "overpriced_gap_pct": 3.0,
+    "primary_horizon": "T+3", "reason": "测试用动态阈值",
+}
 base_quote = {"status": "ok", "source": "test", "auction_price": 100.4, "pre_close": 100}
 assert evaluate_auction_target(signal, target, {**base_quote, "gap_pct": 0.4})["status"] == "仍有预期差"
 assert evaluate_auction_target(signal, target, {**base_quote, "gap_pct": 2.0})["status"] == "基本定价"

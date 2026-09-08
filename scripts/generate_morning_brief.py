@@ -16,9 +16,11 @@ from core.briefing import morning_rule_brief
 from core.emailing import send_email
 from core.evidence import add_evidence_scores
 from core.market_context import enrich_macro_with_market_proxies
+from core.opportunity_model import attach_dynamic_guidance, discover_market_targets
+from core.preopen import build_opportunity_signals
 from core.reporting import build_personal_analysis, render_morning_email
 from core.providers import (
-    fetch_fred_snapshot, fetch_market_snapshot, fetch_news_bundle,
+    fetch_a_share_universe, fetch_fred_snapshot, fetch_market_snapshot, fetch_news_bundle,
     fetch_treasury_snapshot, flatten_watchlist, load_watchlist,
 )
 from core.subscriptions import get_secret, list_active_subscriptions
@@ -58,6 +60,25 @@ def main(send_emails: bool = False, force: bool = False):
     market = fetch_market_snapshot(universe)
     macro = enrich_macro_with_market_proxies(fetch_fred_snapshot(), market, fetch_treasury_snapshot())
     news = add_evidence_scores(fetch_news_bundle(max_each=10))
+    stock_universe, universe_coverage = fetch_a_share_universe(get_secret("TUSHARE_TOKEN"))
+    marketwide_signals = discover_market_targets(
+        build_opportunity_signals(news, market, mapping, []), stock_universe
+    )
+    known_tickers = {item.get("ticker") for item in market.values()}
+    stock_lookup = {row.get("ticker"): row for row in stock_universe}
+    candidate_market = {}
+    for signal in marketwide_signals:
+        for target in signal.get("targets", []):
+            ticker = target.get("ticker")
+            if ticker and ticker not in known_tickers and ticker not in candidate_market:
+                stock = stock_lookup.get(ticker, target)
+                candidate_market[f"DISCOVERY_{len(candidate_market)}"] = {
+                    "name": stock.get("name") or ticker, "ticker": ticker,
+                    "theme": signal.get("theme", ""), "region": "CN", "group": "full_market_discovery",
+                }
+    if candidate_market:
+        market.update(fetch_market_snapshot(candidate_market))
+    marketwide_signals = attach_dynamic_guidance(marketwide_signals, market)
     brief = morning_rule_brief(market, macro, news)
     payload = {
         "generated_at": now.isoformat(),
@@ -65,6 +86,8 @@ def main(send_emails: bool = False, force: bool = False):
         "market": market,
         "macro": macro,
         "news": news[:30],
+        "signals": marketwide_signals,
+        "universe_coverage": universe_coverage,
         "stage": "08:45",
         "subscriber_count": len(subscriptions),
     }
@@ -72,7 +95,17 @@ def main(send_emails: bool = False, force: bool = False):
     outdir.mkdir(parents=True, exist_ok=True)
     day = now.strftime("%Y-%m-%d")
     rendered = json.dumps(payload, ensure_ascii=False, indent=2, allow_nan=True)
-    (outdir / f"{day}.json").write_text(rendered, encoding="utf-8")
+    compact_history = {
+        **payload,
+        "market": {
+            key: {field: value for field, value in item.items() if field != "history"}
+            for key, item in market.items()
+        },
+    }
+    (outdir / f"{day}.json").write_text(
+        json.dumps(compact_history, ensure_ascii=False, indent=2, allow_nan=True),
+        encoding="utf-8",
+    )
     (BASE / "data" / "latest_morning_brief.json").write_text(rendered, encoding="utf-8")
     print(f"generated {day}: {len(news)} events, {len(market)} market series, {len(subscriptions)} subscribers")
 
@@ -82,9 +115,12 @@ def main(send_emails: bool = False, force: bool = False):
         for subscription in subscriptions:
             try:
                 alerts, signals = build_personal_analysis(
-                    subscription["watchlist"], news, market, mapping
+                    subscription["watchlist"], news, market, mapping,
+                    marketwide_signals=marketwide_signals,
                 )
-                subject, html, text = render_morning_email(alerts, signals, now.isoformat(), app_url)
+                subject, html, text = render_morning_email(
+                    alerts, signals, now.isoformat(), app_url, universe_coverage
+                )
                 send_email(subscription["email"], subject, html, text)
             except Exception as exc:
                 failures += 1

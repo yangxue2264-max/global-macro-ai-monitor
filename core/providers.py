@@ -64,7 +64,13 @@ def _yahoo_chart(ticker: str, period="3mo") -> pd.DataFrame:
     if not timestamps or not quote_data.get("close"):
         return pd.DataFrame()
     frame = pd.DataFrame(
-        {"Close": quote_data.get("close", []), "Volume": quote_data.get("volume", [])},
+        {
+            "Open": quote_data.get("open", [None] * len(timestamps)),
+            "High": quote_data.get("high", [None] * len(timestamps)),
+            "Low": quote_data.get("low", [None] * len(timestamps)),
+            "Close": quote_data.get("close", []),
+            "Volume": quote_data.get("volume", []),
+        },
         index=pd.to_datetime(timestamps, unit="s", utc=True).tz_convert(None),
     )
     return frame.dropna(subset=["Close"])
@@ -81,6 +87,42 @@ def fetch_price_history(ticker: str, period="3mo") -> pd.DataFrame:
             return df.dropna(how="all")
         except Exception:
             return pd.DataFrame()
+
+
+def _eastmoney_index_history(secid: str, limit: int = 260) -> pd.DataFrame:
+    response = requests.get(
+        "https://push2his.eastmoney.com/api/qt/stock/kline/get",
+        params={"secid": secid, "klt": 101, "fqt": 1, "lmt": limit, "fields1": "f1,f2,f3,f4,f5,f6", "fields2": "f51,f52,f53,f54,f55,f56"},
+        headers=HEADERS, timeout=12,
+    )
+    response.raise_for_status()
+    rows = response.json().get("data", {}).get("klines", []) or []
+    parsed = [str(row).split(",")[:6] for row in rows]
+    frame = pd.DataFrame(parsed, columns=["Date", "Open", "Close", "High", "Low", "Volume"])
+    if frame.empty:
+        return frame
+    frame["Date"] = pd.to_datetime(frame["Date"], errors="coerce")
+    for column in ["Open", "Close", "High", "Low", "Volume"]:
+        frame[column] = pd.to_numeric(frame[column], errors="coerce")
+    return frame.dropna(subset=["Date", "Close"]).set_index("Date")
+
+
+def _tencent_index_history(symbol: str, limit: int = 260) -> pd.DataFrame:
+    response = requests.get(
+        "https://web.ifzq.gtimg.cn/appstock/app/fqkline/get",
+        params={"param": f"{symbol},day,,,{limit},qfq"}, headers=HEADERS, timeout=12,
+    )
+    response.raise_for_status()
+    payload = response.json().get("data", {}).get(symbol, {}) or {}
+    rows = payload.get("qfqday") or payload.get("day") or []
+    parsed = [list(row)[:6] for row in rows]
+    frame = pd.DataFrame(parsed, columns=["Date", "Open", "Close", "High", "Low", "Volume"])
+    if frame.empty:
+        return frame
+    frame["Date"] = pd.to_datetime(frame["Date"], errors="coerce")
+    for column in ["Open", "Close", "High", "Low", "Volume"]:
+        frame[column] = pd.to_numeric(frame[column], errors="coerce")
+    return frame.dropna(subset=["Date", "Close"]).set_index("Date")
 
 
 def _yahoo_spark(tickers, period="3mo"):
@@ -106,8 +148,18 @@ def _yahoo_spark(tickers, period="3mo"):
         closes = quotes.get("close") or []
         if not timestamps or not closes:
             continue
+        size = len(timestamps)
+        def values(name):
+            raw = quotes.get(name) or []
+            return list(raw)[:size] + [None] * max(0, size - len(raw))
         frames[symbol] = pd.DataFrame(
-            {"Close": closes},
+            {
+                "Open": values("open"),
+                "High": values("high"),
+                "Low": values("low"),
+                "Close": values("close"),
+                "Volume": values("volume"),
+            },
             index=pd.to_datetime(timestamps, unit="s", utc=True).tz_convert(None),
         ).dropna(subset=["Close"])
     return frames
@@ -147,18 +199,40 @@ def _market_snapshot_one(meta):
     })
     return base
 
-def _snapshot_from_frames(meta, price_df, volume_df=None):
-    base = {"name":meta.get("name",""),"ticker":meta["ticker"],"group":meta.get("group",""),"theme":meta.get("theme",""),"region":meta.get("region",""),"last":np.nan,"change_pct":np.nan,"change_5d_pct":np.nan,"change_20d_pct":np.nan,"vol_20d":np.nan,"ret_z":np.nan,"volume_ratio":np.nan,"asof":"","status":"unavailable"}
+def _snapshot_from_frames(meta, price_df, volume_df=None, source="Yahoo Finance", status="ok", **extra):
+    base = {"name":meta.get("name",""),"ticker":meta["ticker"],"group":meta.get("group",""),"theme":meta.get("theme",""),"region":meta.get("region",""),"last":np.nan,"change_pct":np.nan,"change_5d_pct":np.nan,"change_20d_pct":np.nan,"vol_20d":np.nan,"ret_z":np.nan,"volume_ratio":np.nan,"asof":"","history":[],"source":source,"status":"unavailable",**extra}
     try:
-        c=pd.Series(price_df).dropna()
+        if isinstance(price_df, pd.DataFrame):
+            frame = price_df.copy()
+            c = pd.to_numeric(frame.get("Close"), errors="coerce").dropna()
+            opens = pd.to_numeric(frame.get("Open"), errors="coerce") if "Open" in frame else pd.Series(index=frame.index, dtype=float)
+            volumes = pd.to_numeric(frame.get("Volume"), errors="coerce") if "Volume" in frame else pd.Series(index=frame.index, dtype=float)
+        else:
+            c = pd.Series(price_df).dropna()
+            opens = pd.Series(index=c.index, dtype=float)
+            volumes = pd.Series(volume_df).dropna() if volume_df is not None else pd.Series(index=c.index, dtype=float)
         if len(c)<2:return base
         r=c.pct_change().dropna(); std20=r.tail(20).std() if len(r)>=5 else np.nan
         ret_z=(r.iloc[-1]/std20) if std20 and not np.isnan(std20) and std20!=0 else np.nan
         vr=np.nan
-        if volume_df is not None:
-            v=pd.Series(volume_df).dropna()
-            if len(v)>=5 and v.tail(20).mean()!=0: vr=float(v.iloc[-1]/v.tail(20).mean())
-        base.update({"last":float(c.iloc[-1]),"change_pct":float((c.iloc[-1]/c.iloc[-2]-1)*100),"change_5d_pct":float((c.iloc[-1]/c.iloc[-6]-1)*100) if len(c)>=6 else np.nan,"change_20d_pct":float((c.iloc[-1]/c.iloc[-21]-1)*100) if len(c)>=21 else np.nan,"vol_20d":float(r.tail(20).std()*np.sqrt(252)*100) if len(r)>=5 else np.nan,"ret_z":float(ret_z) if not np.isnan(ret_z) else np.nan,"volume_ratio":float(vr) if not np.isnan(vr) else np.nan,"asof":str(c.index[-1].date()) if hasattr(c.index[-1],"date") else str(c.index[-1]),"status":"ok"})
+        v=volumes.dropna()
+        if len(v)>=5 and v.tail(20).mean()!=0: vr=float(v.iloc[-1]/v.tail(20).mean())
+        aligned = pd.DataFrame({"close": c, "open": opens.reindex(c.index), "volume": volumes.reindex(c.index)})
+        aligned["return_pct"] = aligned["close"].pct_change() * 100
+        aligned["open_gap_pct"] = (aligned["open"] / aligned["close"].shift(1) - 1) * 100
+        history=[]
+        for idx, item in aligned.tail(260).iterrows():
+            def clean(value):
+                return round(float(value), 6) if pd.notna(value) and np.isfinite(float(value)) else None
+            history.append({
+                "date": str(idx.date()) if hasattr(idx, "date") else str(idx)[:10],
+                "open": clean(item.get("open")),
+                "close": clean(item.get("close")),
+                "return_pct": clean(item.get("return_pct")),
+                "open_gap_pct": clean(item.get("open_gap_pct")),
+                "volume": clean(item.get("volume")),
+            })
+        base.update({"last":float(c.iloc[-1]),"change_pct":float((c.iloc[-1]/c.iloc[-2]-1)*100),"change_5d_pct":float((c.iloc[-1]/c.iloc[-6]-1)*100) if len(c)>=6 else np.nan,"change_20d_pct":float((c.iloc[-1]/c.iloc[-21]-1)*100) if len(c)>=21 else np.nan,"vol_20d":float(r.tail(20).std()*np.sqrt(252)*100) if len(r)>=5 else np.nan,"ret_z":float(ret_z) if not np.isnan(ret_z) else np.nan,"volume_ratio":float(vr) if not np.isnan(vr) else np.nan,"asof":str(c.index[-1].date()) if hasattr(c.index[-1],"date") else str(c.index[-1]),"history":history,"status":status})
         return base
     except Exception:return base
 
@@ -168,7 +242,7 @@ def fetch_market_snapshot(universe: dict):
 
     def one_chunk(chunk):
         try:
-            return _yahoo_spark([meta["ticker"] for _, meta in chunk], period="3mo")
+            return _yahoo_spark([meta["ticker"] for _, meta in chunk], period="1y")
         except Exception:
             return {}
 
@@ -186,7 +260,7 @@ def fetch_market_snapshot(universe: dict):
     missing = [ticker for ticker in critical if ticker not in frames]
     if missing:
         with ThreadPoolExecutor(max_workers=min(4, len(missing))) as pool:
-            future_map = {pool.submit(_yahoo_chart, ticker, "3mo"): ticker for ticker in missing}
+            future_map = {pool.submit(_yahoo_chart, ticker, "1y"): ticker for ticker in missing}
             for future in as_completed(future_map):
                 try:
                     frame = future.result()
@@ -198,8 +272,97 @@ def fetch_market_snapshot(universe: dict):
     out = {}
     for key, meta in universe.items():
         frame = frames.get(meta["ticker"])
-        out[key] = _snapshot_from_frames(meta, frame["Close"]) if frame is not None and not frame.empty else _snapshot_from_frames(meta, None)
+        out[key] = _snapshot_from_frames(meta, frame) if frame is not None and not frame.empty else _snapshot_from_frames(meta, None)
     return out
+
+
+def _a_share_ticker_from_code(value: str) -> str:
+    code = "".join(ch for ch in str(value or "") if ch.isdigit())[:6]
+    if len(code) != 6:
+        return ""
+    if code.startswith(("4", "8", "92")):
+        return f"{code}.BJ"
+    if code.startswith(("5", "6", "9")):
+        return f"{code}.SS"
+    return f"{code}.SZ"
+
+
+def fetch_eastmoney_a_share_universe() -> list[dict]:
+    """Public full-market snapshot fallback used for discovery, never hidden as official data."""
+    endpoint = "https://82.push2.eastmoney.com/api/qt/clist/get"
+    params = {
+        "pn": 1, "pz": 6000, "po": 1, "np": 1, "fltt": 2, "invt": 2,
+        "fid": "f6", "fs": "m:0+t:6,m:0+t:80,m:1+t:2,m:1+t:23",
+        "fields": "f2,f3,f5,f6,f8,f10,f12,f14,f17,f18,f20,f21,f100",
+    }
+    try:
+        response = requests.get(endpoint, params=params, headers=HEADERS, timeout=25)
+        response.raise_for_status()
+        rows = response.json().get("data", {}).get("diff", []) or []
+        output = []
+        for item in rows:
+            ticker = _a_share_ticker_from_code(item.get("f12"))
+            name = str(item.get("f14") or "").strip()
+            if not ticker or not name:
+                continue
+            def number(key):
+                try:
+                    value = float(item.get(key))
+                    return value if np.isfinite(value) else None
+                except (TypeError, ValueError):
+                    return None
+            output.append({
+                "ticker": ticker, "name": name, "industry": str(item.get("f100") or "").strip(),
+                "last": number("f2"), "change_pct": number("f3"), "volume": number("f5"),
+                "amount": number("f6"), "turnover_rate": number("f8"), "volume_ratio": number("f10"),
+                "open": number("f17"), "pre_close": number("f18"),
+                "market_cap": number("f20"), "float_market_cap": number("f21"),
+                "source": "Eastmoney public full-market snapshot",
+            })
+        return output
+    except Exception:
+        return []
+
+
+def fetch_tushare_stock_universe(token: str = "") -> list[dict]:
+    if not token:
+        return []
+    payload = {
+        "api_name": "stock_basic", "token": token,
+        "params": {"list_status": "L"},
+        "fields": "ts_code,symbol,name,area,industry,market,list_date",
+    }
+    try:
+        response = requests.post("https://api.tushare.pro", json=payload, headers=HEADERS, timeout=25)
+        response.raise_for_status()
+        result = response.json()
+        if result.get("code") not in (0, None):
+            return []
+        data = result.get("data") or {}
+        fields = data.get("fields") or []
+        output = []
+        for values in data.get("items") or []:
+            item = dict(zip(fields, values))
+            ticker = _auction_ticker(item.get("ts_code"))
+            if ticker:
+                output.append({
+                    "ticker": ticker, "name": item.get("name") or ticker,
+                    "industry": item.get("industry") or "", "market": item.get("market") or "",
+                    "list_date": item.get("list_date") or "", "source": "Tushare stock_basic",
+                })
+        return output
+    except Exception:
+        return []
+
+
+def fetch_a_share_universe(token: str = "") -> tuple[list[dict], dict]:
+    official = fetch_tushare_stock_universe(token)
+    public = fetch_eastmoney_a_share_universe()
+    public_by_ticker = {row["ticker"]: row for row in public}
+    if official:
+        rows = [{**row, **{k: v for k, v in public_by_ticker.get(row["ticker"], {}).items() if v not in (None, "")}} for row in official]
+        return rows, {"mode": "TUSHARE+PUBLIC_ENRICHMENT" if public else "TUSHARE_BASIC", "count": len(rows)}
+    return public, {"mode": "PUBLIC_FULL_MARKET" if public else "MAPPING_ONLY", "count": len(public)}
 
 
 def fetch_treasury_snapshot():
@@ -248,11 +411,27 @@ def _fred_csv(series):
     df[series] = pd.to_numeric(df[series], errors="coerce")
     return df.dropna()
 
-def fetch_fred_snapshot(series_map=None):
+
+def _fred_api(series: str, api_key: str) -> pd.DataFrame:
+    response = requests.get(
+        "https://api.stlouisfed.org/fred/series/observations",
+        params={"series_id": series, "api_key": api_key, "file_type": "json", "sort_order": "asc"},
+        headers=HEADERS, timeout=12,
+    )
+    response.raise_for_status()
+    frame = pd.DataFrame(response.json().get("observations", []) or [])
+    if frame.empty:
+        return pd.DataFrame(columns=["DATE", series])
+    frame["DATE"] = pd.to_datetime(frame.get("date"), errors="coerce")
+    frame[series] = pd.to_numeric(frame.get("value"), errors="coerce")
+    return frame[["DATE", series]].dropna().sort_values("DATE")
+
+
+def fetch_fred_snapshot(series_map=None, api_key=""):
     series_map = series_map or FRED_SERIES
     def one(key, meta):
         try:
-            df = _fred_csv(meta["series"])
+            df = _fred_api(meta["series"], api_key) if api_key else _fred_csv(meta["series"])
             row = df.iloc[-1]
             previous = df.iloc[-2] if len(df) > 1 else row
             return key, {
@@ -260,7 +439,7 @@ def fetch_fred_snapshot(series_map=None):
                 "prev": float(previous[meta["series"]]),
                 "delta": float(row[meta["series"]] - previous[meta["series"]]),
                 "date": row["DATE"].date().isoformat(), "unit": meta.get("unit",""),
-                "status":"ok"
+                "status":"ok", "source": "FRED API" if api_key else "FRED CSV"
             }
         except Exception:
             return key, {
@@ -408,7 +587,7 @@ def _auction_row(ticker, name, price, pre_close, date="", time="", source="", **
         return None
 
 
-def fetch_tushare_auction(tickers, trade_date, token=""):
+def fetch_tushare_auction(tickers, trade_date, token="", include_all: bool = False):
     """Official Tushare stk_auction data; requires the separate auction permission."""
     if not token:
         return {}
@@ -417,7 +596,7 @@ def fetch_tushare_auction(tickers, trade_date, token=""):
         "api_name": "stk_auction",
         "token": token,
         "params": {"trade_date": str(trade_date).replace("-", "")},
-        "fields": "ts_code,trade_date,vol,price,amount,pre_close,turnover_rate,volume_ratio",
+        "fields": "ts_code,trade_date,vol,price,amount,pre_close,turnover_rate,volume_ratio,float_share",
     }
     try:
         response = requests.post(endpoint, json=payload, headers=HEADERS, timeout=20)
@@ -432,13 +611,19 @@ def fetch_tushare_auction(tickers, trade_date, token=""):
         for values in data.get("items") or []:
             item = dict(zip(fields, values))
             ticker = _auction_ticker(item.get("ts_code"))
-            if ticker not in wanted:
+            if not include_all and ticker not in wanted:
                 continue
+            try:
+                float_market_cap = float(item.get("float_share")) * float(item.get("pre_close"))
+            except (TypeError, ValueError):
+                float_market_cap = None
             row = _auction_row(
                 ticker, ticker, item.get("price"), item.get("pre_close"),
                 date=item.get("trade_date"), time="09:25", source="Tushare stk_auction",
                 volume=item.get("vol"), amount=item.get("amount"),
                 turnover_rate=item.get("turnover_rate"), volume_ratio=item.get("volume_ratio"),
+                float_share=item.get("float_share"),
+                float_market_cap=float_market_cap,
             )
             if row:
                 out[ticker] = row
@@ -532,15 +717,50 @@ def fetch_auction_quotes(tickers, trade_date, tushare_token=""):
         out.update(fetch_tencent_auction(missing))
     return out
 
+
+def fetch_all_auction_quotes(trade_date, tushare_token=""):
+    """Fetch the full A-share opening auction; returns coverage metadata explicitly."""
+    out = fetch_tushare_auction([], trade_date, token=tushare_token, include_all=True)
+    public_rows = fetch_eastmoney_a_share_universe()
+    if len(out) >= 1000:
+        public_by_ticker = {row["ticker"]: row for row in public_rows}
+        for ticker, row in out.items():
+            enrichment = public_by_ticker.get(ticker, {})
+            row.update({
+                key: enrichment.get(key)
+                for key in ("name", "industry", "market_cap", "float_market_cap")
+                if enrichment.get(key) not in (None, "")
+            })
+        mode = "TUSHARE_FULL_AUCTION+PUBLIC_NAMES" if public_rows else "TUSHARE_FULL_AUCTION"
+        return out, {"mode": mode, "count": len(out)}
+    public = {}
+    for item in public_rows:
+        row = _auction_row(
+            item.get("ticker"), item.get("name"), item.get("open"), item.get("pre_close"),
+            date=str(trade_date).replace("-", ""), time="09:25",
+            source="Eastmoney public full-market fallback",
+            volume=item.get("volume"), amount=item.get("amount"),
+            turnover_rate=item.get("turnover_rate"), volume_ratio=item.get("volume_ratio"),
+            market_cap=item.get("market_cap"), float_market_cap=item.get("float_market_cap"),
+            industry=item.get("industry"),
+        )
+        if row:
+            public[row["ticker"]] = row
+    if len(public) > len(out):
+        return public, {"mode": "PUBLIC_FULL_AUCTION", "count": len(public)}
+    return out, {"mode": "PARTIAL_AUCTION", "count": len(out)}
+
 def data_health(market, macro, news):
     total_m = len(market)
     live_m = sum(1 for v in market.values() if v.get("status")=="ok")
     demo_m = sum(1 for v in market.values() if v.get("status")=="demo")
     total_macro = len(macro)
-    live_macro = sum(1 for v in macro.values() if v.get("status")=="ok")
+    live_macro = sum(1 for v in macro.values() if v.get("status") in {"ok", "treasury"})
     demo_macro = sum(1 for v in macro.values() if v.get("status")=="demo")
+    proxy_macro = sum(1 for v in macro.values() if v.get("status") in {"market_proxy", "derived"})
     return {
         "market_live": live_m, "market_demo": demo_m, "market_total": total_m,
         "macro_live": live_macro, "macro_demo": demo_macro, "macro_total": total_macro,
+        "macro_proxy": proxy_macro,
         "news_count": len(news),
     }
