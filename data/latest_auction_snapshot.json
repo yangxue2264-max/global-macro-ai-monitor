@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-08T10:08:09.095697+08:00",
+  "generated_at": "2026-09-08T14:03:21.047840+08:00",
   "trade_date": "2026-09-08",
   "quote_count": 27,
   "quotes": {
@@ -10,11 +10,11 @@
       "pre_close": 3932.6992,
       "gap_pct": 0.072,
       "date": "2026-09-08",
-      "time": "10:08:08",
+      "time": "14:03:20",
       "source": "Sina public quote fallback",
       "status": "ok",
-      "volume": "197095414",
-      "amount": "344799810775"
+      "volume": "424415361",
+      "amount": "742833549468"
     },
     "000300.SS": {
       "ticker": "000300.SS",
@@ -23,11 +23,11 @@
       "pre_close": 4575.0245,
       "gap_pct": 0.021,
       "date": "2026-09-08",
-      "time": "10:08:09",
+      "time": "14:03:21",
       "source": "Sina public quote fallback",
       "status": "ok",
-      "volume": "59077228",
-      "amount": "179128811386"
+      "volume": "135539044",
+      "amount": "397995085328"
     },
     "000998.SZ": {
       "ticker": "000998.SZ",
@@ -36,11 +36,11 @@
       "pre_close": 9.68,
       "gap_pct": -0.826,
       "date": "2026-09-08",
-      "time": "10:08:09",
+      "time": "14:03:21",
       "source": "Sina public quote fallback",
       "status": "ok",
-      "volume": "53814163",
-      "amount": "536340411.510"
+      "volume": "108208965",
+      "amount": "1094168626.290"
     },
     "002008.SZ": {
       "ticker": "002008.SZ",
@@ -49,11 +49,11 @@
       "pre_close": 93.77,
       "gap_pct": 0.373,
       "date": "2026-09-08",
-      "time": "10:08:09",
+      "time": "14:03:21",
       "source": "Sina public quote fallback",
       "status": "ok",
-      "volume": "14377092",
-      "amount": "1343461127.860"
+      "volume": "48684926",
+      "amount": "4605972653.260"
     },
     "002241.SZ": {
       "ticker": "002241.SZ",
@@ -62,11 +62,11 @@
       "pre_close": 23.6,
       "gap_pct": 0.0,
       "date": "2026-09-08",
-      "time": "10:08:09",
+      "time": "14:03:21",
       "source": "Sina public quote fallback",
       "status": "ok",
-      "volume": "21950987",
-      "amount": "515476342.620"
+      "volume": "74682075",
+      "amount": "1776818080.920"
     },
     "002385.SZ": {
       "ticker": "002385.SZ",
@@ -75,11 +75,11 @@
       "pre_close": 3.5,
       "gap_pct": -0.286,
       "date": "2026-09-08",
-      "time": "10:08:09",
+      "time": "14:03:21",
       "source": "Sina public quote fallback",
       "status": "ok",
-      "volume": "124469959",
-      "amount": "445607632.850"
+      "volume": "218678077",
+      "amount": "786499525.260"
     },
     "002463.SZ": {
       "ticker": "002463.SZ",
@@ -88,11 +88,11 @@
       "pre_close": 122.65,
       "gap_pct": 2.731,
       "date": "2026-09-08",
-      "time": "10:08:09",
+      "time": "14:03:21",
       "source": "Sina public quote fallback",
       "status": "ok",
-      "volume": "34325936",
-      "amount": "4324076832.710"
+      "volume": "59685495",
+      "amount": "7549721486.560"
     },
     "002475.SZ": {
       "ticker": "002475.SZ",
@@ -101,11 +101,11 @@
       "pre_close": 55.93,
       "gap_pct": -0.054,
       "date": "2026-09-08",
-      "time": "10:08:09",
+      "time": "14:03:21",
       "source": "Sina public quote fallback",
       "status": "ok",
-      "volume": "19823161",
-      "amount": "1106220103.090"
+      "volume": "51062099",
+      "amount": "2845066616.470"
     },
     "002594.SZ": {
       "ticker": "002594.SZ",
@@ -114,11 +114,11 @@
       "pre_close": 86.51,
       "gap_pct": -0.139,
       "date": "2026-09-08",
-      "time": "10:08:09",
+      "time": "14:03:21",
       "source": "Sina public quote fallback",
       "status": "ok",
-      "volume": "8462445",
-      "amount": "727739296.220"
+      "volume": "15886913",
+      "amount": "1369009867.160"
     },
     "300308.SZ": {
       "ticker": "300308.SZ",
@@ -127,11 +127,11 @@
       "pre_close": 898.46,
       "gap_pct": 0.082,
       "date": "2026-09-08",
-      "time": "10:08:09",
+      "time": "14:03:21",
       "source": "Sina public quote fallback",
       "status": "ok",
-      "volume": "12452684",
-      "amount": "11319933768.890"
+      "volume": "24495268",
+      "amount": "22373904523.460"
     },
     "300502.SZ": {
       "ticker": "300502.SZ",
@@ -140,11 +140,11 @@
       "pre_close": 417.2,
       "gap_pct": 0.511,
       "date": "2026-09-08",
-      "time": "10:08:09",
+      "time": "14:03:21",
       "source": "Sina public quote fallback",
       "status": "ok",
-      "volume": "13979892",
-      "amount": "5872209195.730"
+      "volume": "31823134",
+      "amount": "13446097970.290"
     },
     "300750.SZ": {
       "ticker": "300750.SZ",
@@ -153,11 +153,11 @@
       "pre_close": 348.2,
       "gap_pct": -0.727,
       "date": "2026-09-08",
-      "time": "10:08:09",
+      "time": "14:03:21",
       "source": "Sina public quote fallback",
       "status": "ok",
-      "volume": "25335083",
-      "amount": "8509908231.010"
+      "volume": "44876942",
+      "amount": "15072119163.750"
     },
     "399006.SZ": {
       "ticker": "399006.SZ",
@@ -166,11 +166,11 @@
       "pre_close": 3398.681,
       "gap_pct": -0.128,
       "date": "2026-09-08",
-      "time": "10:08:09",
+      "time": "14:03:18",
       "source": "Sina public quote fallback",
       "status": "ok",
-      "volume": "6182920201",
-      "amount": "177300466843.980"
+      "volume": "13228840698",
+      "amount": "383768134207.730"
     },
     "600028.SS": {
       "ticker": "600028.SS",
@@ -179,11 +179,11 @@
       "pre_close": 5.37,
       "gap_pct": 0.0,
       "date": "2026-09-08",
-      "time": "10:08:07",
+      "time": "14:03:19",
       "source": "Sina public quote fallback",
       "status": "ok",
-      "volume": "96442425",
-      "amount": "526271177.000"
+      "volume": "211939019",
+      "amount": "1161382632.000"
     },
     "600089.SS": {
       "ticker": "600089.SS",
@@ -192,11 +192,11 @@
       "pre_close": 18.94,
       "gap_pct": -0.106,
       "date": "2026-09-08",
-      "time": "10:08:08",
+      "time": "14:03:20",
       "source": "Sina public quote fallback",
       "status": "ok",
-      "volume": "14351660",
-      "amount": "272135706.000"
+      "volume": "38730669",
+      "amount": "736516773.000"
     },
     "600489.SS": {
       "ticker": "600489.SS",
@@ -205,11 +205,11 @@
       "pre_close": 25.07,
       "gap_pct": 1.237,
       "date": "2026-09-08",
-      "time": "10:08:09",
+      "time": "14:03:21",
       "source": "Sina public quote fallback",
       "status": "ok",
-      "volume": "23902081",
-      "amount": "606493071.000"
+      "volume": "50336701",
+      "amount": "1276886255.000"
     },
     "600519.SS": {
       "ticker": "600519.SS",
@@ -218,11 +218,11 @@
       "pre_close": 1316.01,
       "gap_pct": 0.151,
       "date": "2026-09-08",
-      "time": "10:08:08",
+      "time": "14:03:20",
       "source": "Sina public quote fallback",
       "status": "ok",
-      "volume": "468064",
-      "amount": "617266172.000"
+      "volume": "1358264",
+      "amount": "1785118279.000"
     },
     "600547.SS": {
       "ticker": "600547.SS",
@@ -231,11 +231,11 @@
       "pre_close": 36.45,
       "gap_pct": 1.18,
       "date": "2026-09-08",
-      "time": "10:08:09",
+      "time": "14:03:21",
       "source": "Sina public quote fallback",
       "status": "ok",
-      "volume": "24500919",
-      "amount": "892416533.000"
+      "volume": "49888060",
+      "amount": "1809100222.000"
     },
     "600598.SS": {
       "ticker": "600598.SS",
@@ -244,11 +244,11 @@
       "pre_close": 13.31,
       "gap_pct": 0.225,
       "date": "2026-09-08",
-      "time": "10:08:09",
+      "time": "14:03:21",
       "source": "Sina public quote fallback",
       "status": "ok",
-      "volume": "50243254",
-      "amount": "695852171.000"
+      "volume": "98502745",
+      "amount": "1378563520.000"
     },
     "600938.SS": {
       "ticker": "600938.SS",
@@ -257,11 +257,11 @@
       "pre_close": 33.12,
       "gap_pct": -0.302,
       "date": "2026-09-08",
-      "time": "10:08:08",
+      "time": "14:03:19",
       "source": "Sina public quote fallback",
       "status": "ok",
-      "volume": "10464470",
-      "amount": "348561145.000"
+      "volume": "28910081",
+      "amount": "968423021.000"
     },
     "601088.SS": {
       "ticker": "601088.SS",
@@ -270,11 +270,11 @@
       "pre_close": 46.09,
       "gap_pct": -0.195,
       "date": "2026-09-08",
-      "time": "10:08:10",
+      "time": "14:03:22",
       "source": "Sina public quote fallback",
       "status": "ok",
-      "volume": "7712850",
-      "amount": "355583991.000"
+      "volume": "19976147",
+      "amount": "919492179.000"
     },
     "601111.SS": {
       "ticker": "601111.SS",
@@ -283,11 +283,11 @@
       "pre_close": 5.86,
       "gap_pct": -0.171,
       "date": "2026-09-08",
-      "time": "10:08:09",
+      "time": "14:03:21",
       "source": "Sina public quote fallback",
       "status": "ok",
-      "volume": "13108424",
-      "amount": "77053876.000"
+      "volume": "27865724",
+      "amount": "163475244.000"
     },
     "601138.SS": {
       "ticker": "601138.SS",
@@ -296,11 +296,11 @@
       "pre_close": 66.57,
       "gap_pct": -0.406,
       "date": "2026-09-08",
-      "time": "10:08:08",
+      "time": "14:03:20",
       "source": "Sina public quote fallback",
       "status": "ok",
-      "volume": "42422978",
-      "amount": "2796270771.000"
+      "volume": "88362393",
+      "amount": "5814376685.000"
     },
     "601179.SS": {
       "ticker": "601179.SS",
@@ -309,11 +309,11 @@
       "pre_close": 12.51,
       "gap_pct": 0.0,
       "date": "2026-09-08",
-      "time": "10:08:10",
+      "time": "14:03:22",
       "source": "Sina public quote fallback",
       "status": "ok",
-      "volume": "15581600",
-      "amount": "193866952.000"
+      "volume": "35266562",
+      "amount": "438909630.000"
     },
     "601857.SS": {
       "ticker": "601857.SS",
@@ -322,11 +322,11 @@
       "pre_close": 11.02,
       "gap_pct": -0.091,
       "date": "2026-09-08",
-      "time": "10:08:09",
+      "time": "14:03:20",
       "source": "Sina public quote fallback",
       "status": "ok",
-      "volume": "34623782",
-      "amount": "384849751.000"
+      "volume": "84168683",
+      "amount": "939080465.000"
     },
     "601899.SS": {
       "ticker": "601899.SS",
@@ -335,11 +335,11 @@
       "pre_close": 32.87,
       "gap_pct": 1.734,
       "date": "2026-09-08",
-      "time": "10:08:09",
+      "time": "14:03:21",
       "source": "Sina public quote fallback",
       "status": "ok",
-      "volume": "93779562",
-      "amount": "3159861021.000"
+      "volume": "211103833",
+      "amount": "7134647779.000"
     },
     "603993.SS": {
       "ticker": "603993.SS",
@@ -348,11 +348,11 @@
       "pre_close": 18.37,
       "gap_pct": 2.341,
       "date": "2026-09-08",
-      "time": "10:08:09",
+      "time": "14:03:21",
       "source": "Sina public quote fallback",
       "status": "ok",
-      "volume": "114276061",
-      "amount": "2162117230.000"
+      "volume": "205883960",
+      "amount": "3900143387.000"
     }
   },
   "stage": "09:27",
