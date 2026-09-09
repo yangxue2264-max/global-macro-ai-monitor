@@ -1,0 +1,2670 @@
+{
+  "generated_at": "2026-09-09T13:20:48.849494+08:00",
+  "brief": {
+    "headline": "隔夜信号分化，单一股指方向不足以概括市场，重点看跨资产共振与背离。 S&P 500 -0.58%，Nasdaq -0.12%，美元 -0.12%，铜 +0.42%，黄金 +0.81%。",
+    "regime": "信号分化",
+    "regime_score": 0.06,
+    "states": {
+      "增长": 0.02,
+      "通胀压力": 0.58,
+      "金融条件宽松": 0.22,
+      "久期友好": -0.68,
+      "AI资本开支": 0.09,
+      "美元流动性": 0.59,
+      "实物资产": 0.39
+    },
+    "divergences": [
+      "暂未识别到高置信度跨资产背离；重点观察利率、美元、铜和科技股是否出现新的共振。"
+    ],
+    "checklist": [
+      "贴现率：US10Y 4.80%，实际10Y 2.43%。",
+      "风险溢价：VIX 15.72，HYG-LQD 20日代理 +0.00pp。",
+      "人民币外部条件：USD/CNY代理 -0.06%，美元指数 -0.12%。",
+      "AI实体约束：铜 +0.42%，天然气 -1.23%，AI核心股异动见雷达。",
+      "新闻必须先回答“影响现金流、贴现率、风险溢价还是供给约束”，再映射资产。"
+    ],
+    "events": [
+      {
+        "title": "Tracker: The Federal Reserve’s Balance Sheet Assets - The American Action Forum",
+        "url": "https://news.google.com/rss/articles/CBMikAFBVV95cUxNR2NrRDdoQ1MwS0paZFliV01BelV0MS1tQkNMSEdJYmYweWctanpzZU5hMllmVUtjQWR2cXBPSVhFeFluSFlMbi1ZVTg1ZS1TYzRMam81MFlRbWxockRRN2RpeEk2OGhpYWVXUVpsX3lvcUx4QUFERERGQVdkeVRndHJNeExJTU9DLS1GRW9GTW0?oc=5",
+        "source": "The American Action Forum",
+        "published": "Tue, 08 Sep 2026 21:30:34 GMT",
+        "modules": [
+          "货币政策"
+        ],
+        "themes": [
+          "黄金与美元信用"
+        ],
+        "score": 1.0,
+        "lang": "English",
+        "bucket": "政策原文",
+        "evidence_score": 58,
+        "evidence_label": "C·线索",
+        "evidence_reason": "可用于发现事件，关键数字需二次核实",
+        "theme_primary": "黄金与美元信用",
+        "module_primary": "货币政策",
+        "mechanism": "实际利率/美元/储备需求/地缘风险 → 黄金定价 → 国内金价与矿企盈利弹性"
+      },
+      {
+        "title": "BPI and The Clearing House Association Comment on Federal Reserve AML/CFT Program Proposal - Bank Policy Institute",
+        "url": "https://news.google.com/rss/articles/CBMiqwFBVV95cUxPemp6UHd5UjBPQVpwRWJFX3hIbGMyUDlMVVRFUDEzcVJPOUpmV3JsYVQxbDg0QmRIeVFnVlNWd0tZOWtfT3B2dmkzYWhpMWN6dDU2emhUaEtHS09VTDFZSnRjc2Iwa0J4TU5kTHRJYTJPMjNXUmFmVWpzaG9lLTVzanlFdkJ1UE02VW5ZUDVVWVc2RWcxUy1NSmdvRjNzYUNUbnhDaXp4QVM1ZXc?oc=5",
+        "source": "Bank Policy Institute",
+        "published": "Tue, 08 Sep 2026 22:21:23 GMT",
+        "modules": [
+          "货币政策"
+        ],
+        "themes": [
+          "黄金与美元信用"
+        ],
+        "score": 1.0,
+        "lang": "English",
+        "bucket": "政策原文",
+        "evidence_score": 58,
+        "evidence_label": "C·线索",
+        "evidence_reason": "可用于发现事件，关键数字需二次核实",
+        "theme_primary": "黄金与美元信用",
+        "module_primary": "货币政策",
+        "mechanism": "实际利率/美元/储备需求/地缘风险 → 黄金定价 → 国内金价与矿企盈利弹性"
+      },
+      {
+        "title": "Labor demand policies connect workers to jobs - minneapolisfed.org",
+        "url": "https://news.google.com/rss/articles/CBMikwFBVV95cUxQMnAzbFJNNHlrMXBDM2FnMENuUU5mTXJQeEFtS0FZOWJ4WU5IVjZXeGo4ckJMV1Z5LVJxaDl5OUNvSWlIZURfMGtTdVpfUVNoM3VXaVpoVE1rU1RHTWtUMWczNG5HQVF5TzY5Y2Y2a2ZfLWt5OU15Y1JYMGFqejBkV1V2V2tqTjA1UmQyWTJEQWJpaW8?oc=5",
+        "source": "minneapolisfed.org",
+        "published": "Tue, 08 Sep 2026 21:27:19 GMT",
+        "modules": [
+          "增长",
+          "货币政策"
+        ],
+        "themes": [
+          "待分类"
+        ],
+        "score": 1.0,
+        "lang": "English",
+        "bucket": "政策原文",
+        "evidence_score": 58,
+        "evidence_label": "C·线索",
+        "evidence_reason": "可用于发现事件，关键数字需二次核实",
+        "theme_primary": "待分类",
+        "module_primary": "增长",
+        "mechanism": "事件 → 现金流 / 贴现率 / 风险溢价 / 供需约束 → 行业与资产"
+      },
+      {
+        "title": "Economy grows ‘modestly,’ with consumers wary of rising prices: Fed - Trucking Dive",
+        "url": "https://news.google.com/rss/articles/CBMiqwFBVV95cUxOX2l0VmFJYmJVTEJJTVMxV0RxWWxrU01CRlJ4WDhZdzJrOHJGVkJTQW1GOXVlOVFVRWdSdHNSNUZ4dlJVTk5GRFhlbVpOZmxhYTUtQjhQYjlTekY1Rk1FSXo5TEptTGt5aEVReFlxWXlENHpzN2N1OE5Sa0pWQmVYWWp4TXpRYTFiWmF2clRaYXpuRnhXRllrbDRFSE5tbHo2emdobFdwUEhaeEE?oc=5",
+        "source": "Trucking Dive",
+        "published": "Wed, 09 Sep 2026 00:01:18 GMT",
+        "modules": [
+          "货币政策",
+          "地缘与供应链"
+        ],
+        "themes": [
+          "待分类"
+        ],
+        "score": 1.0,
+        "lang": "English",
+        "bucket": "政策原文",
+        "evidence_score": 58,
+        "evidence_label": "C·线索",
+        "evidence_reason": "可用于发现事件，关键数字需二次核实",
+        "theme_primary": "待分类",
+        "module_primary": "货币政策",
+        "mechanism": "事件 → 现金流 / 贴现率 / 风险溢价 / 供需约束 → 行业与资产"
+      },
+      {
+        "title": "Rising US Bond Yields Pressure Markets as Investors Demand Clearer Fed Policy - Межа. Новини України.",
+        "url": "https://news.google.com/rss/articles/CBMiYEFVX3lxTE5yczJ3SlQwbE1OS0lqUkluemRodXNWdUk5MDBpcjRNd0J1cWR3M1VNaEphS3NQb2Qzb0ZHWU11WUxBY2htVnNVM0VQZFRIRW84Rl9IakRtZ24wTG1wZ0ExOQ?oc=5",
+        "source": "Межа. Новини України.",
+        "published": "Tue, 08 Sep 2026 17:48:22 GMT",
+        "modules": [
+          "货币政策",
+          "金融状况"
+        ],
+        "themes": [
+          "流动性与信用"
+        ],
+        "score": 1.0,
+        "lang": "English",
+        "bucket": "政策原文",
+        "evidence_score": 58,
+        "evidence_label": "C·线索",
+        "evidence_reason": "可用于发现事件，关键数字需二次核实",
+        "theme_primary": "流动性与信用",
+        "module_primary": "货币政策",
+        "mechanism": "美元/实际利率/信用 → 全球金融条件 → 风险溢价与估值 → 人民币及A股风格"
+      },
+      {
+        "title": "Natural gas is winning AI’s power race - wpintelligence.washingtonpost.com",
+        "url": "https://news.google.com/rss/articles/CBMiswFBVV95cUxNUHAwZmRuc3pkV3cyVDRJN0NmSUdPQUNSYUtjV3ZTMGt3QXU0a0JJcjhlb3lUSk9DdDYyWG41VDhvbU1UWVhyLUJ5WUVQcDJKUmxKOFppc3B4TGRlVmo4UEVHLVkwYjZpbnREU3Q5Szljdl9zMFhjNC1oa0xrcEc5QzJwaDFxQ1VTZ2JZZUt6VEN2cmJac0l2bjBWRml6TDB2NnBJUmI1Y0p1M1dCZlBtbXQ3dw?oc=5",
+        "source": "wpintelligence.washingtonpost.com",
+        "published": "Wed, 09 Sep 2026 00:28:27 GMT",
+        "modules": [
+          "实体瓶颈"
+        ],
+        "themes": [
+          "AI资本开支"
+        ],
+        "score": 1.0,
+        "lang": "English",
+        "bucket": "AI资本开支",
+        "evidence_score": 58,
+        "evidence_label": "C·线索",
+        "evidence_reason": "可用于发现事件，关键数字需二次核实",
+        "theme_primary": "AI资本开支",
+        "module_primary": "实体瓶颈",
+        "mechanism": "AI需求与Capex → 芯片/网络 → 数据中心供电与并网 → 铜与设备 → 海外及A股硬件链"
+      }
+    ],
+    "focus": [
+      {
+        "score": 3.592612623980873,
+        "title": "AI Capex 是否从芯片扩散到实体？",
+        "now": "半导体 +0.76%，电力设备 +7.67%，铜 +2.34%（20日）",
+        "why": "只有算力、电力、电网与原料共同确认，才是更完整的资本开支周期。",
+        "verify": "看 hyperscaler 指引、服务器/光模块、电网设备与铜能否接力。"
+      },
+      {
+        "score": 2.639841477610437,
+        "title": "油价冲击是供给风险还是增长信号？",
+        "now": "WTI +0.98%，黄金 +0.81%，VIX 15.7",
+        "why": "供给冲击与需求走强对通胀、利率和A股行业利润的含义相反。",
+        "verify": "看期限结构、库存、通胀预期及航空/化工等成本敏感板块。"
+      },
+      {
+        "score": 0.8237680727473218,
+        "title": "金融条件是否继续收紧？",
+        "now": "美元 -0.12%，Nasdaq -0.12%，实际10Y 2.43%",
+        "why": "美元、实际利率与风险资产的共振决定外部流动性压力。",
+        "verify": "看 USD/CNH、美国长端利率、VIX 与高收益信用是否同向。",
+        "divergence": "暂未识别到高置信度跨资产背离；重点观察利率、美元、铜和科技股是否出现新的共振。"
+      }
+    ]
+  },
+  "market": {
+    "SP500": {
+      "name": "S&P 500",
+      "ticker": "^GSPC",
+      "group": "indices",
+      "theme": "",
+      "region": "US",
+      "last": 7673.52,
+      "change_pct": -0.5840437385018049,
+      "change_5d_pct": -0.1641916488640538,
+      "change_20d_pct": -1.026555795029338,
+      "vol_20d": 8.539538520420162,
+      "ret_z": -1.0857035071615462,
+      "volume_ratio": NaN,
+      "asof": "2026-09-08",
+      "source": "Yahoo Finance",
+      "status": "ok"
+    },
+    "NASDAQ": {
+      "name": "Nasdaq 100",
+      "ticker": "^NDX",
+      "group": "indices",
+      "theme": "",
+      "region": "US",
+      "last": 29507.7,
+      "change_pct": -0.12337467823579917,
+      "change_5d_pct": 0.17221730544587643,
+      "change_20d_pct": -0.38518928626889437,
+      "vol_20d": 12.896485446101805,
+      "ret_z": -0.15186403368207743,
+      "volume_ratio": NaN,
+      "asof": "2026-09-08",
+      "source": "Yahoo Finance",
+      "status": "ok"
+    },
+    "RUSSELL": {
+      "name": "Russell 2000",
+      "ticker": "^RUT",
+      "group": "indices",
+      "theme": "",
+      "region": "US",
+      "last": 2960.2,
+      "change_pct": -0.519214289314951,
+      "change_5d_pct": 0.12684131306126556,
+      "change_20d_pct": -1.895671770398366,
+      "vol_20d": 12.460098597956712,
+      "ret_z": -0.6614932663071084,
+      "volume_ratio": NaN,
+      "asof": "2026-09-08",
+      "source": "Yahoo Finance",
+      "status": "ok"
+    },
+    "CSI300": {
+      "name": "沪深300",
+      "ticker": "000300.SS",
+      "group": "indices",
+      "theme": "",
+      "region": "CN",
+      "last": 4559.767,
+      "change_pct": 0.6771102426530451,
+      "change_5d_pct": -2.8882220395367475,
+      "change_20d_pct": -9.879972172043184,
+      "vol_20d": 28.904240171024004,
+      "ret_z": 0.37187595348667285,
+      "volume_ratio": NaN,
+      "asof": "2026-09-09",
+      "source": "Yahoo Finance",
+      "status": "ok"
+    },
+    "SSE": {
+      "name": "上证综指",
+      "ticker": "000001.SS",
+      "group": "indices",
+      "theme": "",
+      "region": "CN",
+      "last": 3946.056,
+      "change_pct": 0.13970127527851428,
+      "change_5d_pct": 0.11848623808985437,
+      "change_20d_pct": -0.015684088504885896,
+      "vol_20d": 12.615080406633696,
+      "ret_z": 0.1757966593845066,
+      "volume_ratio": NaN,
+      "asof": "2026-09-09",
+      "source": "Yahoo Finance",
+      "status": "ok"
+    },
+    "CHINEXT": {
+      "name": "创业板指",
+      "ticker": "399006.SZ",
+      "group": "indices",
+      "theme": "",
+      "region": "CN",
+      "last": NaN,
+      "change_pct": NaN,
+      "change_5d_pct": NaN,
+      "change_20d_pct": NaN,
+      "vol_20d": NaN,
+      "ret_z": NaN,
+      "volume_ratio": NaN,
+      "asof": "",
+      "source": "Yahoo Finance",
+      "status": "unavailable"
+    },
+    "HSI": {
+      "name": "恒生指数",
+      "ticker": "^HSI",
+      "group": "indices",
+      "theme": "",
+      "region": "HK",
+      "last": 25272.02,
+      "change_pct": -0.1783768966369892,
+      "change_5d_pct": -0.1548325820851626,
+      "change_20d_pct": -0.6609625643224759,
+      "vol_20d": 13.728445765368075,
+      "ret_z": -0.20626118187310793,
+      "volume_ratio": NaN,
+      "asof": "2026-09-09",
+      "source": "Yahoo Finance",
+      "status": "ok"
+    },
+    "NIKKEI": {
+      "name": "日经225",
+      "ticker": "^N225",
+      "group": "indices",
+      "theme": "",
+      "region": "JP",
+      "last": 65193.82,
+      "change_pct": -0.11568986536248937,
+      "change_5d_pct": 1.3496639909062802,
+      "change_20d_pct": -3.450977325711746,
+      "vol_20d": 22.657491939430148,
+      "ret_z": -0.08105573567752722,
+      "volume_ratio": NaN,
+      "asof": "2026-09-09",
+      "source": "Yahoo Finance",
+      "status": "ok"
+    },
+    "KOSPI": {
+      "name": "韩国KOSPI",
+      "ticker": "^KS11",
+      "group": "indices",
+      "theme": "",
+      "region": "KR",
+      "last": 7059.44,
+      "change_pct": 1.5086591166608043,
+      "change_5d_pct": 7.568812931223623,
+      "change_20d_pct": 11.250596876856612,
+      "vol_20d": 45.57397964786883,
+      "ret_z": 0.5255020781633486,
+      "volume_ratio": NaN,
+      "asof": "2026-09-09",
+      "source": "Yahoo Finance",
+      "status": "ok"
+    },
+    "STOXX50": {
+      "name": "Euro Stoxx 50",
+      "ticker": "^STOXX50E",
+      "group": "indices",
+      "theme": "",
+      "region": "EU",
+      "last": 6413.17,
+      "change_pct": 0.14334813139933456,
+      "change_5d_pct": 0.6938316653530174,
+      "change_20d_pct": -2.107241094025236,
+      "vol_20d": 8.00534687406795,
+      "ret_z": 0.28425764371336304,
+      "volume_ratio": NaN,
+      "asof": "2026-09-08",
+      "source": "Yahoo Finance",
+      "status": "ok"
+    },
+    "DXY": {
+      "name": "美元指数",
+      "ticker": "DX-Y.NYB",
+      "group": "fx",
+      "theme": "",
+      "region": "",
+      "last": 98.725,
+      "change_pct": -0.1163496560097177,
+      "change_5d_pct": -0.9481288251229181,
+      "change_20d_pct": -1.0969745541975495,
+      "vol_20d": 4.843059753482729,
+      "ret_z": -0.38136913926150573,
+      "volume_ratio": NaN,
+      "asof": "2026-09-09",
+      "source": "Yahoo Finance",
+      "status": "ok"
+    },
+    "USDCNH": {
+      "name": "USD/CNY（人民币代理）",
+      "ticker": "CNY=X",
+      "group": "fx",
+      "theme": "",
+      "region": "",
+      "last": 6.7067,
+      "change_pct": -0.06109554747570911,
+      "change_5d_pct": -0.20088687836672392,
+      "change_20d_pct": -0.5678280207561226,
+      "vol_20d": 0.9491977023530612,
+      "ret_z": -1.021770013349285,
+      "volume_ratio": NaN,
+      "asof": "2026-09-09",
+      "source": "Yahoo Finance",
+      "status": "ok"
+    },
+    "USDJPY": {
+      "name": "USD/JPY",
+      "ticker": "JPY=X",
+      "group": "fx",
+      "theme": "",
+      "region": "",
+      "last": 153.406,
+      "change_pct": -0.2918332195898654,
+      "change_5d_pct": -4.23855776673574,
+      "change_20d_pct": -3.678774369761073,
+      "vol_20d": 10.207384093778908,
+      "ret_z": -0.45385856919756934,
+      "volume_ratio": NaN,
+      "asof": "2026-09-09",
+      "source": "Yahoo Finance",
+      "status": "ok"
+    },
+    "EURUSD": {
+      "name": "EUR/USD",
+      "ticker": "EURUSD=X",
+      "group": "fx",
+      "theme": "",
+      "region": "",
+      "last": 1.1639,
+      "change_pct": 0.09459924320605051,
+      "change_5d_pct": 0.37081752328389506,
+      "change_20d_pct": 0.8229383229383158,
+      "vol_20d": 4.393097729473785,
+      "ret_z": 0.34183542522934857,
+      "volume_ratio": NaN,
+      "asof": "2026-09-09",
+      "source": "Yahoo Finance",
+      "status": "ok"
+    },
+    "GOLD": {
+      "name": "黄金",
+      "ticker": "GC=F",
+      "group": "commodities",
+      "theme": "",
+      "region": "",
+      "last": 4429.3,
+      "change_pct": 0.805662395593898,
+      "change_5d_pct": 1.8698252069917265,
+      "change_20d_pct": 1.0563540953684836,
+      "vol_20d": 23.869458311763626,
+      "ret_z": 0.5358099823406927,
+      "volume_ratio": NaN,
+      "asof": "2026-09-09",
+      "source": "Yahoo Finance",
+      "status": "ok"
+    },
+    "SILVER": {
+      "name": "白银",
+      "ticker": "SI=F",
+      "group": "commodities",
+      "theme": "",
+      "region": "",
+      "last": 67.11,
+      "change_pct": 1.226299832571609,
+      "change_5d_pct": 3.8565105698102675,
+      "change_20d_pct": 3.6143834241689543,
+      "vol_20d": 33.0836471653045,
+      "ret_z": 0.5884147609675598,
+      "volume_ratio": NaN,
+      "asof": "2026-09-09",
+      "source": "Yahoo Finance",
+      "status": "ok"
+    },
+    "COPPER": {
+      "name": "铜",
+      "ticker": "HG=F",
+      "group": "commodities",
+      "theme": "",
+      "region": "",
+      "last": 6.767,
+      "change_pct": 0.4154919127467016,
+      "change_5d_pct": 4.003688619073231,
+      "change_20d_pct": 2.3442226255293352,
+      "vol_20d": 16.689484805532796,
+      "ret_z": 0.39520271081893105,
+      "volume_ratio": NaN,
+      "asof": "2026-09-09",
+      "source": "Yahoo Finance",
+      "status": "ok"
+    },
+    "WTI": {
+      "name": "WTI原油",
+      "ticker": "CL=F",
+      "group": "commodities",
+      "theme": "",
+      "region": "",
+      "last": 93.94,
+      "change_pct": 0.9781790820165392,
+      "change_5d_pct": 4.123254267346477,
+      "change_20d_pct": 12.90865384615385,
+      "vol_20d": 30.83801954077915,
+      "ret_z": 0.5035378978106376,
+      "volume_ratio": NaN,
+      "asof": "2026-09-09",
+      "source": "Yahoo Finance",
+      "status": "ok"
+    },
+    "BRENT": {
+      "name": "Brent原油",
+      "ticker": "BZ=F",
+      "group": "commodities",
+      "theme": "",
+      "region": "",
+      "last": 98.97,
+      "change_pct": 1.0723039215686292,
+      "change_5d_pct": 4.564183835182245,
+      "change_20d_pct": 11.314812731976165,
+      "vol_20d": 30.34909906550856,
+      "ret_z": 0.560883108963359,
+      "volume_ratio": NaN,
+      "asof": "2026-09-09",
+      "source": "Yahoo Finance",
+      "status": "ok"
+    },
+    "NATGAS": {
+      "name": "美国天然气",
+      "ticker": "NG=F",
+      "group": "commodities",
+      "theme": "",
+      "region": "",
+      "last": 2.88,
+      "change_pct": -1.2345679012345734,
+      "change_5d_pct": -0.8264462809917328,
+      "change_20d_pct": 4.083845319840984,
+      "vol_20d": 29.410445933861705,
+      "ret_z": -0.6663672459713869,
+      "volume_ratio": NaN,
+      "asof": "2026-09-09",
+      "source": "Yahoo Finance",
+      "status": "ok"
+    },
+    "CORN": {
+      "name": "玉米",
+      "ticker": "ZC=F",
+      "group": "commodities",
+      "theme": "",
+      "region": "",
+      "last": 530.0,
+      "change_pct": 3.718199608610573,
+      "change_5d_pct": 1.6299137104506256,
+      "change_20d_pct": 21.35088723526044,
+      "vol_20d": 26.166710439124387,
+      "ret_z": 2.2557130011816175,
+      "volume_ratio": NaN,
+      "asof": "2026-09-09",
+      "source": "Yahoo Finance",
+      "status": "ok"
+    },
+    "SOY": {
+      "name": "大豆",
+      "ticker": "ZS=F",
+      "group": "commodities",
+      "theme": "",
+      "region": "",
+      "last": 1310.25,
+      "change_pct": 0.5950095969289748,
+      "change_5d_pct": 0.2678400612205811,
+      "change_20d_pct": 14.183006535947706,
+      "vol_20d": 15.879067555348794,
+      "ret_z": 0.5948387393719111,
+      "volume_ratio": NaN,
+      "asof": "2026-09-09",
+      "source": "Yahoo Finance",
+      "status": "ok"
+    },
+    "BTC": {
+      "name": "Bitcoin",
+      "ticker": "BTC-USD",
+      "group": "crypto",
+      "theme": "",
+      "region": "",
+      "last": 79293.54,
+      "change_pct": 0.2245946924667841,
+      "change_5d_pct": -2.4340564137054432,
+      "change_20d_pct": 14.476543317887103,
+      "vol_20d": 41.12740096393266,
+      "ret_z": 0.08668989843145036,
+      "volume_ratio": NaN,
+      "asof": "2026-09-09",
+      "source": "Yahoo Finance",
+      "status": "ok"
+    },
+    "NVDA": {
+      "name": "NVIDIA",
+      "ticker": "NVDA",
+      "group": "stocks",
+      "theme": "AI算力",
+      "region": "",
+      "last": 225.73,
+      "change_pct": -2.0098975516582795,
+      "change_5d_pct": 2.242050910408544,
+      "change_20d_pct": 3.7600551597333887,
+      "vol_20d": 44.87769122119119,
+      "ret_z": -0.710957574380885,
+      "volume_ratio": NaN,
+      "asof": "2026-09-08",
+      "source": "Yahoo Finance",
+      "status": "ok"
+    },
+    "AVGO": {
+      "name": "Broadcom",
+      "ticker": "AVGO",
+      "group": "stocks",
+      "theme": "AI算力",
+      "region": "",
+      "last": 368.56,
+      "change_pct": 2.9784856105057322,
+      "change_5d_pct": -0.48063941243181585,
+      "change_20d_pct": -12.74621212121212,
+      "vol_20d": 37.72269873357379,
+      "ret_z": 1.2534096138729767,
+      "volume_ratio": NaN,
+      "asof": "2026-09-08",
+      "source": "Yahoo Finance",
+      "status": "ok"
+    },
+    "AMD": {
+      "name": "AMD",
+      "ticker": "AMD",
+      "group": "stocks",
+      "theme": "AI算力",
+      "region": "",
+      "last": 505.74,
+      "change_pct": 5.898611721841829,
+      "change_5d_pct": 7.4396668932698695,
+      "change_20d_pct": 7.705085612062357,
+      "vol_20d": 49.58073934024024,
+      "ret_z": 1.8885873713292265,
+      "volume_ratio": NaN,
+      "asof": "2026-09-08",
+      "source": "Yahoo Finance",
+      "status": "ok"
+    },
+    "MSFT": {
+      "name": "Microsoft",
+      "ticker": "MSFT",
+      "group": "stocks",
+      "theme": "Hyperscaler",
+      "region": "",
+      "last": 493.95,
+      "change_pct": -1.1506904142485452,
+      "change_5d_pct": -2.629659563563258,
+      "change_20d_pct": -2.3929968778405697,
+      "vol_20d": 23.27771489980154,
+      "ret_z": -0.784726684358567,
+      "volume_ratio": NaN,
+      "asof": "2026-09-08",
+      "source": "Yahoo Finance",
+      "status": "ok"
+    },
+    "GOOGL": {
+      "name": "Alphabet",
+      "ticker": "GOOGL",
+      "group": "stocks",
+      "theme": "Hyperscaler",
+      "region": "",
+      "last": 338.36,
+      "change_pct": -0.02954558884357139,
+      "change_5d_pct": -0.291734197730964,
+      "change_20d_pct": -5.3591407473707715,
+      "vol_20d": 21.14461506170744,
+      "ret_z": -0.02218161367069372,
+      "volume_ratio": NaN,
+      "asof": "2026-09-08",
+      "source": "Yahoo Finance",
+      "status": "ok"
+    },
+    "AMZN": {
+      "name": "Amazon",
+      "ticker": "AMZN",
+      "group": "stocks",
+      "theme": "Hyperscaler",
+      "region": "",
+      "last": 256.97,
+      "change_pct": -0.5957216355266581,
+      "change_5d_pct": -1.0778765831312098,
+      "change_20d_pct": -7.594663598115703,
+      "vol_20d": 25.949442536253965,
+      "ret_z": -0.3644312503489472,
+      "volume_ratio": NaN,
+      "asof": "2026-09-08",
+      "source": "Yahoo Finance",
+      "status": "ok"
+    },
+    "META": {
+      "name": "Meta",
+      "ticker": "META",
+      "group": "stocks",
+      "theme": "Hyperscaler",
+      "region": "",
+      "last": 613.48,
+      "change_pct": -0.5334241289297381,
+      "change_5d_pct": 7.188035084040956,
+      "change_20d_pct": 3.119747192899891,
+      "vol_20d": 32.87417673122985,
+      "ret_z": -0.25758350087507303,
+      "volume_ratio": NaN,
+      "asof": "2026-09-08",
+      "source": "Yahoo Finance",
+      "status": "ok"
+    },
+    "ORCL": {
+      "name": "Oracle",
+      "ticker": "ORCL",
+      "group": "stocks",
+      "theme": "AI云",
+      "region": "",
+      "last": 162.52,
+      "change_pct": 2.3554603854389677,
+      "change_5d_pct": 8.98605150214593,
+      "change_20d_pct": 7.593512082092024,
+      "vol_20d": 50.18285194360246,
+      "ret_z": 0.7451105899608402,
+      "volume_ratio": NaN,
+      "asof": "2026-09-08",
+      "source": "Yahoo Finance",
+      "status": "ok"
+    },
+    "TSM": {
+      "name": "TSMC ADR",
+      "ticker": "TSM",
+      "group": "stocks",
+      "theme": "半导体制造",
+      "region": "",
+      "last": 439.0,
+      "change_pct": 2.3524748781795557,
+      "change_5d_pct": 5.701627660599051,
+      "change_20d_pct": 4.905966974932485,
+      "vol_20d": 27.016824034356574,
+      "ret_z": 1.3822639149461307,
+      "volume_ratio": NaN,
+      "asof": "2026-09-08",
+      "source": "Yahoo Finance",
+      "status": "ok"
+    },
+    "ASML": {
+      "name": "ASML",
+      "ticker": "ASML",
+      "group": "stocks",
+      "theme": "半导体设备",
+      "region": "",
+      "last": 1764.85,
+      "change_pct": 2.9139065124090147,
+      "change_5d_pct": 4.058938331731521,
+      "change_20d_pct": 1.8096545676904219,
+      "vol_20d": 34.99907747009958,
+      "ret_z": 1.3216586035067053,
+      "volume_ratio": NaN,
+      "asof": "2026-09-08",
+      "source": "Yahoo Finance",
+      "status": "ok"
+    },
+    "VRT": {
+      "name": "Vertiv",
+      "ticker": "VRT",
+      "group": "stocks",
+      "theme": "数据中心电力",
+      "region": "",
+      "last": 290.83,
+      "change_pct": 3.6716215734502677,
+      "change_5d_pct": 12.41110080395793,
+      "change_20d_pct": 7.674935209181766,
+      "vol_20d": 50.48315431757413,
+      "ret_z": 1.1545472215044283,
+      "volume_ratio": NaN,
+      "asof": "2026-09-08",
+      "source": "Yahoo Finance",
+      "status": "ok"
+    },
+    "TCEHY": {
+      "name": "Tencent ADR",
+      "ticker": "TCEHY",
+      "group": "stocks",
+      "theme": "中国互联网",
+      "region": "",
+      "last": 55.25,
+      "change_pct": -2.3851590106007126,
+      "change_5d_pct": -3.392201433817099,
+      "change_20d_pct": -10.191807542262687,
+      "vol_20d": 31.258893740332073,
+      "ret_z": -1.2112784857614065,
+      "volume_ratio": NaN,
+      "asof": "2026-09-08",
+      "source": "Yahoo Finance",
+      "status": "ok"
+    },
+    "BABA": {
+      "name": "Alibaba ADR",
+      "ticker": "BABA",
+      "group": "stocks",
+      "theme": "中国互联网",
+      "region": "",
+      "last": 112.66,
+      "change_pct": -0.5121865065347952,
+      "change_5d_pct": -1.1927731976846156,
+      "change_20d_pct": -14.857920193470376,
+      "vol_20d": 41.64762527947119,
+      "ret_z": -0.19522622652513932,
+      "volume_ratio": NaN,
+      "asof": "2026-09-08",
+      "source": "Yahoo Finance",
+      "status": "ok"
+    },
+    "PDD": {
+      "name": "PDD",
+      "ticker": "PDD",
+      "group": "stocks",
+      "theme": "中国互联网",
+      "region": "",
+      "last": 79.75,
+      "change_pct": -2.99233669869845,
+      "change_5d_pct": -5.059523809523814,
+      "change_20d_pct": -14.247311827956988,
+      "vol_20d": 31.834827403192573,
+      "ret_z": -1.4921353855873247,
+      "volume_ratio": NaN,
+      "asof": "2026-09-08",
+      "source": "Yahoo Finance",
+      "status": "ok"
+    },
+    "CATL": {
+      "name": "宁德时代",
+      "ticker": "300750.SZ",
+      "group": "stocks",
+      "theme": "新能源",
+      "region": "",
+      "last": 329.53,
+      "change_pct": -1.7765060061402882,
+      "change_5d_pct": -5.386316001033631,
+      "change_20d_pct": -16.34808214657427,
+      "vol_20d": 22.36986932832266,
+      "ret_z": -1.2606760529196754,
+      "volume_ratio": NaN,
+      "asof": "2026-09-09",
+      "source": "Yahoo Finance",
+      "status": "ok"
+    },
+    "BYD": {
+      "name": "比亚迪",
+      "ticker": "002594.SZ",
+      "group": "stocks",
+      "theme": "新能源",
+      "region": "",
+      "last": 85.81,
+      "change_pct": -0.8779022756150945,
+      "change_5d_pct": -1.140552995391697,
+      "change_20d_pct": -5.087932750801894,
+      "vol_20d": 21.928412259169058,
+      "ret_z": -0.6355346851135604,
+      "volume_ratio": NaN,
+      "asof": "2026-09-09",
+      "source": "Yahoo Finance",
+      "status": "ok"
+    },
+    "FOXCONN": {
+      "name": "工业富联",
+      "ticker": "601138.SS",
+      "group": "stocks",
+      "theme": "AI服务器",
+      "region": "",
+      "last": 65.25,
+      "change_pct": 0.7722007722007707,
+      "change_5d_pct": 5.582524271844669,
+      "change_20d_pct": -0.5335365853658458,
+      "vol_20d": 45.91445169762732,
+      "ret_z": 0.2669814574604869,
+      "volume_ratio": NaN,
+      "asof": "2026-09-09",
+      "source": "Yahoo Finance",
+      "status": "ok"
+    },
+    "MOUTAI": {
+      "name": "贵州茅台",
+      "ticker": "600519.SS",
+      "group": "stocks",
+      "theme": "消费",
+      "region": "",
+      "last": 1288.0,
+      "change_pct": -1.6268234934697867,
+      "change_5d_pct": -0.7321772639691693,
+      "change_20d_pct": -4.095309009679826,
+      "vol_20d": 21.71340931626809,
+      "ret_z": -1.189358242556668,
+      "volume_ratio": NaN,
+      "asof": "2026-09-09",
+      "source": "Yahoo Finance",
+      "status": "ok"
+    },
+    "SMH": {
+      "name": "VanEck Semiconductor ETF",
+      "ticker": "SMH",
+      "group": "stocks",
+      "theme": "半导体",
+      "region": "",
+      "last": 573.73,
+      "change_pct": 1.1851642828168973,
+      "change_5d_pct": 3.072058638592967,
+      "change_20d_pct": 0.7586800372315183,
+      "vol_20d": 30.454160245544415,
+      "ret_z": 0.6177776559539497,
+      "volume_ratio": NaN,
+      "asof": "2026-09-08",
+      "source": "Yahoo Finance",
+      "status": "ok"
+    },
+    "IGV": {
+      "name": "iShares Expanded Tech-Software ETF",
+      "ticker": "IGV",
+      "group": "stocks",
+      "theme": "软件",
+      "region": "",
+      "last": 102.66,
+      "change_pct": -1.8265276848044354,
+      "change_5d_pct": -6.655755591925816,
+      "change_20d_pct": -2.2378821064660603,
+      "vol_20d": 40.52796509690873,
+      "ret_z": -0.7154375511149028,
+      "volume_ratio": NaN,
+      "asof": "2026-09-08",
+      "source": "Yahoo Finance",
+      "status": "ok"
+    },
+    "XLU": {
+      "name": "Utilities Select Sector SPDR",
+      "ticker": "XLU",
+      "group": "stocks",
+      "theme": "电力公用事业",
+      "region": "",
+      "last": 43.45,
+      "change_pct": 0.8588672237697326,
+      "change_5d_pct": 2.8889415107743455,
+      "change_20d_pct": 0.7419429631347008,
+      "vol_20d": 13.829813701022466,
+      "ret_z": 0.9858480233111927,
+      "volume_ratio": NaN,
+      "asof": "2026-09-08",
+      "source": "Yahoo Finance",
+      "status": "ok"
+    },
+    "GRID": {
+      "name": "First Trust Smart Grid ETF",
+      "ticker": "GRID",
+      "group": "stocks",
+      "theme": "电网",
+      "region": "",
+      "last": 181.97,
+      "change_pct": 1.66489748030616,
+      "change_5d_pct": 2.0068389483715476,
+      "change_20d_pct": -1.7281417076200234,
+      "vol_20d": 18.261754233355372,
+      "ret_z": 1.4472557132312722,
+      "volume_ratio": NaN,
+      "asof": "2026-09-08",
+      "source": "Yahoo Finance",
+      "status": "ok"
+    },
+    "DLR": {
+      "name": "Digital Realty",
+      "ticker": "DLR",
+      "group": "stocks",
+      "theme": "数据中心REIT",
+      "region": "",
+      "last": 189.5,
+      "change_pct": 0.5892032485800724,
+      "change_5d_pct": 2.1067945471199945,
+      "change_20d_pct": -0.9409304756926362,
+      "vol_20d": 25.021142555318963,
+      "ret_z": 0.37381632688460664,
+      "volume_ratio": NaN,
+      "asof": "2026-09-08",
+      "source": "Yahoo Finance",
+      "status": "ok"
+    },
+    "XLE": {
+      "name": "Energy Select Sector SPDR",
+      "ticker": "XLE",
+      "group": "stocks",
+      "theme": "能源",
+      "region": "",
+      "last": 64.77,
+      "change_pct": 1.108335935060878,
+      "change_5d_pct": 1.266416510318935,
+      "change_20d_pct": 7.6271186440677985,
+      "vol_20d": 15.427807157493053,
+      "ret_z": 1.1404269796812063,
+      "volume_ratio": NaN,
+      "asof": "2026-09-08",
+      "source": "Yahoo Finance",
+      "status": "ok"
+    },
+    "ZHONGJI": {
+      "name": "中际旭创",
+      "ticker": "300308.SZ",
+      "group": "stocks",
+      "theme": "AI光模块",
+      "region": "",
+      "last": 909.78,
+      "change_pct": 0.8211709165863113,
+      "change_5d_pct": 10.624999999999996,
+      "change_20d_pct": -1.2182410423452805,
+      "vol_20d": 68.46651386840996,
+      "ret_z": 0.19039503311140038,
+      "volume_ratio": NaN,
+      "asof": "2026-09-09",
+      "source": "Yahoo Finance",
+      "status": "ok"
+    },
+    "EOPTOLINK": {
+      "name": "新易盛",
+      "ticker": "300502.SZ",
+      "group": "stocks",
+      "theme": "AI光模块",
+      "region": "",
+      "last": 416.66,
+      "change_pct": 0.06243996157542231,
+      "change_5d_pct": 7.747607964830627,
+      "change_20d_pct": -2.6950023353572994,
+      "vol_20d": 65.21290703917312,
+      "ret_z": 0.015199501236934056,
+      "volume_ratio": NaN,
+      "asof": "2026-09-09",
+      "source": "Yahoo Finance",
+      "status": "ok"
+    },
+    "WUS": {
+      "name": "沪电股份",
+      "ticker": "002463.SZ",
+      "group": "stocks",
+      "theme": "AI PCB",
+      "region": "",
+      "last": 127.57,
+      "change_pct": 2.137710168134488,
+      "change_5d_pct": 7.754033279837813,
+      "change_20d_pct": 3.7070156897813122,
+      "vol_20d": 64.76877886714328,
+      "ret_z": 0.5239422060081882,
+      "volume_ratio": NaN,
+      "asof": "2026-09-09",
+      "source": "Yahoo Finance",
+      "status": "ok"
+    },
+    "XD": {
+      "name": "中国西电",
+      "ticker": "601179.SS",
+      "group": "stocks",
+      "theme": "电网设备",
+      "region": "",
+      "last": 12.5,
+      "change_pct": 0.6441223832528209,
+      "change_5d_pct": 0.08006405124099114,
+      "change_20d_pct": -9.354604786076859,
+      "vol_20d": 26.840404692888807,
+      "ret_z": 0.38096019627350397,
+      "volume_ratio": NaN,
+      "asof": "2026-09-09",
+      "source": "Yahoo Finance",
+      "status": "ok"
+    },
+    "TBEA": {
+      "name": "特变电工",
+      "ticker": "600089.SS",
+      "group": "stocks",
+      "theme": "电网/能源",
+      "region": "",
+      "last": 19.1,
+      "change_pct": 0.10482180293502896,
+      "change_5d_pct": 0.3678402522333091,
+      "change_20d_pct": -10.664172123479876,
+      "vol_20d": 23.445411642323805,
+      "ret_z": 0.07097314223552334,
+      "volume_ratio": NaN,
+      "asof": "2026-09-09",
+      "source": "Yahoo Finance",
+      "status": "ok"
+    },
+    "ZIJIN": {
+      "name": "紫金矿业",
+      "ticker": "601899.SS",
+      "group": "stocks",
+      "theme": "铜金",
+      "region": "",
+      "last": 34.07,
+      "change_pct": 0.6202008269344361,
+      "change_5d_pct": 3.399089529590271,
+      "change_20d_pct": 1.459201905896368,
+      "vol_20d": 34.74502181481191,
+      "ret_z": 0.28336096487104945,
+      "volume_ratio": NaN,
+      "asof": "2026-09-09",
+      "source": "Yahoo Finance",
+      "status": "ok"
+    },
+    "CMOC": {
+      "name": "洛阳钼业",
+      "ticker": "603993.SS",
+      "group": "stocks",
+      "theme": "铜钴",
+      "region": "",
+      "last": 18.86,
+      "change_pct": -0.42238648363253084,
+      "change_5d_pct": 2.1668472372697645,
+      "change_20d_pct": -0.736842105263158,
+      "vol_20d": 41.71623749647452,
+      "ret_z": -0.1607330372890663,
+      "volume_ratio": NaN,
+      "asof": "2026-09-09",
+      "source": "Yahoo Finance",
+      "status": "ok"
+    },
+    "SHENHUA": {
+      "name": "中国神华",
+      "ticker": "601088.SS",
+      "group": "stocks",
+      "theme": "能源",
+      "region": "",
+      "last": 46.91,
+      "change_pct": 1.2737478411053438,
+      "change_5d_pct": -2.3725286160249714,
+      "change_20d_pct": 6.444293169956872,
+      "vol_20d": 19.610348651654995,
+      "ret_z": 1.0310943717828533,
+      "volume_ratio": NaN,
+      "asof": "2026-09-09",
+      "source": "Yahoo Finance",
+      "status": "ok"
+    },
+    "LONGPING": {
+      "name": "隆平高科",
+      "ticker": "000998.SZ",
+      "group": "stocks",
+      "theme": "种业",
+      "region": "",
+      "last": 10.0,
+      "change_pct": -1.4778325123152691,
+      "change_5d_pct": 6.496272630457933,
+      "change_20d_pct": 22.399020807833537,
+      "vol_20d": 69.26905378939864,
+      "ret_z": -0.3386774116083342,
+      "volume_ratio": NaN,
+      "asof": "2026-09-09",
+      "source": "Yahoo Finance",
+      "status": "ok"
+    },
+    "BEIDAHUANG": {
+      "name": "北大荒",
+      "ticker": "600598.SS",
+      "group": "stocks",
+      "theme": "种植业",
+      "region": "",
+      "last": 13.92,
+      "change_pct": -0.9957325746799417,
+      "change_5d_pct": 9.86582478295186,
+      "change_20d_pct": 15.518672199170114,
+      "vol_20d": 71.32164293429211,
+      "ret_z": -0.22162647885351805,
+      "volume_ratio": NaN,
+      "asof": "2026-09-09",
+      "source": "Yahoo Finance",
+      "status": "ok"
+    },
+    "PETROCHINA": {
+      "name": "中国石油",
+      "ticker": "601857.SS",
+      "group": "stocks",
+      "theme": "石油上游",
+      "region": "",
+      "last": 11.37,
+      "change_pct": 0.619469026548658,
+      "change_5d_pct": 0.9769094138543544,
+      "change_20d_pct": 6.660412757973733,
+      "vol_20d": 22.625673105640633,
+      "ret_z": 0.4346286578532121,
+      "volume_ratio": NaN,
+      "asof": "2026-09-09",
+      "source": "Yahoo Finance",
+      "status": "ok"
+    },
+    "CNOOC": {
+      "name": "中国海油",
+      "ticker": "600938.SS",
+      "group": "stocks",
+      "theme": "石油上游",
+      "region": "",
+      "last": 34.25,
+      "change_pct": -0.40709508578075093,
+      "change_5d_pct": 1.42137992300857,
+      "change_20d_pct": 4.26179604261796,
+      "vol_20d": 21.783837018470916,
+      "ret_z": -0.2966618845024697,
+      "volume_ratio": NaN,
+      "asof": "2026-09-09",
+      "source": "Yahoo Finance",
+      "status": "ok"
+    },
+    "SINOPEC": {
+      "name": "中国石化",
+      "ticker": "600028.SS",
+      "group": "stocks",
+      "theme": "炼化",
+      "region": "",
+      "last": 5.63,
+      "change_pct": 0.7155635062611854,
+      "change_5d_pct": 3.6832412523020386,
+      "change_20d_pct": 11.485148514851495,
+      "vol_20d": 27.8258794824771,
+      "ret_z": 0.4082249589342298,
+      "volume_ratio": NaN,
+      "asof": "2026-09-09",
+      "source": "Yahoo Finance",
+      "status": "ok"
+    },
+    "AIRCHINA": {
+      "name": "中国国航",
+      "ticker": "601111.SS",
+      "group": "stocks",
+      "theme": "航空",
+      "region": "",
+      "last": 5.87,
+      "change_pct": 0.17064846416381396,
+      "change_5d_pct": 0.6861063464836947,
+      "change_20d_pct": -3.6124794745484357,
+      "vol_20d": 18.123107628794475,
+      "ret_z": 0.1494754896478874,
+      "volume_ratio": NaN,
+      "asof": "2026-09-09",
+      "source": "Yahoo Finance",
+      "status": "ok"
+    },
+    "SHANDONG_GOLD": {
+      "name": "山东黄金",
+      "ticker": "600547.SS",
+      "group": "stocks",
+      "theme": "黄金矿业",
+      "region": "",
+      "last": 35.71,
+      "change_pct": -0.8331019161344044,
+      "change_5d_pct": -5.753496964898385,
+      "change_20d_pct": 15.119277885235327,
+      "vol_20d": 59.02792801673844,
+      "ret_z": -0.2240478933535991,
+      "volume_ratio": NaN,
+      "asof": "2026-09-09",
+      "source": "Yahoo Finance",
+      "status": "ok"
+    },
+    "ZHONGJIN_GOLD": {
+      "name": "中金黄金",
+      "ticker": "600489.SS",
+      "group": "stocks",
+      "theme": "黄金矿业",
+      "region": "",
+      "last": 25.35,
+      "change_pct": 0.5952380952380931,
+      "change_5d_pct": 2.6315789473684292,
+      "change_20d_pct": -0.8215962441314395,
+      "vol_20d": 43.242273989475464,
+      "ret_z": 0.218515608765867,
+      "volume_ratio": NaN,
+      "asof": "2026-09-09",
+      "source": "Yahoo Finance",
+      "status": "ok"
+    },
+    "LUXSHARE": {
+      "name": "立讯精密",
+      "ticker": "002475.SZ",
+      "group": "stocks",
+      "theme": "消费电子",
+      "region": "",
+      "last": 55.89,
+      "change_pct": 1.5074464220850015,
+      "change_5d_pct": -2.084793272599861,
+      "change_20d_pct": -2.545771578029643,
+      "vol_20d": 43.49506165973299,
+      "ret_z": 0.5501767136865582,
+      "volume_ratio": NaN,
+      "asof": "2026-09-09",
+      "source": "Yahoo Finance",
+      "status": "ok"
+    },
+    "GOERTEK": {
+      "name": "歌尔股份",
+      "ticker": "002241.SZ",
+      "group": "stocks",
+      "theme": "消费电子",
+      "region": "",
+      "last": 23.02,
+      "change_pct": -2.78716216216216,
+      "change_5d_pct": -4.639602319801162,
+      "change_20d_pct": 2.039007092198575,
+      "vol_20d": 35.45727224512135,
+      "ret_z": -1.2478350664503999,
+      "volume_ratio": NaN,
+      "asof": "2026-09-09",
+      "source": "Yahoo Finance",
+      "status": "ok"
+    },
+    "DBN": {
+      "name": "大北农",
+      "ticker": "002385.SZ",
+      "group": "stocks",
+      "theme": "种业",
+      "region": "",
+      "last": 3.6,
+      "change_pct": -0.27700831024930483,
+      "change_5d_pct": 8.108108108108114,
+      "change_20d_pct": 18.421052631578938,
+      "vol_20d": 68.07127550015556,
+      "ret_z": -0.06459950350272578,
+      "volume_ratio": NaN,
+      "asof": "2026-09-09",
+      "source": "Yahoo Finance",
+      "status": "ok"
+    },
+    "US10Y_PROXY": {
+      "name": "美国10Y市场代理",
+      "ticker": "^TNX",
+      "group": "macro_proxies",
+      "theme": "利率代理",
+      "region": "",
+      "last": 4.806,
+      "change_pct": 0.459866220735794,
+      "change_5d_pct": 1.0088272383354413,
+      "change_20d_pct": 2.277080229836148,
+      "vol_20d": 12.32026769342514,
+      "ret_z": 0.5925317631249267,
+      "volume_ratio": NaN,
+      "asof": "2026-09-08",
+      "source": "Yahoo Finance",
+      "status": "ok"
+    },
+    "VIX_MARKET": {
+      "name": "VIX市场代理",
+      "ticker": "^VIX",
+      "group": "macro_proxies",
+      "theme": "风险代理",
+      "region": "",
+      "last": 15.72,
+      "change_pct": 2.7450980392156765,
+      "change_5d_pct": -3.794369645042839,
+      "change_20d_pct": 2.8795811518324665,
+      "vol_20d": 80.45621721148738,
+      "ret_z": 0.5416247734216422,
+      "volume_ratio": NaN,
+      "asof": "2026-09-08",
+      "source": "Yahoo Finance",
+      "status": "ok"
+    },
+    "HYG": {
+      "name": "美国高收益债ETF",
+      "ticker": "HYG",
+      "group": "macro_proxies",
+      "theme": "信用代理",
+      "region": "",
+      "last": 79.12,
+      "change_pct": -0.050530570995444,
+      "change_5d_pct": -0.8645533141210304,
+      "change_20d_pct": -0.45294413688978796,
+      "vol_20d": 3.8612190158442097,
+      "ret_z": -0.20774474161364034,
+      "volume_ratio": NaN,
+      "asof": "2026-09-08",
+      "source": "Yahoo Finance",
+      "status": "ok"
+    },
+    "LQD": {
+      "name": "美国投资级债ETF",
+      "ticker": "LQD",
+      "group": "macro_proxies",
+      "theme": "信用代理",
+      "region": "",
+      "last": 105.48,
+      "change_pct": 0.0,
+      "change_5d_pct": -0.6873175783824403,
+      "change_20d_pct": -0.45300113250281715,
+      "vol_20d": 6.046558238823545,
+      "ret_z": 0.0,
+      "volume_ratio": NaN,
+      "asof": "2026-09-08",
+      "source": "Yahoo Finance",
+      "status": "ok"
+    },
+    "SUB_0_7": {
+      "name": "大族激光",
+      "ticker": "002008.SZ",
+      "group": "subscriber_watchlist",
+      "theme": "AI资本开支",
+      "region": "CN",
+      "last": 95.41,
+      "change_pct": -0.3238612620142134,
+      "change_5d_pct": 2.1629724809936857,
+      "change_20d_pct": 1.1770943796394429,
+      "vol_20d": 72.73063555957376,
+      "ret_z": -0.07068738107274913,
+      "volume_ratio": NaN,
+      "asof": "2026-09-09",
+      "source": "Yahoo Finance",
+      "status": "ok"
+    }
+  },
+  "macro": {
+    "US10Y": {
+      "name": "美国10年期国债收益率",
+      "value": 4.8,
+      "prev": 4.78,
+      "delta": 0.019999999999999574,
+      "date": "2026-09-08",
+      "unit": "%",
+      "status": "treasury",
+      "source": "US Treasury"
+    },
+    "US2Y": {
+      "name": "美国2年期国债收益率",
+      "value": 4.39,
+      "prev": 4.37,
+      "delta": 0.019999999999999574,
+      "date": "2026-09-08",
+      "unit": "%",
+      "status": "treasury",
+      "source": "US Treasury"
+    },
+    "USREAL10Y": {
+      "name": "美国10年期实际利率",
+      "value": 2.43,
+      "prev": 2.43,
+      "delta": 0.0,
+      "date": "2026-09-08",
+      "unit": "%",
+      "status": "treasury",
+      "source": "US Treasury real yield curve"
+    },
+    "BREAKEVEN10Y": {
+      "name": "美国10年期盈亏平衡通胀",
+      "value": 2.3699999999999997,
+      "prev": 2.35,
+      "delta": 0.0,
+      "date": "2026-09-08",
+      "unit": "%",
+      "status": "derived",
+      "source": "Treasury nominal 10Y − real 10Y"
+    },
+    "HYSPREAD": {
+      "name": "美国高收益债OAS",
+      "value": NaN,
+      "prev": NaN,
+      "delta": NaN,
+      "date": "",
+      "unit": "%",
+      "status": "unavailable"
+    },
+    "VIX": {
+      "name": "VIX",
+      "value": 15.72,
+      "prev": NaN,
+      "delta": 2.7450980392156765,
+      "date": "2026-09-08",
+      "unit": "",
+      "status": "market_proxy",
+      "source": "Yahoo ^VIX"
+    },
+    "NFCI": {
+      "name": "芝加哥联储金融状况指数",
+      "value": NaN,
+      "prev": NaN,
+      "delta": NaN,
+      "date": "",
+      "unit": "",
+      "status": "unavailable"
+    },
+    "FEDBAL": {
+      "name": "美联储资产负债表",
+      "value": NaN,
+      "prev": NaN,
+      "delta": NaN,
+      "date": "",
+      "unit": "百万美元",
+      "status": "unavailable"
+    },
+    "RRP": {
+      "name": "美联储隔夜逆回购",
+      "value": NaN,
+      "prev": NaN,
+      "delta": NaN,
+      "date": "",
+      "unit": "十亿美元",
+      "status": "unavailable"
+    },
+    "UNRATE": {
+      "name": "美国失业率",
+      "value": NaN,
+      "prev": NaN,
+      "delta": NaN,
+      "date": "",
+      "unit": "%",
+      "status": "unavailable"
+    },
+    "CPI": {
+      "name": "美国CPI",
+      "value": NaN,
+      "prev": NaN,
+      "delta": NaN,
+      "date": "",
+      "unit": "指数",
+      "status": "unavailable"
+    },
+    "CREDIT_PROXY": {
+      "name": "信用风险市场代理",
+      "value": 5.69956130291871e-05,
+      "delta": NaN,
+      "date": "2026-09-08",
+      "unit": "HYG-LQD 20日百分点",
+      "status": "market_proxy",
+      "source": "HYG相对LQD的20日表现"
+    }
+  },
+  "news": [
+    {
+      "title": "Tracker: The Federal Reserve’s Balance Sheet Assets - The American Action Forum",
+      "url": "https://news.google.com/rss/articles/CBMikAFBVV95cUxNR2NrRDdoQ1MwS0paZFliV01BelV0MS1tQkNMSEdJYmYweWctanpzZU5hMllmVUtjQWR2cXBPSVhFeFluSFlMbi1ZVTg1ZS1TYzRMam81MFlRbWxockRRN2RpeEk2OGhpYWVXUVpsX3lvcUx4QUFERERGQVdkeVRndHJNeExJTU9DLS1GRW9GTW0?oc=5",
+      "source": "The American Action Forum",
+      "published": "Tue, 08 Sep 2026 21:30:34 GMT",
+      "modules": [
+        "货币政策"
+      ],
+      "themes": [
+        "黄金与美元信用"
+      ],
+      "score": 1.0,
+      "lang": "English",
+      "bucket": "政策原文",
+      "evidence_score": 58,
+      "evidence_label": "C·线索",
+      "evidence_reason": "可用于发现事件，关键数字需二次核实"
+    },
+    {
+      "title": "BPI and The Clearing House Association Comment on Federal Reserve AML/CFT Program Proposal - Bank Policy Institute",
+      "url": "https://news.google.com/rss/articles/CBMiqwFBVV95cUxPemp6UHd5UjBPQVpwRWJFX3hIbGMyUDlMVVRFUDEzcVJPOUpmV3JsYVQxbDg0QmRIeVFnVlNWd0tZOWtfT3B2dmkzYWhpMWN6dDU2emhUaEtHS09VTDFZSnRjc2Iwa0J4TU5kTHRJYTJPMjNXUmFmVWpzaG9lLTVzanlFdkJ1UE02VW5ZUDVVWVc2RWcxUy1NSmdvRjNzYUNUbnhDaXp4QVM1ZXc?oc=5",
+      "source": "Bank Policy Institute",
+      "published": "Tue, 08 Sep 2026 22:21:23 GMT",
+      "modules": [
+        "货币政策"
+      ],
+      "themes": [
+        "黄金与美元信用"
+      ],
+      "score": 1.0,
+      "lang": "English",
+      "bucket": "政策原文",
+      "evidence_score": 58,
+      "evidence_label": "C·线索",
+      "evidence_reason": "可用于发现事件，关键数字需二次核实"
+    },
+    {
+      "title": "Labor demand policies connect workers to jobs - minneapolisfed.org",
+      "url": "https://news.google.com/rss/articles/CBMikwFBVV95cUxQMnAzbFJNNHlrMXBDM2FnMENuUU5mTXJQeEFtS0FZOWJ4WU5IVjZXeGo4ckJMV1Z5LVJxaDl5OUNvSWlIZURfMGtTdVpfUVNoM3VXaVpoVE1rU1RHTWtUMWczNG5HQVF5TzY5Y2Y2a2ZfLWt5OU15Y1JYMGFqejBkV1V2V2tqTjA1UmQyWTJEQWJpaW8?oc=5",
+      "source": "minneapolisfed.org",
+      "published": "Tue, 08 Sep 2026 21:27:19 GMT",
+      "modules": [
+        "增长",
+        "货币政策"
+      ],
+      "themes": [
+        "待分类"
+      ],
+      "score": 1.0,
+      "lang": "English",
+      "bucket": "政策原文",
+      "evidence_score": 58,
+      "evidence_label": "C·线索",
+      "evidence_reason": "可用于发现事件，关键数字需二次核实"
+    },
+    {
+      "title": "Economy grows ‘modestly,’ with consumers wary of rising prices: Fed - Trucking Dive",
+      "url": "https://news.google.com/rss/articles/CBMiqwFBVV95cUxOX2l0VmFJYmJVTEJJTVMxV0RxWWxrU01CRlJ4WDhZdzJrOHJGVkJTQW1GOXVlOVFVRWdSdHNSNUZ4dlJVTk5GRFhlbVpOZmxhYTUtQjhQYjlTekY1Rk1FSXo5TEptTGt5aEVReFlxWXlENHpzN2N1OE5Sa0pWQmVYWWp4TXpRYTFiWmF2clRaYXpuRnhXRllrbDRFSE5tbHo2emdobFdwUEhaeEE?oc=5",
+      "source": "Trucking Dive",
+      "published": "Wed, 09 Sep 2026 00:01:18 GMT",
+      "modules": [
+        "货币政策",
+        "地缘与供应链"
+      ],
+      "themes": [
+        "待分类"
+      ],
+      "score": 1.0,
+      "lang": "English",
+      "bucket": "政策原文",
+      "evidence_score": 58,
+      "evidence_label": "C·线索",
+      "evidence_reason": "可用于发现事件，关键数字需二次核实"
+    },
+    {
+      "title": "Why the Fed's interest rate call could come down to a few hundredths of a percentage point - CNBC",
+      "url": "https://news.google.com/rss/articles/CBMimAFBVV95cUxQVFlvci1qSTJXOWUzS2UyWDFOYW01ZWpPOFJ2eTdibHE1T0NHbXR3RndadzhfOURid2VHNkY2dmJLeERJSkdZbFZ3TkJxSnk5VHhURm13ZUUtLVZGTEVidW1jUnBmMk1CUEJfZUtYNm5LcUxjUnBia0RDSzVzNTdrbEdJcmNEaXpoTU9zazllWFBNVEhvaHZUcw?oc=5",
+      "source": "CNBC",
+      "published": "Tue, 08 Sep 2026 18:35:32 GMT",
+      "modules": [
+        "货币政策"
+      ],
+      "themes": [
+        "待分类"
+      ],
+      "score": 1.0,
+      "lang": "English",
+      "bucket": "政策原文",
+      "evidence_score": 58,
+      "evidence_label": "C·线索",
+      "evidence_reason": "可用于发现事件，关键数字需二次核实"
+    },
+    {
+      "title": "RTP, Fed race on fast payments - Payments Dive",
+      "url": "https://news.google.com/rss/articles/CBMie0FVX3lxTFBCdkloMVNYcFRKdFIyR081aUJLQXl5dFZTX1A5VWlIVWxGSjhrR0l5ZzlDb2lhV0FCTnNYUC1HLU9ZQWo2UWxUSU1UdU5uXzN0eldhTDB4YlBHM3l0MUJSRE9oZ2lUZUZsWWNMZVhZcU0tQ1YyUC00LXNQVQ?oc=5",
+      "source": "Payments Dive",
+      "published": "Tue, 08 Sep 2026 16:03:15 GMT",
+      "modules": [
+        "货币政策"
+      ],
+      "themes": [
+        "待分类"
+      ],
+      "score": 1.0,
+      "lang": "English",
+      "bucket": "政策原文",
+      "evidence_score": 58,
+      "evidence_label": "C·线索",
+      "evidence_reason": "可用于发现事件，关键数字需二次核实"
+    },
+    {
+      "title": "Consumers more worried about personal finances and jobs, New York Fed report shows - WTVB",
+      "url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxQVXpCQXlCMWlTQkxvMXc5dTNjbDl3OXFMOXVKenVfSmg5SHNabmE5UHpRbkJmcEQ2SXZYajRpaGhJaXdoY3ZUYlVhV0RFNHZrWmpOYXlpQmZhdS10WW1fcmtBMFk0VWhKc1dqSzY3UnR4ejdfbDVDVFcxLXg2OEl0cjRZVzVIcTVHdFl1c1Y1OXdKSEJ3aGNSYjU0LThQMm1ycmpGNHUzOU9mbjl0dy1LMEpn?oc=5",
+      "source": "WTVB",
+      "published": "Tue, 08 Sep 2026 15:55:51 GMT",
+      "modules": [
+        "增长",
+        "货币政策"
+      ],
+      "themes": [
+        "待分类"
+      ],
+      "score": 1.0,
+      "lang": "English",
+      "bucket": "政策原文",
+      "evidence_score": 58,
+      "evidence_label": "C·线索",
+      "evidence_reason": "可用于发现事件，关键数字需二次核实"
+    },
+    {
+      "title": "The new fiscal threats to monetary policy - Financial Times",
+      "url": "https://news.google.com/rss/articles/CBMihAFBVV95cUxPYmJwWWhKVDlrVEZfampnUXFuQ0RPMVJtWVpKZXdDemk5c1lTRmROLWVwdEY0VTg2Z0pKNjhHQjlOYTRUd0k2NHdCaURETS1BZTFzSkdyN01XdmRJd0RlM25fSEhFZkM2ZXRDSzh0bUJrTFdKa05nQ1FVUjdfOE5IWEZzZkg?oc=5",
+      "source": "Financial Times",
+      "published": "Tue, 08 Sep 2026 11:30:09 GMT",
+      "modules": [
+        "财政与监管"
+      ],
+      "themes": [
+        "待分类"
+      ],
+      "score": 1.0,
+      "lang": "English",
+      "bucket": "政策原文",
+      "evidence_score": 78,
+      "evidence_label": "B·可靠报道",
+      "evidence_reason": "高可信财经媒体，仍应回看原始文件"
+    },
+    {
+      "title": "Kentucky State to Host Annual Federal Reserve Luncheon - The Lexington Times",
+      "url": "https://news.google.com/rss/articles/CBMilgFBVV95cUxNYTNTNlNsUm5lZzBVRUNYUFMyWkJBWG9ZdUtJZVVDeERzTHpIemktcVRXSkdiTVVscE5tbTBTM1BxZ285UHJUTGZfTEU5Yl9lamFTeFBFR3J4WHppQmZBYXBraWU3eWtkc1hFYjNUbUtTWWUzVjZ3VE5hUkFFaXJ1UlpyY2I1UjkxTWdMZ0lBamNPbFU0UVE?oc=5",
+      "source": "The Lexington Times",
+      "published": "Tue, 08 Sep 2026 15:50:06 GMT",
+      "modules": [
+        "货币政策"
+      ],
+      "themes": [
+        "黄金与美元信用"
+      ],
+      "score": 1.0,
+      "lang": "English",
+      "bucket": "政策原文",
+      "evidence_score": 58,
+      "evidence_label": "C·线索",
+      "evidence_reason": "可用于发现事件，关键数字需二次核实"
+    },
+    {
+      "title": "Rising US Bond Yields Pressure Markets as Investors Demand Clearer Fed Policy - Межа. Новини України.",
+      "url": "https://news.google.com/rss/articles/CBMiYEFVX3lxTE5yczJ3SlQwbE1OS0lqUkluemRodXNWdUk5MDBpcjRNd0J1cWR3M1VNaEphS3NQb2Qzb0ZHWU11WUxBY2htVnNVM0VQZFRIRW84Rl9IakRtZ24wTG1wZ0ExOQ?oc=5",
+      "source": "Межа. Новини України.",
+      "published": "Tue, 08 Sep 2026 17:48:22 GMT",
+      "modules": [
+        "货币政策",
+        "金融状况"
+      ],
+      "themes": [
+        "流动性与信用"
+      ],
+      "score": 1.0,
+      "lang": "English",
+      "bucket": "政策原文",
+      "evidence_score": 58,
+      "evidence_label": "C·线索",
+      "evidence_reason": "可用于发现事件，关键数字需二次核实"
+    },
+    {
+      "title": "Natural gas is winning AI’s power race - wpintelligence.washingtonpost.com",
+      "url": "https://news.google.com/rss/articles/CBMiswFBVV95cUxNUHAwZmRuc3pkV3cyVDRJN0NmSUdPQUNSYUtjV3ZTMGt3QXU0a0JJcjhlb3lUSk9DdDYyWG41VDhvbU1UWVhyLUJ5WUVQcDJKUmxKOFppc3B4TGRlVmo4UEVHLVkwYjZpbnREU3Q5Szljdl9zMFhjNC1oa0xrcEc5QzJwaDFxQ1VTZ2JZZUt6VEN2cmJac0l2bjBWRml6TDB2NnBJUmI1Y0p1M1dCZlBtbXQ3dw?oc=5",
+      "source": "wpintelligence.washingtonpost.com",
+      "published": "Wed, 09 Sep 2026 00:28:27 GMT",
+      "modules": [
+        "实体瓶颈"
+      ],
+      "themes": [
+        "AI资本开支"
+      ],
+      "score": 1.0,
+      "lang": "English",
+      "bucket": "AI资本开支",
+      "evidence_score": 58,
+      "evidence_label": "C·线索",
+      "evidence_reason": "可用于发现事件，关键数字需二次核实"
+    },
+    {
+      "title": "The Fed Is a Passenger as AI CapEx Rewrites the Rates Trade - The Dark Side Of The Boom",
+      "url": "https://news.google.com/rss/articles/CBMihAFBVV95cUxNMElYSjFVWENPWVZxUmF0cTV1a0ZQSGVXbVZkQUJjQTV1SEx1YlF1QVp6ZDlfTnktTEhLdFo1VmZHUGdaVGVmaFpxNVVhb0lMakxIbkVuTEo0UUR0MjIybVdMWUNFZFQ4Z3BaWS10RWh2dldSWUpsN3hGZ2xXbW1JY2RmWGQ?oc=5",
+      "source": "The Dark Side Of The Boom",
+      "published": "Wed, 09 Sep 2026 01:20:32 GMT",
+      "modules": [
+        "货币政策"
+      ],
+      "themes": [
+        "AI资本开支",
+        "贸易与关税"
+      ],
+      "score": 1.0,
+      "lang": "English",
+      "bucket": "AI资本开支",
+      "evidence_score": 58,
+      "evidence_label": "C·线索",
+      "evidence_reason": "可用于发现事件，关键数字需二次核实"
+    },
+    {
+      "title": "Equity Buybacks: Shifting Buyer Base Drives Record-High Activity - Neuberger Berman",
+      "url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxQbE5wV0NPekN5anZ4cm5zYnpWbzdoTmdEZnZrVG9hUXpoN2oyVnJpZ09GWXcyT3gzYWFCOS1iYlZSSk9DVkZVeHFvZDhmcFFibjQzQUljMHk4a1VWWjlhWFBQVmNBRW5MNzhobUFRY3RreDVJNFEzTFpIeEFvRGNmN2FfM05YcnloMUQ1NTFfMlFQZ2ctQ0t2eEl4NkRKLVUzeWY4VFhFUVNjSEhhY2JJQTJn?oc=5",
+      "source": "Neuberger Berman",
+      "published": "Tue, 08 Sep 2026 23:56:18 GMT",
+      "modules": [
+        "待分类"
+      ],
+      "themes": [
+        "待分类"
+      ],
+      "score": 1.0,
+      "lang": "English",
+      "bucket": "AI资本开支",
+      "evidence_score": 58,
+      "evidence_label": "C·线索",
+      "evidence_reason": "可用于发现事件，关键数字需二次核实"
+    },
+    {
+      "title": "Is the next focus of AI investment \"connectivity\"?! Over 80 million miles of fiber optic contracts secured. Which optical communication stocks will benefit from the surge in DCI demand? - Moomoo",
+      "url": "https://news.google.com/rss/articles/CBMiowFBVV95cUxPUk5aTHJLUXZfSjNYQzZZeUNwNmoxQVFCRWpkc1E3dDZORlpKU3ljcEZRYXhIMzhiLXAxeGg3MUJSTmxfU0hXR0ducFZjQzVtaGNzU0ZBcHZmV051ZGpkME1xV2dmTTk5Q0ZDcVRRWF8xX0w2VGNJbVMyN05wd1VDYUVtNUtxd2dfZjR4aFk5Q3hNUEJyZDF0S3QwU2ZRTnd1VEg0?oc=5",
+      "source": "Moomoo",
+      "published": "Wed, 09 Sep 2026 03:11:39 GMT",
+      "modules": [
+        "待分类"
+      ],
+      "themes": [
+        "AI资本开支"
+      ],
+      "score": 1.0,
+      "lang": "English",
+      "bucket": "AI资本开支",
+      "evidence_score": 58,
+      "evidence_label": "C·线索",
+      "evidence_reason": "可用于发现事件，关键数字需二次核实"
+    },
+    {
+      "title": "Constellation Energy's Biggest AI Power Deal Doesn't Start Paying Until June 2027 - Currently.com",
+      "url": "https://news.google.com/rss/articles/CBMikwFBVV95cUxQR0dXcGhiZnBDYlFUWkpsM2JlVnBUREFRMGZ4Mk9uLVY0blkxUFItTjZ0QjltSkd4aW5DNDY3NFNkR1BDTXc5eHRpRW56YkpoUVpTNFZ3dUI2NG1wMWJweHNPY3p3bjJfQU9CSWRicFptYmd2cU03T1NqYTFfUENYZDlUWUpIRlVkRllGT09WeklCelk?oc=5",
+      "source": "Currently.com",
+      "published": "Tue, 08 Sep 2026 23:58:01 GMT",
+      "modules": [
+        "实体瓶颈"
+      ],
+      "themes": [
+        "AI资本开支",
+        "油价与通胀"
+      ],
+      "score": 1.0,
+      "lang": "English",
+      "bucket": "AI资本开支",
+      "evidence_score": 58,
+      "evidence_label": "C·线索",
+      "evidence_reason": "可用于发现事件，关键数字需二次核实"
+    },
+    {
+      "title": "Middle power AI agency: Preserving choice between the United States and China - Brookings",
+      "url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxQVU5qaWNIdlhaY0ZtV18ySktiUkZLZlcxRURSOXpGQ0FNandPNHlreUEwSnNPdHhzVTU2Q1J1RjFpYWltLWlZNm95Q1NQQ3doaXpPZ1FRbVpjN18teWtEdWFfWXNRME1PUXp6amE5OFRET0JENDBnLVh1TDVQejBDaEZtOG1PRlA4eUtEYnlka0J3dF9jaWFPWE5lMTMySFBaUU5ISTFPN1ZKeWRHcUw4UEhR?oc=5",
+      "source": "Brookings",
+      "published": "Tue, 08 Sep 2026 17:07:52 GMT",
+      "modules": [
+        "实体瓶颈"
+      ],
+      "themes": [
+        "AI资本开支",
+        "中国增长与政策"
+      ],
+      "score": 1.0,
+      "lang": "English",
+      "bucket": "AI资本开支",
+      "evidence_score": 58,
+      "evidence_label": "C·线索",
+      "evidence_reason": "可用于发现事件，关键数字需二次核实"
+    },
+    {
+      "title": "New data center project coming to Mason County, WV spearheaded by Florida-based real estate group - West Virginia Watch",
+      "url": "https://news.google.com/rss/articles/CBMi1AFBVV95cUxNSEYxUGpnX2lRMXZvbVZaWDVwZ3NocVl4RkhDRDJEX2hHTWI5NUtkYlh3RHBNdW43YjRwTGtheF9ZYUxiblVGbEtNVzBSR3lSWjZkY2JQdmR4NHAwM3dQdEFVWlNYWnFmazJSTVFadG1vNjBsUmNFdVVENDJGUEZWdzV2OEhwQk80ZTBQV0VGU3JrdzlBZDUzYVBpQnVYT21lNkR3cTItcGtBT25QTE5zeVFfU1NFREhpSTVZVVIxZ2ZsME9XR3lNLWExcUtMQ1Z2eHJEZg?oc=5",
+      "source": "West Virginia Watch",
+      "published": "Tue, 08 Sep 2026 17:22:25 GMT",
+      "modules": [
+        "实体瓶颈"
+      ],
+      "themes": [
+        "AI资本开支"
+      ],
+      "score": 1.0,
+      "lang": "English",
+      "bucket": "AI资本开支",
+      "evidence_score": 58,
+      "evidence_label": "C·线索",
+      "evidence_reason": "可用于发现事件，关键数字需二次核实"
+    },
+    {
+      "title": "Project Thunderbird data center proposal, promises 600 jobs and self-generated power - KOKH",
+      "url": "https://news.google.com/rss/articles/CBMiswFBVV95cUxNeVdybXB3VjVwR2Qta0IzVkJWS2JFWWZBcURxQUhGNGVfc0QzR19ueHRXMm8zNUZiTnFTc0N1bFpVNjVrTEtvelJRb1R6UldoZmNEelBod1UtTWxlZHFUWG9pekRLRWhlTU1EMXFQVEt3SG94d1dZR2xRSXZzNXhESWo2ZXFrVWRzNGlfX2FRNm92RWxXRTJYSHJnQ04yTWhJUDktTmFEc2EzWnhzZjZTaWlGVQ?oc=5",
+      "source": "KOKH",
+      "published": "Wed, 09 Sep 2026 03:23:11 GMT",
+      "modules": [
+        "增长",
+        "实体瓶颈"
+      ],
+      "themes": [
+        "AI资本开支"
+      ],
+      "score": 1.0,
+      "lang": "English",
+      "bucket": "AI资本开支",
+      "evidence_score": 58,
+      "evidence_label": "C·线索",
+      "evidence_reason": "可用于发现事件，关键数字需二次核实"
+    },
+    {
+      "title": "AI Companies Turn to Corporate Bonds Amid Funding Surge - 조선일보",
+      "url": "https://news.google.com/rss/articles/CBMijgFBVV95cUxNeUNyU2dGUW1GMURkdW16TEtuZzltZmgzUGtIVDRlQjg2ODBKR0hRS1hWWDV3N0l0LXlQV2ZPaG5HNEZGRHdIRE1ic0dVQkkyam5aWDZZLWN2XzVOeG5TTHNZcDV4cWUyR0lqSHFJdU04Wkk1UWNKMTluejVwYmJWMEozcGNuNWpFREtCSkJB?oc=5",
+      "source": "조선일보",
+      "published": "Wed, 09 Sep 2026 00:32:45 GMT",
+      "modules": [
+        "待分类"
+      ],
+      "themes": [
+        "AI资本开支",
+        "流动性与信用"
+      ],
+      "score": 1.0,
+      "lang": "English",
+      "bucket": "AI资本开支",
+      "evidence_score": 58,
+      "evidence_label": "C·线索",
+      "evidence_reason": "可用于发现事件，关键数字需二次核实"
+    },
+    {
+      "title": "Verizon’s Megadeal Proves Corning Is Integral to the AI Grid - Barron's",
+      "url": "https://news.google.com/rss/articles/CBMihwFBVV95cUxOVmdGcUtYUGJxUjdoeWVETzd0MlJLYl9pckFvYlZWZW15N0JGUE5qdERQTGlrZEh5c1kydmlnOXVYVngtWVlMSE1faHFpTnNzUW5JclpIbVF4RzRERzlwUDZsb3ZObEU3T2ZtMFc4XzJ2RnQzbmdjNXFOeUVENDBiYXhCNVJ4Rnc?oc=5",
+      "source": "Barron's",
+      "published": "Tue, 08 Sep 2026 18:52:00 GMT",
+      "modules": [
+        "实体瓶颈"
+      ],
+      "themes": [
+        "AI资本开支",
+        "天气与农业"
+      ],
+      "score": 1.0,
+      "lang": "English",
+      "bucket": "AI资本开支",
+      "evidence_score": 58,
+      "evidence_label": "C·线索",
+      "evidence_reason": "可用于发现事件，关键数字需二次核实"
+    },
+    {
+      "title": "Long-Term Global Government Bond Yields Hit Fresh Highs - WSJ",
+      "url": "https://news.google.com/rss/articles/CBMiuwFBVV95cUxPUUxBVTlwa1QweUhQWHduWnBjSmJhMnpjQmN0NEptNFZMdnFKQVNNV3FWVWJhdldCX1JXU0g1bkw1eXBEemJwVXdNSUNGOTIxb0FVTXFDaEtXMU4weWVOVktfSm8yb0JQNjEyaVNPUnFJbExJdUNROU9QWVFQWHFTUkpiVUt3OWlNdm1GdXVXR0gyZU1QdlNmZkZMeXJGaVJ0OExheUxUUDRtMG5lSW1jcTFNOFdndk92bFlR?oc=5",
+      "source": "WSJ",
+      "published": "Wed, 09 Sep 2026 01:51:02 GMT",
+      "modules": [
+        "金融状况"
+      ],
+      "themes": [
+        "流动性与信用"
+      ],
+      "score": 1.0,
+      "lang": "English",
+      "bucket": "全球宏观",
+      "evidence_score": 58,
+      "evidence_label": "C·线索",
+      "evidence_reason": "可用于发现事件，关键数字需二次核实"
+    },
+    {
+      "title": "Weekly market commentary - BlackRock",
+      "url": "https://news.google.com/rss/articles/CBMingFBVV95cUxQLWJDTjBBalYwVHVpc0VxV1BwRE1xeUt1RWlLQ1VJdnJQRXNnb3p6MnFNbjRBV0s0TnlldW4wSVIycFRQeVNISWJ3VV9wMWdjX1ZndE1Tc24tNzc0anNYWjl0SVBsRDhSa0dVTWlyVVYxX0w5b2JhTFB0Tm9Vb2FwYVZubTU1SVJlcy0zMEpXOEM4ZlhiSU1QazdVQVlldw?oc=5",
+      "source": "BlackRock",
+      "published": "Tue, 08 Sep 2026 20:10:57 GMT",
+      "modules": [
+        "待分类"
+      ],
+      "themes": [
+        "待分类"
+      ],
+      "score": 1.0,
+      "lang": "English",
+      "bucket": "全球宏观",
+      "evidence_score": 58,
+      "evidence_label": "C·线索",
+      "evidence_reason": "可用于发现事件，关键数字需二次核实"
+    },
+    {
+      "title": "COMMENTARY: Unloved, but unbroken — the US bond market is working as it should - Reuters",
+      "url": "https://news.google.com/rss/articles/CBMivgFBVV95cUxQY3ltQXNrazU1eW16ZGNyXzViRnZuMDhLbUFGV1JvQzl3RGEtbi1zeDY3SFFHZ3hOelRRZEFhVldhZUs3SlZrbVBBLVBLZldvd29WQTlZRE1SamYwY3p4MkE5cTJ5SGtpVGc0ZXFiU00yNWxtSmZ5aW80UXpDcGlIdzE3eGoxLXRXMVQ0QUpOLUl6RndXTFB6OHAwNDlBMzQzRUp1YmU0Y3J6RWdOeTM0WmJvRjI2eHRmanFvQUFn?oc=5",
+      "source": "Reuters",
+      "published": "Tue, 08 Sep 2026 23:30:26 GMT",
+      "modules": [
+        "待分类"
+      ],
+      "themes": [
+        "流动性与信用"
+      ],
+      "score": 1.0,
+      "lang": "English",
+      "bucket": "全球宏观",
+      "evidence_score": 78,
+      "evidence_label": "B·可靠报道",
+      "evidence_reason": "高可信财经媒体，仍应回看原始文件"
+    },
+    {
+      "title": "There’s a simple way the Fed could help calm the bond market - CNN",
+      "url": "https://news.google.com/rss/articles/CBMibEFVX3lxTE1xS0xVRGFsRlhGb1BFXy1Vc1c5Zjd1NkxfajlLZ0JUQkZfM1VkVVhhUkh1TnZHZnlMeTI4R3Rkb0dqMG1CWVk4WFhYdkxyMUVhVUM3TUhtdWdqeDlMRTZpVjU5UTBTN3VGOVZzZA?oc=5",
+      "source": "CNN",
+      "published": "Tue, 08 Sep 2026 17:33:57 GMT",
+      "modules": [
+        "货币政策"
+      ],
+      "themes": [
+        "流动性与信用"
+      ],
+      "score": 1.0,
+      "lang": "English",
+      "bucket": "全球宏观",
+      "evidence_score": 58,
+      "evidence_label": "C·线索",
+      "evidence_reason": "可用于发现事件，关键数字需二次核实"
+    },
+    {
+      "title": "Kroll Assesses Impact of U.S. Monetary and Fiscal Policy on Treasury Yields - Kroll",
+      "url": "https://news.google.com/rss/articles/CBMingFBVV95cUxPUGxHSGNWSzVFdjk1bXVIelJWazhfc3Jnb0NTdTNoek81TVRmdnB4OHVtNWJJbS1TQWt2RjN2dHViZTZwODk4djdYR1BtUzdVdEx0c1JwQWUyU2poTHhJbTdEZ1RGQ1VWZHF5NjRndXJiV29RcVVPb2x4UDZKZ3NEVGNwNW1HOFMwNDFfaE5zMFF5R0REMGJzc0tKRVhSQQ?oc=5",
+      "source": "Kroll",
+      "published": "Tue, 08 Sep 2026 18:28:09 GMT",
+      "modules": [
+        "金融状况",
+        "财政与监管"
+      ],
+      "themes": [
+        "流动性与信用"
+      ],
+      "score": 1.0,
+      "lang": "English",
+      "bucket": "全球宏观",
+      "evidence_score": 58,
+      "evidence_label": "C·线索",
+      "evidence_reason": "可用于发现事件，关键数字需二次核实"
+    },
+    {
+      "title": "What is driving the global rise in long-term interest rates? - Bruegel",
+      "url": "https://news.google.com/rss/articles/CBMiigFBVV95cUxPaW55UHBoRVdaV1EtcE53TFQ2U1l3dm14Y19SNzZTMmd6aHltY3RCd21Qb29FREtnVElrSm1sSmMxMThSdUlGZER1M0NpaFF6UEw4REpOOVhqUFRuczFKdXZuSThTUWI3d2FfMnpCVzl3MFRPSlozZnQyeEZ3OUhmNDl4dGx5TlNtTEE?oc=5",
+      "source": "Bruegel",
+      "published": "Tue, 08 Sep 2026 10:04:23 GMT",
+      "modules": [
+        "待分类"
+      ],
+      "themes": [
+        "待分类"
+      ],
+      "score": 1.0,
+      "lang": "English",
+      "bucket": "全球宏观",
+      "evidence_score": 58,
+      "evidence_label": "C·线索",
+      "evidence_reason": "可用于发现事件，关键数字需二次核实"
+    },
+    {
+      "title": "Stefano Sgambati | Private Leverage, Public Costs - Phenomenal World",
+      "url": "https://news.google.com/rss/articles/CBMidkFVX3lxTE9mazl3RGhJM2ttZVM3aU11ejVUOVJnSkhRMkVPRmRDaWFhNHF0UnFXZEZaYVBza3QzbUc1aG11R2hqRWdQN0M5aHljN3oycWwwM2hYU0lNZGRWbHRfY1RFWWdIRDc5NGtGREVuWlIySHMyZXRhcXc?oc=5",
+      "source": "Phenomenal World",
+      "published": "Tue, 08 Sep 2026 15:03:03 GMT",
+      "modules": [
+        "待分类"
+      ],
+      "themes": [
+        "待分类"
+      ],
+      "score": 1.0,
+      "lang": "English",
+      "bucket": "全球宏观",
+      "evidence_score": 58,
+      "evidence_label": "C·线索",
+      "evidence_reason": "可用于发现事件，关键数字需二次核实"
+    },
+    {
+      "title": "Higher Yields Test Resilient Markets Ahead of Key Inflation Data - Penn Mutual Asset Management",
+      "url": "https://news.google.com/rss/articles/CBMi8AFBVV95cUxPX1doanlpdjgxSGd5UllWbDl0ZHlpeTRvZXo2NkFEMkdJQ1NaNzRUY1AtR3hVTEc4b1N6bmpXdnNGY28zR2VucTFqR0o3bmdoMXVENUJmMlpSejNnM2JPZjRVRzdKd1FzQmhieFBfR1ZsUDdESlVCMnBWNElIRjRKTjdzdGI1QTlVRVN5UjBiMUZic0NKQ2hNVkF6aXFWWU5va1QyQl9HTm9Ra2MwbU03ZkJ3dFpEbTlyek1DbnBQeWlhclpFb1RIRkZ6NEVvYXctNE9kNG5pbHFMRmlWZlVRTXFjaHFYcGg4WG5KSGtOQVY?oc=5",
+      "source": "Penn Mutual Asset Management",
+      "published": "Tue, 08 Sep 2026 16:07:19 GMT",
+      "modules": [
+        "通胀",
+        "金融状况"
+      ],
+      "themes": [
+        "流动性与信用",
+        "油价与通胀"
+      ],
+      "score": 1.0,
+      "lang": "English",
+      "bucket": "全球宏观",
+      "evidence_score": 58,
+      "evidence_label": "C·线索",
+      "evidence_reason": "可用于发现事件，关键数字需二次核实"
+    },
+    {
+      "title": "U.S. Debt, AI Boom Triggers Historic Borrowing Binge, Pushing Up Rates. The Risks Are Mounting. - Investor's Business Daily",
+      "url": "https://news.google.com/rss/articles/CBMijwFBVV95cUxNRmIwYlFaOE1PczBEYjN1RUR3eWowam81d2VsWVgtSEwwVzFabmludk1saTFsNm5WZE1jNmt1ZFJTU2lZeXhGeURXQ1dhZzBySWVKNFYyblIxTzFKN1lBRWs4azRzWk1UaC11TGU2UEpSVGZVZXJmQUdCcVVKWlI2S195X3R1TS1nd2x4WHlhTQ?oc=5",
+      "source": "Investor's Business Daily",
+      "published": "Tue, 08 Sep 2026 14:39:00 GMT",
+      "modules": [
+        "待分类"
+      ],
+      "themes": [
+        "AI资本开支"
+      ],
+      "score": 1.0,
+      "lang": "English",
+      "bucket": "全球宏观",
+      "evidence_score": 58,
+      "evidence_label": "C·线索",
+      "evidence_reason": "可用于发现事件，关键数字需二次核实"
+    },
+    {
+      "title": "Copper Scales New Heights on U.S. Tariff Fears, Supply Challenges - WSJ",
+      "url": "https://news.google.com/rss/articles/CBMiuwFBVV95cUxNeEp6RlN2a3RNRXNfNW9NT3NycUxmZlVmMGpMWDZVaWdzUVBjMDFTMEtBOXQ3dTdoX2o5cldUVzl0ejNaUjRsQm5Eczh1MWdPQ1FISFROQzlNRXV6cE1fRG85S1QtLXJQRXcyOHFJbV9iUl9KTWVSclJUY0Z5TGhseUdRdGZsOVk0UHhncWU4SDV0OHd4MTRJNDkteGwxcGZPdnBiYjNsSE43eURvTE9yUTV6c0V5SkxoR2p3?oc=5",
+      "source": "WSJ",
+      "published": "Tue, 08 Sep 2026 20:17:00 GMT",
+      "modules": [
+        "财政与监管",
+        "实体瓶颈"
+      ],
+      "themes": [
+        "贸易与关税"
+      ],
+      "score": 1.0,
+      "lang": "English",
+      "bucket": "商品与瓶颈",
+      "evidence_score": 58,
+      "evidence_label": "C·线索",
+      "evidence_reason": "可用于发现事件，关键数字需二次核实"
+    }
+  ],
+  "signals": [
+    {
+      "category": "传导待验证",
+      "priority": 63,
+      "theme": "贸易与关税",
+      "title": "Korea Picks $22 Billion Gas Project as First Under Trade Deal - Bloomberg.com",
+      "url": "https://news.google.com/rss/articles/CBMisAFBVV95cUxPa1U1VU5wSElNNndzU09Ba2tMdEZFY2xFSXRGaFo2YTVQM2o4dEtHMHlCUmMySjlaMzRZVmljaUxFR250VTh0U0pHMU90Z2c0al9wTkl3VWlqV3JfQlhrUElwbjFYQkZwU0VGNGN4Mm1qU3QyM0VnYnZBdjRlZDNTcUg1MTVocUVxMmtKUS15VEZTOHdPeFhHN29FTkpSd1FqSmVUX0JmeWVRTmdLaFBfWg?oc=5",
+      "source": "Bloomberg.com",
+      "published": "Tue, 08 Sep 2026 23:45:06 GMT",
+      "evidence": 78,
+      "evidence_label": "B·可靠报道",
+      "price_text": "TSMC ADR +2.35%（近一年70%分位）",
+      "price_direction": "下跌",
+      "price_moves": [
+        {
+          "key": "TSM",
+          "name": "TSMC ADR",
+          "move": 2.35,
+          "tail_percentile": 0.7,
+          "history_count": 250
+        },
+        {
+          "key": "BABA",
+          "name": "Alibaba ADR",
+          "move": -0.51,
+          "tail_percentile": 0.192,
+          "history_count": 250
+        },
+        {
+          "key": "NASDAQ",
+          "name": "Nasdaq 100",
+          "move": -0.12,
+          "tail_percentile": 0.08,
+          "history_count": 250
+        }
+      ],
+      "targets": [
+        {
+          "ticker": "601138.SS",
+          "name": "工业富联",
+          "source": "主题映射",
+          "role": "出口制造",
+          "relation": "需判断",
+          "beta": 0,
+          "mapping_level": "维护映射",
+          "mapping_reason": "来自维护映射或用户自选配置，仍需核对公司最新业务暴露。",
+          "guidance": {
+            "action": "等待验证",
+            "max_gap_pct": null,
+            "max_price": null,
+            "fair_gap_low": null,
+            "fair_gap_high": null,
+            "overpriced_gap_pct": null,
+            "required_probability": null,
+            "sample_count": 0,
+            "effective_sample": 0,
+            "confidence": "不足",
+            "primary_horizon": "未判定",
+            "horizons": [],
+            "reason": "海外价格尚未确认，08:45不提供集合竞价参与阈值。",
+            "method": "未达到动态阈值的最低数据要求，因此不提供固定百分比替代值。"
+          }
+        },
+        {
+          "ticker": "300308.SZ",
+          "name": "中际旭创",
+          "source": "主题映射",
+          "role": "光模块",
+          "relation": "需判断",
+          "beta": 0,
+          "mapping_level": "维护映射",
+          "mapping_reason": "来自维护映射或用户自选配置，仍需核对公司最新业务暴露。",
+          "guidance": {
+            "action": "等待验证",
+            "max_gap_pct": null,
+            "max_price": null,
+            "fair_gap_low": null,
+            "fair_gap_high": null,
+            "overpriced_gap_pct": null,
+            "required_probability": null,
+            "sample_count": 0,
+            "effective_sample": 0,
+            "confidence": "不足",
+            "primary_horizon": "未判定",
+            "horizons": [],
+            "reason": "海外价格尚未确认，08:45不提供集合竞价参与阈值。",
+            "method": "未达到动态阈值的最低数据要求，因此不提供固定百分比替代值。"
+          }
+        },
+        {
+          "ticker": "002463.SZ",
+          "name": "沪电股份",
+          "source": "主题映射",
+          "role": "PCB",
+          "relation": "需判断",
+          "beta": 0,
+          "mapping_level": "维护映射",
+          "mapping_reason": "来自维护映射或用户自选配置，仍需核对公司最新业务暴露。",
+          "guidance": {
+            "action": "等待验证",
+            "max_gap_pct": null,
+            "max_price": null,
+            "fair_gap_low": null,
+            "fair_gap_high": null,
+            "overpriced_gap_pct": null,
+            "required_probability": null,
+            "sample_count": 0,
+            "effective_sample": 0,
+            "confidence": "不足",
+            "primary_horizon": "未判定",
+            "horizons": [],
+            "reason": "海外价格尚未确认，08:45不提供集合竞价参与阈值。",
+            "method": "未达到动态阈值的最低数据要求，因此不提供固定百分比替代值。"
+          }
+        },
+        {
+          "ticker": "002475.SZ",
+          "name": "立讯精密",
+          "source": "主题映射",
+          "role": "消费电子",
+          "relation": "需判断",
+          "beta": 0,
+          "mapping_level": "维护映射",
+          "mapping_reason": "来自维护映射或用户自选配置，仍需核对公司最新业务暴露。",
+          "guidance": {
+            "action": "等待验证",
+            "max_gap_pct": null,
+            "max_price": null,
+            "fair_gap_low": null,
+            "fair_gap_high": null,
+            "overpriced_gap_pct": null,
+            "required_probability": null,
+            "sample_count": 0,
+            "effective_sample": 0,
+            "confidence": "不足",
+            "primary_horizon": "未判定",
+            "horizons": [],
+            "reason": "海外价格尚未确认，08:45不提供集合竞价参与阈值。",
+            "method": "未达到动态阈值的最低数据要求，因此不提供固定百分比替代值。"
+          }
+        },
+        {
+          "ticker": "002241.SZ",
+          "name": "歌尔股份",
+          "source": "主题映射",
+          "role": "消费电子",
+          "relation": "需判断",
+          "beta": 0,
+          "mapping_level": "维护映射",
+          "mapping_reason": "来自维护映射或用户自选配置，仍需核对公司最新业务暴露。",
+          "guidance": {
+            "action": "等待验证",
+            "max_gap_pct": null,
+            "max_price": null,
+            "fair_gap_low": null,
+            "fair_gap_high": null,
+            "overpriced_gap_pct": null,
+            "required_probability": null,
+            "sample_count": 0,
+            "effective_sample": 0,
+            "confidence": "不足",
+            "primary_horizon": "未判定",
+            "horizons": [],
+            "reason": "海外价格尚未确认，08:45不提供集合竞价参与阈值。",
+            "method": "未达到动态阈值的最低数据要求，因此不提供固定百分比替代值。"
+          }
+        },
+        {
+          "ticker": "000300.SS",
+          "name": "沪深300",
+          "source": "主题映射",
+          "role": "宽基风险",
+          "relation": "需判断",
+          "beta": 0,
+          "mapping_level": "维护映射",
+          "mapping_reason": "来自维护映射或用户自选配置，仍需核对公司最新业务暴露。",
+          "guidance": {
+            "action": "等待验证",
+            "max_gap_pct": null,
+            "max_price": null,
+            "fair_gap_low": null,
+            "fair_gap_high": null,
+            "overpriced_gap_pct": null,
+            "required_probability": null,
+            "sample_count": 0,
+            "effective_sample": 0,
+            "confidence": "不足",
+            "primary_horizon": "未判定",
+            "horizons": [],
+            "reason": "海外价格尚未确认，08:45不提供集合竞价参与阈值。",
+            "method": "未达到动态阈值的最低数据要求，因此不提供固定百分比替代值。"
+          }
+        }
+      ],
+      "watchlist_relevant": false,
+      "direct_watch_match": false,
+      "mechanism": "关税/出口管制 → 数量与成本 → 供应链迁移和企业利润 → 人民币、海外中资股与A股出口链",
+      "direction_note": "同一政策会产生受益与受损两侧；海外中资股或供应链代理下跌时，先按风险提示处理。",
+      "next_check": "先核对原始事实，再等待海外价格或A股集合竞价确认",
+      "risk": "政策细节没有实质增量，或汇率、订单与相关资产均未确认。",
+      "marketwide_added": 0,
+      "evidence_chain": [
+        {
+          "label": "原始事件",
+          "value": "Korea Picks $22 Billion Gas Project as First Under Trade Deal - Bloomberg.com",
+          "source": "Bloomberg.com",
+          "url": "https://news.google.com/rss/articles/CBMisAFBVV95cUxPa1U1VU5wSElNNndzU09Ba2tMdEZFY2xFSXRGaFo2YTVQM2o4dEtHMHlCUmMySjlaMzRZVmljaUxFR250VTh0U0pHMU90Z2c0al9wTkl3VWlqV3JfQlhrUElwbjFYQkZwU0VGNGN4Mm1qU3QyM0VnYnZBdjRlZDNTcUg1MTVocUVxMmtKUS15VEZTOHdPeFhHN29FTkpSd1FqSmVUX0JmeWVRTmdLaFBfWg?oc=5",
+          "time": "Tue, 08 Sep 2026 23:45:06 GMT"
+        },
+        {
+          "label": "来源证据",
+          "value": "B·可靠报道（78/100）"
+        },
+        {
+          "label": "海外价格",
+          "value": "TSMC ADR +2.35%，近一年70%分位；截至2026-09-08；Yahoo Finance；Alibaba ADR -0.51%，近一年19%分位；截至2026-09-08；Yahoo Finance；Nasdaq 100 -0.12%，近一年8%分位；截至2026-09-08；Yahoo Finance"
+        },
+        {
+          "label": "传导机制",
+          "value": "关税/出口管制 → 数量与成本 → 供应链迁移和企业利润 → 人民币、海外中资股与A股出口链"
+        },
+        {
+          "label": "反方与失效",
+          "value": "政策细节没有实质增量，或汇率、订单与相关资产均未确认。"
+        }
+      ]
+    },
+    {
+      "category": "传导待验证",
+      "priority": 52,
+      "theme": "油价与通胀",
+      "title": "Oil Climbs After Report US Hit Targets Near Iran’s Kharg Island - Bloomberg.com",
+      "url": "https://news.google.com/rss/articles/CBMingFBVV95cUxPMTE2a29FUnp0SWE1SGF6MGFrSG16LXFJVjFhNFg5LVVxalNWLUF2eDkxMExMQm5nMTVtMnpYZnJSMnNxR0Rtb2ozbDRsOE9uTDRUaTlpcWJ3VDNYem91emdZVkpjenpEY1lnSlAxdVVWOWpyaktQTGZHWUtCdFBfUU9pdU9XWFhQREZZNU5OYjA0TWdyR2pIdDJuMDg0UQ?oc=5",
+      "source": "Bloomberg.com",
+      "published": "Wed, 09 Sep 2026 04:16:00 GMT",
+      "evidence": 78,
+      "evidence_label": "B·可靠报道",
+      "price_text": "Energy Select Sector SPDR +1.11%（近一年58%分位）",
+      "price_direction": "上涨",
+      "price_moves": [
+        {
+          "key": "XLE",
+          "name": "Energy Select Sector SPDR",
+          "move": 1.11,
+          "tail_percentile": 0.58,
+          "history_count": 250
+        },
+        {
+          "key": "BRENT",
+          "name": "Brent原油",
+          "move": 1.07,
+          "tail_percentile": 0.347,
+          "history_count": 251
+        },
+        {
+          "key": "WTI",
+          "name": "WTI原油",
+          "move": 0.98,
+          "tail_percentile": 0.328,
+          "history_count": 250
+        }
+      ],
+      "targets": [
+        {
+          "ticker": "601857.SS",
+          "name": "中国石油",
+          "source": "主题映射",
+          "role": "上游受益",
+          "relation": "同向",
+          "beta": 1,
+          "mapping_level": "维护映射",
+          "mapping_reason": "来自维护映射或用户自选配置，仍需核对公司最新业务暴露。",
+          "guidance": {
+            "action": "等待验证",
+            "max_gap_pct": null,
+            "max_price": null,
+            "fair_gap_low": null,
+            "fair_gap_high": null,
+            "overpriced_gap_pct": null,
+            "required_probability": null,
+            "sample_count": 0,
+            "effective_sample": 0,
+            "confidence": "不足",
+            "primary_horizon": "未判定",
+            "horizons": [],
+            "reason": "海外价格尚未确认，08:45不提供集合竞价参与阈值。",
+            "method": "未达到动态阈值的最低数据要求，因此不提供固定百分比替代值。"
+          }
+        },
+        {
+          "ticker": "600938.SS",
+          "name": "中国海油",
+          "source": "主题映射",
+          "role": "上游受益",
+          "relation": "同向",
+          "beta": 1,
+          "mapping_level": "维护映射",
+          "mapping_reason": "来自维护映射或用户自选配置，仍需核对公司最新业务暴露。",
+          "guidance": {
+            "action": "等待验证",
+            "max_gap_pct": null,
+            "max_price": null,
+            "fair_gap_low": null,
+            "fair_gap_high": null,
+            "overpriced_gap_pct": null,
+            "required_probability": null,
+            "sample_count": 0,
+            "effective_sample": 0,
+            "confidence": "不足",
+            "primary_horizon": "未判定",
+            "horizons": [],
+            "reason": "海外价格尚未确认，08:45不提供集合竞价参与阈值。",
+            "method": "未达到动态阈值的最低数据要求，因此不提供固定百分比替代值。"
+          }
+        },
+        {
+          "ticker": "600028.SS",
+          "name": "中国石化",
+          "source": "主题映射",
+          "role": "炼化分化",
+          "relation": "需判断",
+          "beta": 0,
+          "mapping_level": "维护映射",
+          "mapping_reason": "来自维护映射或用户自选配置，仍需核对公司最新业务暴露。",
+          "guidance": {
+            "action": "等待验证",
+            "max_gap_pct": null,
+            "max_price": null,
+            "fair_gap_low": null,
+            "fair_gap_high": null,
+            "overpriced_gap_pct": null,
+            "required_probability": null,
+            "sample_count": 0,
+            "effective_sample": 0,
+            "confidence": "不足",
+            "primary_horizon": "未判定",
+            "horizons": [],
+            "reason": "海外价格尚未确认，08:45不提供集合竞价参与阈值。",
+            "method": "未达到动态阈值的最低数据要求，因此不提供固定百分比替代值。"
+          }
+        },
+        {
+          "ticker": "601088.SS",
+          "name": "中国神华",
+          "source": "主题映射",
+          "role": "能源替代",
+          "relation": "同向",
+          "beta": 1,
+          "mapping_level": "维护映射",
+          "mapping_reason": "来自维护映射或用户自选配置，仍需核对公司最新业务暴露。",
+          "guidance": {
+            "action": "等待验证",
+            "max_gap_pct": null,
+            "max_price": null,
+            "fair_gap_low": null,
+            "fair_gap_high": null,
+            "overpriced_gap_pct": null,
+            "required_probability": null,
+            "sample_count": 0,
+            "effective_sample": 0,
+            "confidence": "不足",
+            "primary_horizon": "未判定",
+            "horizons": [],
+            "reason": "海外价格尚未确认，08:45不提供集合竞价参与阈值。",
+            "method": "未达到动态阈值的最低数据要求，因此不提供固定百分比替代值。"
+          }
+        },
+        {
+          "ticker": "601111.SS",
+          "name": "中国国航",
+          "source": "主题映射",
+          "role": "成本风险",
+          "relation": "反向",
+          "beta": -1,
+          "mapping_level": "维护映射",
+          "mapping_reason": "来自维护映射或用户自选配置，仍需核对公司最新业务暴露。",
+          "guidance": {
+            "action": "等待验证",
+            "max_gap_pct": null,
+            "max_price": null,
+            "fair_gap_low": null,
+            "fair_gap_high": null,
+            "overpriced_gap_pct": null,
+            "required_probability": null,
+            "sample_count": 0,
+            "effective_sample": 0,
+            "confidence": "不足",
+            "primary_horizon": "未判定",
+            "horizons": [],
+            "reason": "海外价格尚未确认，08:45不提供集合竞价参与阈值。",
+            "method": "未达到动态阈值的最低数据要求，因此不提供固定百分比替代值。"
+          }
+        }
+      ],
+      "watchlist_relevant": false,
+      "direct_watch_match": false,
+      "mechanism": "原油 → 能源与运输成本 → 通胀/利润率/政策预期 → 上游资源与成本敏感行业分化",
+      "direction_note": "油价与能源股上涨通常利好上游、压制航空和部分化工下游；必须区分受益与受损标的。",
+      "next_check": "先核对原始事实，再等待海外价格或A股集合竞价确认",
+      "risk": "期限结构、库存、能源股与通胀预期均不确认油价新闻。",
+      "marketwide_added": 0,
+      "evidence_chain": [
+        {
+          "label": "原始事件",
+          "value": "Oil Climbs After Report US Hit Targets Near Iran’s Kharg Island - Bloomberg.com",
+          "source": "Bloomberg.com",
+          "url": "https://news.google.com/rss/articles/CBMingFBVV95cUxPMTE2a29FUnp0SWE1SGF6MGFrSG16LXFJVjFhNFg5LVVxalNWLUF2eDkxMExMQm5nMTVtMnpYZnJSMnNxR0Rtb2ozbDRsOE9uTDRUaTlpcWJ3VDNYem91emdZVkpjenpEY1lnSlAxdVVWOWpyaktQTGZHWUtCdFBfUU9pdU9XWFhQREZZNU5OYjA0TWdyR2pIdDJuMDg0UQ?oc=5",
+          "time": "Wed, 09 Sep 2026 04:16:00 GMT"
+        },
+        {
+          "label": "来源证据",
+          "value": "B·可靠报道（78/100）"
+        },
+        {
+          "label": "海外价格",
+          "value": "Energy Select Sector SPDR +1.11%，近一年58%分位；截至2026-09-08；Yahoo Finance；Brent原油 +1.07%，近一年35%分位；截至2026-09-09；Yahoo Finance；WTI原油 +0.98%，近一年33%分位；截至2026-09-09；Yahoo Finance"
+        },
+        {
+          "label": "传导机制",
+          "value": "原油 → 能源与运输成本 → 通胀/利润率/政策预期 → 上游资源与成本敏感行业分化"
+        },
+        {
+          "label": "反方与失效",
+          "value": "期限结构、库存、能源股与通胀预期均不确认油价新闻。"
+        }
+      ]
+    },
+    {
+      "category": "传导待验证",
+      "priority": 49,
+      "theme": "流动性与信用",
+      "title": "COMMENTARY: Unloved, but unbroken — the US bond market is working as it should - Reuters",
+      "url": "https://news.google.com/rss/articles/CBMivgFBVV95cUxQY3ltQXNrazU1eW16ZGNyXzViRnZuMDhLbUFGV1JvQzl3RGEtbi1zeDY3SFFHZ3hOelRRZEFhVldhZUs3SlZrbVBBLVBLZldvd29WQTlZRE1SamYwY3p4MkE5cTJ5SGtpVGc0ZXFiU00yNWxtSmZ5aW80UXpDcGlIdzE3eGoxLXRXMVQ0QUpOLUl6RndXTFB6OHAwNDlBMzQzRUp1YmU0Y3J6RWdOeTM0WmJvRjI2eHRmanFvQUFn?oc=5",
+      "source": "Reuters",
+      "published": "Tue, 08 Sep 2026 23:30:26 GMT",
+      "evidence": 78,
+      "evidence_label": "B·可靠报道",
+      "price_text": "黄金 +0.81%（近一年42%分位）",
+      "price_direction": "上涨",
+      "price_moves": [
+        {
+          "key": "GOLD",
+          "name": "黄金",
+          "move": 0.81,
+          "tail_percentile": 0.418,
+          "history_count": 251
+        },
+        {
+          "key": "SP500",
+          "name": "S&P 500",
+          "move": -0.58,
+          "tail_percentile": 0.592,
+          "history_count": 250
+        },
+        {
+          "key": "BTC",
+          "name": "Bitcoin",
+          "move": 0.22,
+          "tail_percentile": 0.138,
+          "history_count": 260
+        }
+      ],
+      "targets": [
+        {
+          "ticker": "000300.SS",
+          "name": "沪深300",
+          "source": "主题映射",
+          "role": "宽基",
+          "relation": "同向",
+          "beta": 1,
+          "mapping_level": "维护映射",
+          "mapping_reason": "来自维护映射或用户自选配置，仍需核对公司最新业务暴露。",
+          "guidance": {
+            "action": "等待验证",
+            "max_gap_pct": null,
+            "max_price": null,
+            "fair_gap_low": null,
+            "fair_gap_high": null,
+            "overpriced_gap_pct": null,
+            "required_probability": null,
+            "sample_count": 0,
+            "effective_sample": 0,
+            "confidence": "不足",
+            "primary_horizon": "未判定",
+            "horizons": [],
+            "reason": "海外价格尚未确认，08:45不提供集合竞价参与阈值。",
+            "method": "未达到动态阈值的最低数据要求，因此不提供固定百分比替代值。"
+          }
+        },
+        {
+          "ticker": "^HSI",
+          "name": "恒生指数",
+          "source": "主题映射",
+          "role": "港股验证",
+          "relation": "同向",
+          "beta": 1,
+          "mapping_level": "维护映射",
+          "mapping_reason": "来自维护映射或用户自选配置，仍需核对公司最新业务暴露。",
+          "guidance": {
+            "action": "等待验证",
+            "max_gap_pct": null,
+            "max_price": null,
+            "fair_gap_low": null,
+            "fair_gap_high": null,
+            "overpriced_gap_pct": null,
+            "required_probability": null,
+            "sample_count": 0,
+            "effective_sample": 0,
+            "confidence": "不足",
+            "primary_horizon": "未判定",
+            "horizons": [],
+            "reason": "海外价格尚未确认，08:45不提供集合竞价参与阈值。",
+            "method": "未达到动态阈值的最低数据要求，因此不提供固定百分比替代值。"
+          }
+        },
+        {
+          "ticker": "BABA",
+          "name": "Alibaba ADR",
+          "source": "主题映射",
+          "role": "中概验证",
+          "relation": "同向",
+          "beta": 1,
+          "mapping_level": "维护映射",
+          "mapping_reason": "来自维护映射或用户自选配置，仍需核对公司最新业务暴露。",
+          "guidance": {
+            "action": "等待验证",
+            "max_gap_pct": null,
+            "max_price": null,
+            "fair_gap_low": null,
+            "fair_gap_high": null,
+            "overpriced_gap_pct": null,
+            "required_probability": null,
+            "sample_count": 0,
+            "effective_sample": 0,
+            "confidence": "不足",
+            "primary_horizon": "未判定",
+            "horizons": [],
+            "reason": "海外价格尚未确认，08:45不提供集合竞价参与阈值。",
+            "method": "未达到动态阈值的最低数据要求，因此不提供固定百分比替代值。"
+          }
+        },
+        {
+          "ticker": "601899.SS",
+          "name": "紫金矿业",
+          "source": "主题映射",
+          "role": "资源品",
+          "relation": "需判断",
+          "beta": 0,
+          "mapping_level": "维护映射",
+          "mapping_reason": "来自维护映射或用户自选配置，仍需核对公司最新业务暴露。",
+          "guidance": {
+            "action": "等待验证",
+            "max_gap_pct": null,
+            "max_price": null,
+            "fair_gap_low": null,
+            "fair_gap_high": null,
+            "overpriced_gap_pct": null,
+            "required_probability": null,
+            "sample_count": 0,
+            "effective_sample": 0,
+            "confidence": "不足",
+            "primary_horizon": "未判定",
+            "horizons": [],
+            "reason": "海外价格尚未确认，08:45不提供集合竞价参与阈值。",
+            "method": "未达到动态阈值的最低数据要求，因此不提供固定百分比替代值。"
+          }
+        }
+      ],
+      "watchlist_relevant": false,
+      "direct_watch_match": false,
+      "mechanism": "美元/实际利率 → 全球金融条件与人民币 → 外资风险偏好/估值贴现率/商品定价 → A股风格与行业相对表现",
+      "direction_note": "必须结合美元和人民币判断：风险资产上涨但美元同步走强时，不直接视为A股正向信号。",
+      "next_check": "先核对原始事实，再等待海外价格或A股集合竞价确认",
+      "risk": "美元/实际利率变化没有得到人民币、信用和A股风格的共同确认。",
+      "marketwide_added": 0,
+      "evidence_chain": [
+        {
+          "label": "原始事件",
+          "value": "COMMENTARY: Unloved, but unbroken — the US bond market is working as it should - Reuters",
+          "source": "Reuters",
+          "url": "https://news.google.com/rss/articles/CBMivgFBVV95cUxQY3ltQXNrazU1eW16ZGNyXzViRnZuMDhLbUFGV1JvQzl3RGEtbi1zeDY3SFFHZ3hOelRRZEFhVldhZUs3SlZrbVBBLVBLZldvd29WQTlZRE1SamYwY3p4MkE5cTJ5SGtpVGc0ZXFiU00yNWxtSmZ5aW80UXpDcGlIdzE3eGoxLXRXMVQ0QUpOLUl6RndXTFB6OHAwNDlBMzQzRUp1YmU0Y3J6RWdOeTM0WmJvRjI2eHRmanFvQUFn?oc=5",
+          "time": "Tue, 08 Sep 2026 23:30:26 GMT"
+        },
+        {
+          "label": "来源证据",
+          "value": "B·可靠报道（78/100）"
+        },
+        {
+          "label": "海外价格",
+          "value": "黄金 +0.81%，近一年42%分位；截至2026-09-09；Yahoo Finance；S&P 500 -0.58%，近一年59%分位；截至2026-09-08；Yahoo Finance；Bitcoin +0.22%，近一年14%分位；截至2026-09-09；Yahoo Finance"
+        },
+        {
+          "label": "传导机制",
+          "value": "美元/实际利率 → 全球金融条件与人民币 → 外资风险偏好/估值贴现率/商品定价 → A股风格与行业相对表现"
+        },
+        {
+          "label": "反方与失效",
+          "value": "美元/实际利率变化没有得到人民币、信用和A股风格的共同确认。"
+        }
+      ]
+    }
+  ],
+  "universe_coverage": {
+    "mode": "MAPPING_ONLY",
+    "count": 0
+  },
+  "stage": "08:45",
+  "subscriber_count": 1
+}
