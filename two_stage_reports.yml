@@ -1,0 +1,95 @@
+name: A-share personalized email reports
+
+on:
+  workflow_dispatch:
+    inputs:
+      stage:
+        description: Report stage
+        required: true
+        type: choice
+        options:
+          - morning
+          - auction
+      send_emails:
+        description: Send real subscriber emails
+        required: true
+        type: boolean
+        default: false
+  schedule:
+    # Redundant five-minute triggers reduce the chance that one delayed/dropped
+    # GitHub schedule event makes the entire pre-open report disappear.
+    - cron: "45,50,55 0 * * 1-5" # 08:45-08:55 Asia/Shanghai
+    - cron: "0,5,10,15,20 1 * * 1-5" # 09:00-09:20 Asia/Shanghai
+    - cron: "27,32,37,42,47,52,57 1 * * 1-5" # 09:27-09:57 Asia/Shanghai
+
+concurrency:
+  group: a-share-report-writer
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  generate-and-send:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+      SMTP_HOST: ${{ secrets.SMTP_HOST }}
+      SMTP_PORT: ${{ secrets.SMTP_PORT }}
+      SMTP_USERNAME: ${{ secrets.SMTP_USERNAME }}
+      SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
+      EMAIL_FROM: ${{ secrets.EMAIL_FROM }}
+      APP_URL: ${{ secrets.APP_URL }}
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      OPENAI_MODEL: ${{ secrets.OPENAI_MODEL }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Synchronize latest report state
+        run: git pull --ff-only origin main
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - run: pip install -r requirements.txt
+
+      - id: route
+        name: Select report stage
+        if: github.event_name == 'workflow_dispatch'
+        shell: bash
+        run: |
+          stage="${{ inputs.stage }}"
+          send="${{ inputs.send_emails }}"
+          echo "stage=$stage" >> "$GITHUB_OUTPUT"
+          echo "send=$send" >> "$GITHUB_OUTPUT"
+
+      - name: Generate manually selected report
+        if: github.event_name == 'workflow_dispatch'
+        shell: bash
+        run: |
+          args=()
+          if [[ "${{ steps.route.outputs.send }}" == "true" ]]; then args+=(--send-emails); fi
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then args+=(--force); fi
+          if [[ "${{ steps.route.outputs.stage }}" == "morning" ]]; then
+            PYTHONPATH=. python scripts/generate_morning_brief.py "${args[@]}"
+          else
+            PYTHONPATH=. python scripts/generate_auction_snapshot.py "${args[@]}"
+          fi
+
+      - name: Generate due scheduled reports exactly once
+        if: github.event_name == 'schedule'
+        run: PYTHONPATH=. python scripts/run_scheduled_reports.py
+
+      - name: Commit report snapshots
+        run: |
+          git config user.name "a-share-radar-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add data/
+          git diff --cached --quiet || git commit -m "chore: scheduled market reports"
+          git push
