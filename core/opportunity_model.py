@@ -109,6 +109,7 @@ def discover_market_targets(signals: Iterable[dict], stock_universe: Iterable[di
     output = []
     for signal in signals:
         row = dict(signal)
+        event_text = f"{signal.get('title', '')} {signal.get('summary', '')}"
         existing = [dict(target) for target in signal.get("targets", [])]
         seen = {target.get("ticker") for target in existing}
         keywords = THEME_INDUSTRY_KEYWORDS.get(signal.get("theme"), [])
@@ -117,6 +118,9 @@ def discover_market_targets(signals: Iterable[dict], stock_universe: Iterable[di
             if stock.get("ticker") in seen or "ST" in str(stock.get("name", "")).upper():
                 continue
             score = _candidate_score(stock, keywords)
+            compact_name = str(stock.get("name", "")).replace("*", "").replace("ST", "")
+            if len(compact_name) >= 3 and compact_name in event_text:
+                score = max(score, 135.0)
             if score < 0:
                 continue
             bucket = _size_bucket(stock.get("float_market_cap") or stock.get("market_cap"))
@@ -342,7 +346,23 @@ def attach_dynamic_guidance(signals: Iterable[dict], market: dict) -> list[dict]
 
 
 def detect_market_auction_anomalies(quotes: dict, limit: int = 24) -> list[dict]:
-    rows = [dict(row) for row in quotes.values() if row.get("status") == "ok" and _finite(row.get("gap_pct")) is not None]
+    rows = []
+    for source in quotes.values():
+        row = dict(source)
+        name = str(row.get("name") or "").upper().replace(" ", "")
+        gap = _finite(row.get("gap_pct"))
+        # IPOs have no comparable prior-close distribution; ST shares have
+        # different price limits. Mixing either into the ordinary cross-section
+        # creates spectacular but unusable false positives.
+        if (
+            row.get("status") != "ok"
+            or gap is None
+            or "ST" in name
+            or name.startswith(("N", "C"))
+            or abs(gap) > 20
+        ):
+            continue
+        rows.append(row)
     if len(rows) < 50:
         return []
     groups: dict[tuple[str, str], list[float]] = defaultdict(list)
@@ -361,13 +381,19 @@ def detect_market_auction_anomalies(quotes: dict, limit: int = 24) -> list[dict]
         volume_ratio = max(_finite(row.get("volume_ratio")) or 0, 0)
         turnover = max(_finite(row.get("turnover_rate")) or 0, 0)
         score = abs(gap) / max(threshold, 0.01) + min(volume_ratio, 5) * 0.20 + min(turnover, 10) * 0.05
+        near_limit = abs(gap) >= 9.5
         candidates.append({
             "ticker": row.get("ticker"), "name": row.get("name") or row.get("ticker"),
             "gap_pct": round(gap, 2), "auction_price": row.get("auction_price"),
             "amount": row.get("amount"), "turnover_rate": row.get("turnover_rate"), "volume_ratio": row.get("volume_ratio"),
             "board": group[0], "size_bucket": group[1], "dynamic_threshold_pct": round(threshold, 2),
             "score": round(score, 3), "status": "竞价独立异动", "primary_horizon": "T+0",
-            "evidence_state": "只有横截面量价异常，尚无可靠全球事件或公司新闻解释；不能直接视为买入信号。",
+            "evidence_state": (
+                "接近涨跌停，成交能力受限；只有横截面量价异常，不能作为追单依据。"
+                if near_limit else
+                "只有横截面量价异常，尚无可靠全球事件或公司新闻解释；不能直接视为买入信号。"
+            ),
+            "tradability": "接近涨跌停/可能无法成交" if near_limit else "需在开盘后复核流动性",
             "source": row.get("source", ""),
         })
     candidates.sort(key=lambda row: (-row["score"], row["ticker"]))

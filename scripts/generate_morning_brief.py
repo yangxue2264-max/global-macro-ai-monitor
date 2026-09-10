@@ -60,7 +60,13 @@ def main(send_emails: bool = False, force: bool = False):
     market = fetch_market_snapshot(universe)
     macro = enrich_macro_with_market_proxies(fetch_fred_snapshot(), market, fetch_treasury_snapshot())
     news = add_evidence_scores(fetch_news_bundle(max_each=10))
-    stock_universe, universe_coverage = fetch_a_share_universe(get_secret("TUSHARE_TOKEN"))
+    stock_universe, universe_coverage = fetch_a_share_universe()
+    if not universe_coverage.get("usable"):
+        raise SystemExit(
+            "full-market universe unavailable: "
+            f"received {universe_coverage.get('count', 0)}, "
+            f"required {universe_coverage.get('minimum_required', 4500)}; email not sent"
+        )
     marketwide_signals = discover_market_targets(
         build_opportunity_signals(news, market, mapping, []), stock_universe
     )
@@ -107,7 +113,10 @@ def main(send_emails: bool = False, force: bool = False):
         encoding="utf-8",
     )
     (BASE / "data" / "latest_morning_brief.json").write_text(rendered, encoding="utf-8")
-    print(f"generated {day}: {len(news)} events, {len(market)} market series, {len(subscriptions)} subscribers")
+    print(
+        f"generated {day}: {len(news)} events, {len(market)} market series, "
+        f"{universe_coverage.get('count', 0)} A shares, {len(subscriptions)} subscribers"
+    )
 
     if send_emails:
         failures = 0

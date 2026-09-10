@@ -122,16 +122,6 @@ def _saved_auction_snapshot(trade_date: str):
         return None
 
 
-def get_tushare_token():
-    token = os.getenv("TUSHARE_TOKEN", "")
-    if token:
-        return token
-    try:
-        return str(st.secrets.get("TUSHARE_TOKEN", ""))
-    except Exception:
-        return ""
-
-
 def auction_is_ready(now: datetime, trade_date: str) -> bool:
     if trade_date < now.date().isoformat():
         return True
@@ -139,7 +129,7 @@ def auction_is_ready(now: datetime, trade_date: str) -> bool:
 
 
 @st.cache_data(ttl=93600, show_spinner=False)
-def load_daily_bundle(universe: dict, mapping_cfg: dict, snapshot_key: str, _token: str):
+def load_daily_bundle(universe: dict, mapping_cfg: dict, snapshot_key: str):
     if os.getenv("MACRO_MONITOR_OFFLINE_TEST") == "1":
         market = demo_market(universe)
         macro = demo_macro(FRED_SERIES)
@@ -155,7 +145,7 @@ def load_daily_bundle(universe: dict, mapping_cfg: dict, snapshot_key: str, _tok
         return market, macro, news, signals, {"mode": "DEMO_CONFIGURED_UNIVERSE", "count": len(stock_rows)}, "DEMO", "DEMO"
 
     saved = _saved_snapshot()
-    if saved and saved.get("signals"):
+    if saved and saved.get("universe_coverage"):
         return (
             saved.get("market", {}),
             saved.get("macro", {}),
@@ -171,7 +161,7 @@ def load_daily_bundle(universe: dict, mapping_cfg: dict, snapshot_key: str, _tok
         macro_future = pool.submit(fetch_fred_snapshot, FRED_SERIES)
         news_future = pool.submit(fetch_news_bundle, 10)
         treasury_future = pool.submit(fetch_treasury_snapshot)
-        universe_future = pool.submit(fetch_a_share_universe, _token)
+        universe_future = pool.submit(fetch_a_share_universe)
         market = market_future.result()
         macro = enrich_macro_with_market_proxies(macro_future.result(), market, treasury_future.result())
         news = add_evidence_scores(news_future.result())
@@ -208,7 +198,7 @@ def load_missing_watchlist_market(rows: list[dict], existing_tickers: tuple[str,
 
 
 @st.cache_data(ttl=93600, show_spinner=False)
-def load_auction_bundle(tickers: tuple[str, ...], trade_date: str, _token: str):
+def load_auction_bundle(tickers: tuple[str, ...], trade_date: str):
     if os.getenv("MACRO_MONITOR_OFFLINE_TEST") == "1":
         gaps = [0.45, 1.65, 3.80, -0.90, 0.20, 2.40, -0.30, 5.20]
         quotes = {}
@@ -226,13 +216,12 @@ def load_auction_bundle(tickers: tuple[str, ...], trade_date: str, _token: str):
         anomalies = list(saved.get("anomalies", []))
         coverage = saved.get("auction_coverage", {"mode": "LEGACY_SNAPSHOT", "count": len(quotes)})
     else:
-        quotes, coverage = fetch_all_auction_quotes(trade_date, tushare_token=_token)
+        quotes, coverage = fetch_all_auction_quotes(trade_date)
         anomalies = detect_market_auction_anomalies(quotes)
     missing = tuple(ticker for ticker in tickers if ticker not in quotes)
     if missing:
-        quotes.update(fetch_auction_quotes(missing, trade_date, tushare_token=_token))
-    sources = {row.get("source", "") for row in quotes.values()}
-    mode = "TUSHARE_AUCTION" if any("Tushare" in source for source in sources) else "PUBLIC_QUOTE_FALLBACK" if quotes else "AUCTION_UNAVAILABLE"
+        quotes.update(fetch_auction_quotes(missing, trade_date))
+    mode = coverage.get("mode") or ("FREE_QUOTE_FALLBACK" if quotes else "AUCTION_UNAVAILABLE")
     generated = saved.get("generated_at", "") if saved else datetime.now(CN_TZ).isoformat()
     return quotes, anomalies, coverage, mode, generated
 
@@ -245,7 +234,8 @@ def snapshot_label(generated_at: str, mode: str, expected_day: str) -> tuple[str
         return "快照时间未知", True
     parsed_cn = parsed.astimezone(CN_TZ)
     age_hours = (datetime.now(CN_TZ) - parsed_cn).total_seconds() / 3600
-    stale = parsed_cn.date().isoformat() != expected_day or age_hours > 72
+    late_for_premarket = parsed_cn.date().isoformat() == expected_day and (parsed_cn.hour, parsed_cn.minute) >= (9, 25)
+    stale = parsed_cn.date().isoformat() != expected_day or age_hours > 72 or late_for_premarket
     return f"{parsed_cn:%m-%d %H:%M} 快照", stale
 
 
@@ -439,7 +429,7 @@ snapshot_key = expected_snapshot_day(now)
 load_notice = st.empty()
 load_notice.info("正在读取北京时间 08:45 盘前快照…")
 market, macro, news, marketwide_signals, universe_coverage, data_mode, generated_at = load_daily_bundle(
-    universe, mapping_cfg, snapshot_key, get_tushare_token()
+    universe, mapping_cfg, snapshot_key
 )
 existing_tickers = tuple(item.get("ticker", "") for item in market.values())
 market.update(load_missing_watchlist_market(user_watchlist, existing_tickers, snapshot_key))
@@ -453,7 +443,7 @@ if auction_ready:
         ticker for ticker in ([row["ticker"] for row in user_watchlist] + [target.get("ticker", "") for signal in marketwide_signals for target in signal.get("targets", [])])
         if str(ticker).endswith((".SS", ".SZ", ".BJ"))
     }))
-    auction_quotes, market_anomalies, auction_coverage, auction_mode, auction_generated_at = load_auction_bundle(auction_tickers, snapshot_key, get_tushare_token())
+    auction_quotes, market_anomalies, auction_coverage, auction_mode, auction_generated_at = load_auction_bundle(auction_tickers, snapshot_key)
 alerts, signals = build_personal_analysis(
     user_watchlist, news, market, mapping_cfg,
     auction_quotes if auction_ready else None,
@@ -481,6 +471,13 @@ st.markdown(
 )
 
 snapshot_text, stale = snapshot_label(generated_at, data_mode, snapshot_key)
+universe_usable = bool(
+    universe_coverage.get("usable", universe_coverage.get("count", 0) >= 4500)
+)
+auction_usable = (data_mode == "DEMO") or bool(
+    auction_coverage.get("usable", auction_coverage.get("count", 0) >= 3500)
+) if auction_ready else True
+current_decision_data = data_mode == "DEMO" or (not stale and universe_usable)
 market_ratio = f"{health.get('market_live', 0)}/{health.get('market_total', 0)}"
 badges = [
     f'<span class="badge {"warn" if data_mode == "DEMO" else "live"}">{escape(data_mode)} · 行情 {market_ratio}</span>',
@@ -495,6 +492,10 @@ if data_mode == "DEMO":
     st.warning("当前为明确标注的演示模式；演示值不会被当作真实盘前判断。")
 elif stale:
     st.warning("最近快照不是当前应使用的交易日快照，可能遇到节假日、任务排队或自动任务失败，请先核对页面日期。")
+if data_mode != "DEMO" and not universe_usable:
+    st.error("本次没有完成全A股扫描。页面将数据状态标为“不可用”，不会再把未扫描误报成0个机会。")
+if auction_ready and auction_quotes and not auction_usable and data_mode != "DEMO":
+    st.error(f"集合竞价只覆盖 {auction_coverage.get('count', 0)} 只，低于完整性门槛；09:27结论已停用。")
 if auction_ready and not auction_quotes and data_mode != "DEMO":
     st.warning("09:25集合竞价数据暂不可用，因此今天只能展示海外候选，不能判断是否仍有交易价值。")
 
@@ -503,7 +504,17 @@ page = st.radio("主导航", ["盘前决策台", "机会雷达", "方法与数�
 
 if page == "盘前决策台":
     cols = st.columns(4)
-    if auction_ready and auction_quotes:
+    if not current_decision_data:
+        cols[0].metric("全市场扫描", "不可用", "等待当日有效快照")
+        cols[1].metric("参与条件", "不可用", "禁止据此下单")
+        cols[2].metric("事件判断", "不可用", "不是0个机会")
+        cols[3].metric("竞价判断", "不可用", "等待完整数据")
+    elif auction_ready and auction_quotes and not auction_usable:
+        cols[0].metric("仍有预期差", "不可用", "竞价覆盖不足")
+        cols[1].metric("基本定价", "不可用", "竞价覆盖不足")
+        cols[2].metric("追高风险", "不可用", "竞价覆盖不足")
+        cols[3].metric("全市场独立异动", "不可用", f"仅覆盖 {auction_coverage.get('count', 0)} 只")
+    elif auction_ready and auction_quotes:
         cols[0].metric("仍有预期差", auction_counts["仍有预期差"], "优先进入开盘观察")
         cols[1].metric("基本定价", auction_counts["基本定价"], "不再视为明显预期差")
         cols[2].metric("追高风险", auction_counts["过度定价/追高风险"], "竞价反应过度")
@@ -515,7 +526,11 @@ if page == "盘前决策台":
         cols[3].metric("自选股重点异动", len(important_alerts), f"另有 {len(watch_alerts)} 只需关注")
 
     st.markdown('<div class="section">今天先处理什么</div>', unsafe_allow_html=True)
-    if gap_targets:
+    if not current_decision_data:
+        st.error("今天尚未生成通过覆盖门槛的盘前快照，因此不能得出“没有机会”的结论，也不能用于集合竞价下单。")
+    elif auction_ready and not auction_usable:
+        st.error("09:27全市场竞价数据不完整，本次不输出仍有预期差、基本定价或追高风险结论。")
+    elif gap_targets:
         top_names = "、".join(row["name"] for row in gap_targets[:6])
         st.markdown(f'<div class="callout"><b>全市场竞价后仍有预期差：</b>{escape(top_names)}。每只标的均沿用08:45动态阈值，并在下方注明主要观察期限。</div>', unsafe_allow_html=True)
     elif overpriced_targets:
@@ -533,7 +548,9 @@ if page == "盘前决策台":
         st.markdown('<div class="callout"><b>今日没有达到强提示阈值的信号。</b>这也是有效结论：不为了每天都有交易机会而降低证据标准。</div>', unsafe_allow_html=True)
 
     st.markdown('<div class="section">全A股事件机会（主区）<span class="section-note">不是只看大盘股、热门股或自选股；行业级命中必须继续核对主营业务</span></div>', unsafe_allow_html=True)
-    if verified:
+    if not current_decision_data:
+        st.info("等待今天的全A股有效快照；下方不展示旧数据作为今日机会。")
+    elif verified:
         for row in verified[:8]:
             render_signal(row)
     elif transmission:
@@ -543,7 +560,7 @@ if page == "盘前决策台":
     else:
         st.info("今天没有达到新闻证据门槛的全市场事件机会。")
 
-    if auction_ready:
+    if auction_ready and current_decision_data and auction_usable:
         st.markdown('<div class="section">全市场独立竞价异动<span class="section-note">按板块×市值分组的当日95%分位，不使用统一2%阈值</span></div>', unsafe_allow_html=True)
         if market_anomalies:
             st.dataframe(pd.DataFrame([{ "股票": f"{row.get('name')}（{str(row.get('ticker','')).split('.')[0]}）", "竞价涨跌": f"{row.get('gap_pct',0):+.2f}%", "板块": row.get('board'), "规模": row.get('size_bucket'), "当日异常线": f"{row.get('dynamic_threshold_pct',0):.2f}%", "期限": "T+0", "证据状态": row.get('evidence_state')} for row in market_anomalies]), hide_index=True, width="stretch")
@@ -687,8 +704,8 @@ else:
     st.write("- **市场代理与历史：** Yahoo Finance，用于海外收盘价格及候选A股近一年开盘/收盘序列；页面显示快照与样本量。")
     st.write("- **新闻发现：** GDELT，失败时回退Google News RSS；只让证据分≥70的新闻进入机会雷达。")
     st.write("- **宏观背景：** FRED与美国财政部，仅用于风险环境，不再提供独立跨资产看板。")
-    st.write("- **全A股列表：** 优先Tushare `stock_basic`并用公开全市场快照补充成交和市值；没有Token时使用公开全市场列表，并明确标注覆盖模式。")
-    st.write("- **集合竞价：** 优先使用Tushare `stk_auction`全市场数据（需单独权限）；缺少权限时使用公开全市场开盘快照回退，并标注覆盖数量和来源。")
+    st.write("- **全A股列表：** 直接读取上交所、深交所、北交所官方上市名单，不需要Token；失败时只允许使用14天内的最近有效缓存。")
+    st.write("- **集合竞价：** 使用腾讯免费批量行情获取全市场09:25开盘价，并以东方财富公开行情补缺；覆盖不足3500只时停止输出结论和邮件。")
     st.write("- **用户配置：** 网页只要求输入股票；系统自动补齐研究映射。通过邮箱验证后，订阅配置会持久化保存，用于两次个性化邮件。")
     st.markdown("#### 边界")
     st.write("免费数据源可能延迟或中断；系统会明确标注快照、覆盖数量和DEMO状态。行业映射不是主营业务证明，历史条件概率也不是未来收益保证。最终仍需核对原文、公司公告、涨跌停规则、流动性与实际委托限制。")

@@ -36,7 +36,6 @@ EMAIL_FROM = "A股盘前机会雷达 <sender@gmail.com>"
 APP_URL = "https://your-app.streamlit.app"
 OPENAI_API_KEY = "..." # 可选；只用于规则库之外的新股票
 OPENAI_MODEL = "gpt-5.6-luna" # 可选
-TUSHARE_TOKEN = "..." # 可选；用于竞价接口
 ```
 
 ## 3. Streamlit Cloud Secrets

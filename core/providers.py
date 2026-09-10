@@ -2,12 +2,15 @@ from __future__ import annotations
 
 from datetime import datetime, timezone
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from io import StringIO
+from io import BytesIO, StringIO
 from pathlib import Path
 from urllib.parse import quote, urlparse
 from zoneinfo import ZoneInfo
 import json
+import math
+import os
 import re
+import time
 import xml.etree.ElementTree as ET
 from difflib import SequenceMatcher
 
@@ -19,6 +22,9 @@ import yfinance as yf
 from .ontology import tag_modules, tag_themes, TRUSTED_DOMAINS
 
 HEADERS = {"User-Agent": "Mozilla/5.0 (GlobalMacroAIMonitor/0.2; research use)"}
+BASE = Path(__file__).resolve().parents[1]
+A_SHARE_CACHE = BASE / "data" / "reference" / "a_share_universe.json"
+MIN_VALID_A_SHARE_UNIVERSE = int(os.getenv("MIN_VALID_A_SHARE_UNIVERSE", "4500"))
 
 FRED_SERIES = {
     "US10Y": {"name":"美国10年期国债收益率", "series":"DGS10", "unit":"%"},
@@ -287,82 +293,350 @@ def _a_share_ticker_from_code(value: str) -> str:
     return f"{code}.SZ"
 
 
-def fetch_eastmoney_a_share_universe() -> list[dict]:
-    """Public full-market snapshot fallback used for discovery, never hidden as official data."""
-    endpoint = "https://82.push2.eastmoney.com/api/qt/clist/get"
-    params = {
-        "pn": 1, "pz": 6000, "po": 1, "np": 1, "fltt": 2, "invt": 2,
-        "fid": "f6", "fs": "m:0+t:6,m:0+t:80,m:1+t:2,m:1+t:23",
-        "fields": "f2,f3,f5,f6,f8,f10,f12,f14,f17,f18,f20,f21,f100",
-    }
+def _clean_stock_name(value) -> str:
+    text = re.sub(r"<[^>]+>", "", str(value or ""))
+    return re.sub(r"\s+", "", text).strip()
+
+
+def _number(value, multiplier: float = 1.0):
     try:
-        response = requests.get(endpoint, params=params, headers=HEADERS, timeout=25)
+        parsed = float(value) * multiplier
+        return parsed if np.isfinite(parsed) else None
+    except (TypeError, ValueError):
+        return None
+
+
+def fetch_sse_a_share_universe() -> list[dict]:
+    """Fetch Shanghai main-board and STAR listings from the exchange itself."""
+    endpoint = "https://query.sse.com.cn/sseQuery/commonQuery.do"
+    headers = {
+        **HEADERS,
+        "Referer": "https://www.sse.com.cn/assortment/stock/list/share/",
+    }
+
+    def one(stock_type: str):
+        params = {
+            "STOCK_TYPE": stock_type,
+            "REG_PROVINCE": "",
+            "CSRC_CODE": "",
+            "STOCK_CODE": "",
+            "sqlId": "COMMON_SSE_CP_GPJCTPZ_GPLB_GP_L",
+            "COMPANY_STATUS": "2,4,5,7,8",
+            "type": "inParams",
+            "isPagination": "true",
+            "pageHelp.cacheSize": "1",
+            "pageHelp.beginPage": "1",
+            "pageHelp.pageSize": "10000",
+            "pageHelp.pageNo": "1",
+            "pageHelp.endPage": "1",
+        }
+        response = requests.get(endpoint, params=params, headers=headers, timeout=35)
         response.raise_for_status()
-        rows = response.json().get("data", {}).get("diff", []) or []
+        return response.json().get("result", []) or []
+
+    output = []
+    try:
+        with ThreadPoolExecutor(max_workers=2) as pool:
+            batches = list(pool.map(one, ("1", "8")))
+        for rows in batches:
+            for item in rows:
+                ticker = _a_share_ticker_from_code(item.get("A_STOCK_CODE"))
+                name = _clean_stock_name(item.get("SEC_NAME_CN") or item.get("COMPANY_ABBR"))
+                if ticker and name:
+                    output.append({
+                        "ticker": ticker,
+                        "name": name,
+                        "industry": str(item.get("CSRC_CODE_DESC") or "").strip(),
+                        "industry_code": str(item.get("CSRC_CODE") or "").strip(),
+                        "market": "科创板" if ticker.startswith("688") else "沪市主板",
+                        "list_date": str(item.get("LIST_DATE") or ""),
+                        "source": "上海证券交易所",
+                    })
+    except Exception:
+        return []
+    return output
+
+
+def fetch_szse_a_share_universe() -> list[dict]:
+    """Fetch the complete Shenzhen A-share workbook in one official request."""
+    try:
+        response = requests.get(
+            "https://www.szse.cn/api/report/ShowReport",
+            params={"SHOWTYPE": "xlsx", "CATALOGID": "1110", "TABKEY": "tab1"},
+            headers={**HEADERS, "Referer": "https://www.szse.cn/market/product/stock/list/index.html"},
+            timeout=40,
+        )
+        response.raise_for_status()
+        frame = pd.read_excel(BytesIO(response.content), dtype={"A股代码": str})
         output = []
-        for item in rows:
-            ticker = _a_share_ticker_from_code(item.get("f12"))
-            name = str(item.get("f14") or "").strip()
+        for item in frame.to_dict("records"):
+            code = str(item.get("A股代码") or "").split(".")[0].zfill(6)
+            ticker = _a_share_ticker_from_code(code)
+            name = _clean_stock_name(item.get("A股简称"))
             if not ticker or not name:
                 continue
-            def number(key):
-                try:
-                    value = float(item.get(key))
-                    return value if np.isfinite(value) else None
-                except (TypeError, ValueError):
-                    return None
+            total_shares = _number(item.get("A股总股本"), 100_000_000)
+            float_shares = _number(item.get("A股流通股本"), 100_000_000)
             output.append({
-                "ticker": ticker, "name": name, "industry": str(item.get("f100") or "").strip(),
-                "last": number("f2"), "change_pct": number("f3"), "volume": number("f5"),
-                "amount": number("f6"), "turnover_rate": number("f8"), "volume_ratio": number("f10"),
-                "open": number("f17"), "pre_close": number("f18"),
-                "market_cap": number("f20"), "float_market_cap": number("f21"),
-                "source": "Eastmoney public full-market snapshot",
+                "ticker": ticker,
+                "name": name,
+                "industry": str(item.get("所属行业") or "").strip(),
+                "market": str(item.get("板块") or "深市").strip(),
+                "list_date": str(item.get("A股上市日期") or ""),
+                "total_shares": total_shares,
+                "float_shares": float_shares,
+                "source": "深圳证券交易所",
             })
         return output
     except Exception:
         return []
 
 
-def fetch_tushare_stock_universe(token: str = "") -> list[dict]:
-    if not token:
-        return []
-    payload = {
-        "api_name": "stock_basic", "token": token,
-        "params": {"list_status": "L"},
-        "fields": "ts_code,symbol,name,area,industry,market,list_date",
-    }
+def fetch_bse_a_share_universe() -> list[dict]:
+    """Fetch all Beijing Stock Exchange listings from the exchange endpoint."""
+    endpoint = "https://www.bse.cn/nqxxController/nqxxCnzq.do"
+    headers = {**HEADERS, "Referer": "https://www.bse.cn/nq/listedcompany.html"}
+
+    def page(number: int):
+        try:
+            response = requests.post(
+                endpoint,
+                data={
+                    "page": str(number), "typejb": "T", "xxfcbj[]": "2",
+                    "xxzqdm": "", "sortfield": "xxzqdm", "sorttype": "asc",
+                },
+                headers=headers,
+                timeout=25,
+            )
+            response.raise_for_status()
+            text = response.text
+            return json.loads(text[text.find("["):text.rfind("]") + 1])[0]
+        except Exception:
+            return {}
+
     try:
-        response = requests.post("https://api.tushare.pro", json=payload, headers=HEADERS, timeout=25)
-        response.raise_for_status()
-        result = response.json()
-        if result.get("code") not in (0, None):
+        first = page(0)
+        if not first:
             return []
-        data = result.get("data") or {}
-        fields = data.get("fields") or []
+        pages = max(1, int(first.get("totalPages") or 1))
+        payloads = [first]
+        if pages > 1:
+            with ThreadPoolExecutor(max_workers=min(18, pages - 1)) as pool:
+                payloads.extend(pool.map(page, range(1, pages)))
         output = []
-        for values in data.get("items") or []:
-            item = dict(zip(fields, values))
-            ticker = _auction_ticker(item.get("ts_code"))
-            if ticker:
-                output.append({
-                    "ticker": ticker, "name": item.get("name") or ticker,
-                    "industry": item.get("industry") or "", "market": item.get("market") or "",
-                    "list_date": item.get("list_date") or "", "source": "Tushare stock_basic",
-                })
+        for payload in (item for item in payloads if item):
+            for item in payload.get("content", []) or []:
+                ticker = _a_share_ticker_from_code(item.get("xxzqdm"))
+                name = _clean_stock_name(item.get("xxzqjc"))
+                if ticker and name:
+                    output.append({
+                        "ticker": ticker,
+                        "name": name,
+                        "industry": str(item.get("xxsshy") or "").strip(),
+                        "market": "北交所",
+                        "list_date": str(item.get("fxssrq") or ""),
+                        "total_shares": _number(item.get("xxzgb")),
+                        "float_shares": _number(item.get("xxltgb")),
+                        "source": "北京证券交易所",
+                    })
         return output
     except Exception:
         return []
 
 
-def fetch_a_share_universe(token: str = "") -> tuple[list[dict], dict]:
-    official = fetch_tushare_stock_universe(token)
-    public = fetch_eastmoney_a_share_universe()
-    public_by_ticker = {row["ticker"]: row for row in public}
-    if official:
-        rows = [{**row, **{k: v for k, v in public_by_ticker.get(row["ticker"], {}).items() if v not in (None, "")}} for row in official]
-        return rows, {"mode": "TUSHARE+PUBLIC_ENRICHMENT" if public else "TUSHARE_BASIC", "count": len(rows)}
-    return public, {"mode": "PUBLIC_FULL_MARKET" if public else "MAPPING_ONLY", "count": len(public)}
+def fetch_official_a_share_universe() -> list[dict]:
+    """Merge the free official listing feeds of all three mainland exchanges."""
+    with ThreadPoolExecutor(max_workers=3) as pool:
+        futures = [
+            pool.submit(fetch_sse_a_share_universe),
+            pool.submit(fetch_szse_a_share_universe),
+            pool.submit(fetch_bse_a_share_universe),
+        ]
+        batches = [future.result() for future in futures]
+    merged = {}
+    for rows in batches:
+        for row in rows:
+            if row.get("ticker"):
+                merged[row["ticker"]] = row
+    return sorted(merged.values(), key=lambda row: row["ticker"])
+
+
+def load_cached_a_share_universe() -> tuple[list[dict], dict]:
+    try:
+        payload = json.loads(A_SHARE_CACHE.read_text(encoding="utf-8"))
+        rows = payload.get("rows", [])
+        if len(rows) < MIN_VALID_A_SHARE_UNIVERSE:
+            return [], {}
+        stamp = datetime.fromisoformat(str(payload.get("generated_at", "")))
+        now = datetime.now(stamp.tzinfo or ZoneInfo("Asia/Shanghai"))
+        if (now - stamp).total_seconds() > 14 * 86400:
+            return [], {}
+        return rows, payload
+    except Exception:
+        return [], {}
+
+
+def save_a_share_universe_cache(rows: list[dict], sources: list[str] | None = None):
+    if len(rows) < MIN_VALID_A_SHARE_UNIVERSE:
+        return
+    payload = {
+        "generated_at": datetime.now(ZoneInfo("Asia/Shanghai")).isoformat(),
+        "count": len(rows),
+        "sources": sources or sorted({row.get("source", "") for row in rows if row.get("source")}),
+        "rows": rows,
+    }
+    try:
+        A_SHARE_CACHE.parent.mkdir(parents=True, exist_ok=True)
+        temporary = A_SHARE_CACHE.with_suffix(".tmp")
+        temporary.write_text(json.dumps(payload, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
+        temporary.replace(A_SHARE_CACHE)
+    except OSError:
+        pass
+
+
+def fetch_eastmoney_a_share_universe() -> list[dict]:
+    """Optional quote/industry enrichment; the official exchange list remains authoritative."""
+    endpoint = "https://82.push2.eastmoney.com/api/qt/clist/get"
+    base_params = {
+        "pz": 100, "po": 1, "np": 1, "fltt": 2, "invt": 2,
+        "fid": "f6", "fs": "m:0+t:6,m:0+t:80,m:1+t:2,m:1+t:23,m:0+t:81+s:2048",
+        "fields": "f2,f3,f5,f6,f8,f10,f12,f14,f17,f18,f20,f21,f100",
+    }
+
+    def get_page(page_number: int):
+        params = {**base_params, "pn": page_number}
+        for attempt in range(2):
+            try:
+                response = requests.get(
+                    endpoint,
+                    params=params,
+                    headers={**HEADERS, "Referer": "https://quote.eastmoney.com/"},
+                    timeout=12,
+                )
+                response.raise_for_status()
+                return response.json().get("data") or {}
+            except Exception:
+                if attempt == 0:
+                    time.sleep(0.4)
+        return {}
+
+    first = get_page(1)
+    if not first:
+        return []
+    total = int(first.get("total") or 0)
+    pages = min(65, max(1, math.ceil(total / base_params["pz"])))
+    payloads = [first]
+    if pages > 1:
+        with ThreadPoolExecutor(max_workers=8) as pool:
+            payloads.extend(pool.map(get_page, range(2, pages + 1)))
+    output = []
+    for payload in payloads:
+        for item in payload.get("diff", []) or []:
+            ticker = _a_share_ticker_from_code(item.get("f12"))
+            name = _clean_stock_name(item.get("f14"))
+            if not ticker or not name:
+                continue
+            output.append({
+                "ticker": ticker, "name": name, "industry": str(item.get("f100") or "").strip(),
+                "last": _number(item.get("f2")), "change_pct": _number(item.get("f3")),
+                "volume": _number(item.get("f5")), "amount": _number(item.get("f6")),
+                "turnover_rate": _number(item.get("f8")), "volume_ratio": _number(item.get("f10")),
+                "open": _number(item.get("f17")), "pre_close": _number(item.get("f18")),
+                "market_cap": _number(item.get("f20")), "float_market_cap": _number(item.get("f21")),
+                "quote_source": "东方财富公开行情",
+            })
+    return output
+
+
+def fetch_a_share_universe(
+    token: str = "", include_quotes: bool = True, refresh: bool = False
+) -> tuple[list[dict], dict]:
+    """Return a no-key full-market universe with a durable last-good fallback.
+
+    The token argument is retained for backwards compatibility but is intentionally
+    unused: this path does not require Tushare or another paid credential.
+    """
+    cached, cache_meta = load_cached_a_share_universe()
+    if cached and not refresh:
+        official, enrichment = [], []
+    else:
+        with ThreadPoolExecutor(max_workers=2) as pool:
+            official_future = pool.submit(fetch_official_a_share_universe)
+            enrichment_future = pool.submit(fetch_eastmoney_a_share_universe)
+            official = official_future.result()
+            enrichment = enrichment_future.result()
+    fresh = len(official) >= MIN_VALID_A_SHARE_UNIVERSE
+    if fresh:
+        combined = {row.get("ticker"): row for row in cached if row.get("ticker")}
+        combined.update({row.get("ticker"): row for row in official if row.get("ticker")})
+        base_rows = sorted(combined.values(), key=lambda row: row["ticker"])
+    else:
+        base_rows = cached
+    if not base_rows:
+        partial = official if official else enrichment
+        return partial, {
+            "mode": "UNAVAILABLE_PARTIAL",
+            "count": len(partial),
+            "minimum_required": MIN_VALID_A_SHARE_UNIVERSE,
+            "usable": False,
+            "fresh": False,
+        }
+
+    enrichment_by_ticker = {row["ticker"]: row for row in enrichment}
+    tencent_by_ticker = (
+        fetch_tencent_auction([row["ticker"] for row in base_rows]) if include_quotes else {}
+    )
+    rows = []
+    for base in base_rows:
+        quote_row = enrichment_by_ticker.get(base.get("ticker"), {})
+        tencent_row = tencent_by_ticker.get(base.get("ticker"), {})
+        merged = dict(base)
+        for key in (
+            "last", "change_pct", "volume", "amount", "turnover_rate", "volume_ratio",
+            "open", "pre_close", "market_cap", "float_market_cap", "quote_source",
+        ):
+            if quote_row.get(key) not in (None, ""):
+                merged[key] = quote_row[key]
+        if quote_row.get("industry"):
+            merged["industry"] = quote_row["industry"]
+        for key in (
+            "last", "change_pct", "volume", "amount", "turnover_rate",
+            "open", "pre_close", "market_cap", "float_market_cap", "quote_source",
+        ):
+            if tencent_row.get(key) not in (None, ""):
+                merged[key] = tencent_row[key]
+        if merged.get("market_cap") is None and merged.get("total_shares") and merged.get("last"):
+            merged["market_cap"] = merged["total_shares"] * merged["last"]
+        if merged.get("float_market_cap") is None and merged.get("float_shares") and merged.get("last"):
+            merged["float_market_cap"] = merged["float_shares"] * merged["last"]
+        rows.append(merged)
+
+    if fresh:
+        save_a_share_universe_cache(rows)
+    additions = []
+    if tencent_by_ticker:
+        additions.append("TENCENT_QUOTES")
+    if enrichment:
+        additions.append("INDUSTRY_ENRICHMENT")
+    mode = "OFFICIAL_EXCHANGES" + ("+" + "+".join(additions) if additions else "")
+    if not fresh:
+        mode = "LAST_GOOD_CACHE" + ("+" + "+".join(additions) if additions else "")
+    minimum_quotes = max(3500, int(len(rows) * 0.65)) if include_quotes else 0
+    quote_usable = not include_quotes or len(tencent_by_ticker) >= minimum_quotes
+    return rows, {
+        "mode": mode,
+        "count": len(rows),
+        "minimum_required": MIN_VALID_A_SHARE_UNIVERSE,
+        "usable": len(rows) >= MIN_VALID_A_SHARE_UNIVERSE and quote_usable,
+        "fresh": fresh,
+        "fresh_count": len(official),
+        "asof": datetime.now(ZoneInfo("Asia/Shanghai")).isoformat() if fresh else cache_meta.get("generated_at", ""),
+        "listing_sources": sorted({row.get("source", "") for row in base_rows if row.get("source")}),
+        "enrichment_count": len(enrichment),
+        "quote_count": len(tencent_by_ticker),
+        "minimum_quote_count": minimum_quotes,
+        "quote_usable": quote_usable,
+    }
 
 
 def fetch_treasury_snapshot():
@@ -587,51 +861,6 @@ def _auction_row(ticker, name, price, pre_close, date="", time="", source="", **
         return None
 
 
-def fetch_tushare_auction(tickers, trade_date, token="", include_all: bool = False):
-    """Official Tushare stk_auction data; requires the separate auction permission."""
-    if not token:
-        return {}
-    endpoint = "https://api.tushare.pro"
-    payload = {
-        "api_name": "stk_auction",
-        "token": token,
-        "params": {"trade_date": str(trade_date).replace("-", "")},
-        "fields": "ts_code,trade_date,vol,price,amount,pre_close,turnover_rate,volume_ratio,float_share",
-    }
-    try:
-        response = requests.post(endpoint, json=payload, headers=HEADERS, timeout=20)
-        response.raise_for_status()
-        result = response.json()
-        if result.get("code") not in (0, None):
-            return {}
-        data = result.get("data") or {}
-        fields = data.get("fields") or []
-        wanted = {_auction_ticker(value) for value in tickers}
-        out = {}
-        for values in data.get("items") or []:
-            item = dict(zip(fields, values))
-            ticker = _auction_ticker(item.get("ts_code"))
-            if not include_all and ticker not in wanted:
-                continue
-            try:
-                float_market_cap = float(item.get("float_share")) * float(item.get("pre_close"))
-            except (TypeError, ValueError):
-                float_market_cap = None
-            row = _auction_row(
-                ticker, ticker, item.get("price"), item.get("pre_close"),
-                date=item.get("trade_date"), time="09:25", source="Tushare stk_auction",
-                volume=item.get("vol"), amount=item.get("amount"),
-                turnover_rate=item.get("turnover_rate"), volume_ratio=item.get("volume_ratio"),
-                float_share=item.get("float_share"),
-                float_market_cap=float_market_cap,
-            )
-            if row:
-                out[ticker] = row
-        return out
-    except Exception:
-        return {}
-
-
 def _parse_sina_auction(text, symbol_to_ticker):
     out = {}
     for line in (text or "").splitlines():
@@ -682,73 +911,122 @@ def _parse_tencent_auction(text, symbol_to_ticker):
         stamp = fields[30] if len(fields) > 30 else ""
         row = _auction_row(
             ticker, fields[1], fields[5], fields[4],
-            date=stamp[:8], time=stamp[8:14], source="Tencent public quote fallback",
-            volume=fields[6] or None,
+            date=stamp[:8], time=stamp[8:14], source="腾讯免费实时行情",
+            last=_number(fields[3]),
+            change_pct=_number(fields[32] if len(fields) > 32 else None),
+            open=_number(fields[5]),
+            quote_source="腾讯免费实时行情",
+            volume=_number(fields[6], 100),
+            amount=_number(fields[37] if len(fields) > 37 else None, 10_000),
+            turnover_rate=_number(fields[38] if len(fields) > 38 else None),
+            market_cap=_number(fields[44] if len(fields) > 44 else None, 100_000_000),
+            float_market_cap=_number(fields[45] if len(fields) > 45 else None, 100_000_000),
         )
         if row:
             out[ticker] = row
     return out
 
 
-def fetch_tencent_auction(tickers):
-    symbols = {_quote_symbol(ticker): _auction_ticker(ticker) for ticker in tickers}
-    if not symbols:
-        return {}
-    try:
-        response = requests.get(
-            "https://qt.gtimg.cn/q=" + ",".join(symbols), headers=HEADERS, timeout=12,
-        )
-        response.raise_for_status()
-        response.encoding = "gbk"
-        return _parse_tencent_auction(response.text, symbols)
-    except Exception:
+def fetch_tencent_auction(tickers, batch_size: int = 200):
+    """Fetch free quotes in bounded batches so an entire A-share market fits safely."""
+    wanted = sorted({_auction_ticker(ticker) for ticker in tickers if ticker})
+    chunks = [wanted[index:index + batch_size] for index in range(0, len(wanted), batch_size)]
+    if not chunks:
         return {}
 
+    def one(chunk):
+        symbols = {_quote_symbol(ticker): ticker for ticker in chunk}
+        for attempt in range(3):
+            try:
+                response = requests.get(
+                    "https://qt.gtimg.cn/q=" + ",".join(symbols),
+                    headers={**HEADERS, "Referer": "https://gu.qq.com/"},
+                    timeout=18,
+                )
+                response.raise_for_status()
+                response.encoding = "gbk"
+                parsed = _parse_tencent_auction(response.text, symbols)
+                if parsed:
+                    return parsed
+            except Exception:
+                pass
+            if attempt < 2:
+                time.sleep(0.5 * (attempt + 1))
+        return {}
 
-def fetch_auction_quotes(tickers, trade_date, tushare_token=""):
-    """Fetch the 09:25 opening-auction price with official-first fallbacks."""
+    output = {}
+    with ThreadPoolExecutor(max_workers=min(10, len(chunks))) as pool:
+        for rows in pool.map(one, chunks):
+            output.update(rows)
+    return output
+
+
+def fetch_auction_quotes(tickers, trade_date):
+    """Fetch selected 09:25 opening prices without a paid API key."""
     wanted = sorted({ticker for value in tickers if value for ticker in [_auction_ticker(value)] if ticker.endswith((".SS", ".SZ", ".BJ"))})
-    out = fetch_tushare_auction(wanted, trade_date, token=tushare_token)
+    out = fetch_tencent_auction(wanted)
     missing = [ticker for ticker in wanted if ticker not in out]
     if missing:
         out.update(fetch_sina_auction(missing))
-    missing = [ticker for ticker in wanted if ticker not in out]
-    if missing:
-        out.update(fetch_tencent_auction(missing))
     return out
 
 
-def fetch_all_auction_quotes(trade_date, tushare_token=""):
-    """Fetch the full A-share opening auction; returns coverage metadata explicitly."""
-    out = fetch_tushare_auction([], trade_date, token=tushare_token, include_all=True)
-    public_rows = fetch_eastmoney_a_share_universe()
-    if len(out) >= 1000:
-        public_by_ticker = {row["ticker"]: row for row in public_rows}
-        for ticker, row in out.items():
-            enrichment = public_by_ticker.get(ticker, {})
-            row.update({
-                key: enrichment.get(key)
-                for key in ("name", "industry", "market_cap", "float_market_cap")
-                if enrichment.get(key) not in (None, "")
-            })
-        mode = "TUSHARE_FULL_AUCTION+PUBLIC_NAMES" if public_rows else "TUSHARE_FULL_AUCTION"
-        return out, {"mode": mode, "count": len(out)}
-    public = {}
-    for item in public_rows:
+def fetch_all_auction_quotes(trade_date):
+    """Fetch the full-market 09:25 opening snapshot with explicit completeness gates."""
+    universe, universe_coverage = fetch_a_share_universe(include_quotes=False)
+    if not universe_coverage.get("usable"):
+        return {}, {
+            "mode": "UNAVAILABLE_NO_FULL_UNIVERSE",
+            "count": 0,
+            "universe_count": len(universe),
+            "usable": False,
+        }
+
+    out = fetch_tencent_auction([row["ticker"] for row in universe])
+    expected_date = str(trade_date).replace("-", "")
+    current = {
+        ticker: row for ticker, row in out.items()
+        if not row.get("date") or row.get("date") == expected_date
+    }
+    universe_by_ticker = {stock.get("ticker"): stock for stock in universe}
+    for ticker, row in current.items():
+        item = universe_by_ticker.get(ticker, {})
+        for key in ("name", "industry", "market"):
+            if item.get(key) not in (None, ""):
+                row[key] = item[key]
+        for key in ("market_cap", "float_market_cap"):
+            if item.get(key) not in (None, "") and row.get(key) in (None, ""):
+                row[key] = item[key]
+
+    # If Tencent omitted a symbol, an independently obtained Eastmoney opening
+    # field may still complete it. This is augmentation, never the stock-list authority.
+    for item in universe:
+        if item.get("ticker") in current:
+            continue
         row = _auction_row(
             item.get("ticker"), item.get("name"), item.get("open"), item.get("pre_close"),
             date=str(trade_date).replace("-", ""), time="09:25",
-            source="Eastmoney public full-market fallback",
+            source="东方财富免费行情备用",
             volume=item.get("volume"), amount=item.get("amount"),
             turnover_rate=item.get("turnover_rate"), volume_ratio=item.get("volume_ratio"),
             market_cap=item.get("market_cap"), float_market_cap=item.get("float_market_cap"),
             industry=item.get("industry"),
         )
         if row:
-            public[row["ticker"]] = row
-    if len(public) > len(out):
-        return public, {"mode": "PUBLIC_FULL_AUCTION", "count": len(public)}
-    return out, {"mode": "PARTIAL_AUCTION", "count": len(out)}
+            current[row["ticker"]] = row
+
+    minimum = max(3500, int(len(universe) * 0.65))
+    usable = len(current) >= minimum
+    sources = sorted({row.get("source", "") for row in current.values() if row.get("source")})
+    return current, {
+        "mode": "FREE_FULL_MARKET" if usable else "UNAVAILABLE_PARTIAL_AUCTION",
+        "count": len(current),
+        "universe_count": len(universe),
+        "minimum_required": minimum,
+        "usable": usable,
+        "sources": sources,
+        "trade_date": str(trade_date),
+    }
 
 def data_health(market, macro, news):
     total_m = len(market)

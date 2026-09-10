@@ -35,9 +35,13 @@ def main(send_emails: bool = False, force: bool = False):
     marketwide_signals = morning.get("signals", [])
     subscriptions = list_active_subscriptions()
     trade_date = now.strftime("%Y-%m-%d")
-    quotes, auction_coverage = fetch_all_auction_quotes(
-        trade_date, tushare_token=get_secret("TUSHARE_TOKEN")
-    )
+    quotes, auction_coverage = fetch_all_auction_quotes(trade_date)
+    if not auction_coverage.get("usable"):
+        raise SystemExit(
+            "full-market auction unavailable: "
+            f"received {auction_coverage.get('count', 0)}, "
+            f"required {auction_coverage.get('minimum_required', 3500)}; email not sent"
+        )
     anomalies = detect_market_auction_anomalies(quotes)
     payload = {
         "generated_at": now.isoformat(),

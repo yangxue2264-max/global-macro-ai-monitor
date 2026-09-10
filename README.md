@@ -65,7 +65,7 @@ python scripts/generate_auction_snapshot.py
 - `data/latest_auction_snapshot.json`
 - `data/auction_history/YYYY-MM-DD.json`
 
-系统优先读取 Tushare `stk_auction` 全市场结果；未配置权限时尝试公开全市场开盘快照回退，并在页面明确标注覆盖数量与数据模式。用户临时添加的自选股若不在固定快照中，页面会单独按需补取。
+系统读取三家交易所官方上市名单，再用腾讯免费批量行情取得全市场09:25开盘结果，并以东方财富公开行情补缺。股票池不足4500只或竞价不足3500只时任务直接失败且不发送误导邮件。用户临时添加的自选股若不在固定快照中，页面会单独按需补取。
 
 > GitHub 定时任务可能因平台排队延迟几分钟；页面与邮件均显示真实生成时间。
 
@@ -129,8 +129,7 @@ PYTHONPATH=. python tests/smoke_test.py
 4. 确认 GitHub Actions 的 Workflow permissions 为 `Read and write permissions`。
 5. 在 Actions 页面手动运行 `A-share personalized email reports`；先分别选择 morning 与 auction，并保持 `send_emails=false` 检查数据。
 6. 用你自己的邮箱在网页完成一次订阅，再手动测试 `send_emails=true`。
-7. 可选添加 `TUSHARE_TOKEN`，以使用官方竞价接口；该接口需要单独的数据权限。
-8. 重新打开网站，确认页面同时显示当日08:45与竞价数据状态。
+7. 重新打开网站，确认页面同时显示当日08:45与竞价数据状态；不需要配置任何行情Token。
 
 已维护股票的基础功能不依赖 OpenAI API。只有规则库尚未覆盖的新股票会尝试用AI自动补齐；AI不可用时系统使用低置信度保守映射，不会要求用户填写研究栏目。
 
@@ -139,7 +138,7 @@ PYTHONPATH=. python tests/smoke_test.py
 - Yahoo Finance：海外收盘价格和 A 股上一交易日数据。
 - GDELT：新闻发现；失败时回退 Google News RSS。普通工作日读取近24小时，周一读取近72小时以覆盖周末。
 - FRED / 美国财政部：只提供隔夜风险背景，不再作为独立跨资产页面。
-- Tushare `stk_auction`：A 股集合竞价结果，需单独权限；无权限时使用公开行情回退。
+- 上交所、深交所、北交所：免费官方上市股票名单；腾讯免费行情：全市场09:25开盘价；东方财富：行业和缺失报价补充。
 - 免费数据可能延迟或中断；页面必须保留快照、DEMO 与过期状态标注。
 
 研究辅助，不构成投资建议。
